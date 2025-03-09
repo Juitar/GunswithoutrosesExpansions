@@ -7,6 +7,8 @@ import lykrast.gunswithoutroses.registry.GWREntities;
 import lykrast.gunswithoutroses.registry.GWRItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -17,7 +19,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.List;
-import java.util.Properties;
+
 
 import javax.annotation.Nullable;
 
@@ -34,6 +36,9 @@ public class SplinterBulletItem extends BulletItem {
                 spawnBulletPiece(world, target.getX(), target.getY() + 0.5, target.getZ(), shooter);
             }
         }
+        world.playSound(null, target.getX(), target.getY(), target.getZ(),
+                SoundEvents.GLASS_BREAK, SoundSource.NEUTRAL,
+                1.0F, 1.0F + (world.random.nextFloat() - world.random.nextFloat()) * 0.2F);
     }
     @Override
     public void onBlockHit(BulletEntity projectile, BlockHitResult hit, @Nullable Entity shooter, Level world) {
@@ -44,6 +49,9 @@ public class SplinterBulletItem extends BulletItem {
                 spawnBulletPiece(world, hit.getLocation().x, hit.getLocation().y , hit.getLocation().z, shooter);
             }
         }
+        world.playSound(null, hit.getLocation().x, hit.getLocation().y , hit.getLocation().z,
+                SoundEvents.GLASS_BREAK, SoundSource.NEUTRAL,
+                1.0F, 1.0F + (world.random.nextFloat() - world.random.nextFloat()) * 0.2F);
     }
 
     protected void spawnBulletPiece(Level world, double x, double y, double z, @Nullable Entity shooter) {

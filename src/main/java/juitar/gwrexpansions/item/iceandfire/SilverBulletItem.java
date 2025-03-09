@@ -2,6 +2,7 @@ package juitar.gwrexpansions.item.iceandfire;
 
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.item.BulletItem;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -25,7 +26,7 @@ public class SilverBulletItem extends BulletItem {
             if(headshot)
                 target.hurt(shooter.level().damageSources().magic(), (float) (bullet.getDamage()*2.0F));
             else
-                target.hurt(shooter.level().damageSources().magic(), (float) (bullet.getDamage()+3.0F));
+                target.hurt(shooter.level().damageSources().magic(), (float) (bullet.getDamage()+4.0F));
         }
     }
 
@@ -33,6 +34,6 @@ public class SilverBulletItem extends BulletItem {
     @OnlyIn(Dist.CLIENT)
     public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
-        tooltip.add(Component.translatable("tooltip.gwrexpansions.silver_bullet.desc"));
+        tooltip.add(Component.translatable("tooltip.gwrexpansions.silver_bullet.desc").withStyle(ChatFormatting.GRAY));
     }
 }
