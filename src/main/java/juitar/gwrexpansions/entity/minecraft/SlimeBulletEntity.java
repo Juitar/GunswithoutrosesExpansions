@@ -1,7 +1,9 @@
-package juitar.gwrexpansions.entity;
+package juitar.gwrexpansions.entity.minecraft;
 
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
@@ -71,6 +73,11 @@ public class SlimeBulletEntity extends BulletEntity {
                     (random.nextDouble() - 0.5) * 0.2);
             }
         }
+
+        // 播放史莱姆跳跃音效
+        level().playSound(null, getX(), getY(), getZ(),
+                SoundEvents.SLIME_JUMP_SMALL, SoundSource.NEUTRAL,
+                1.0F, 1.0F + (level().random.nextFloat() - level().random.nextFloat()) * 0.2F);
     }
 
     @Override
@@ -95,8 +102,9 @@ public class SlimeBulletEntity extends BulletEntity {
                 getX(), getY(), getZ(),
                 0.0D, 0.0D, 0.0D);
         }
-        
-        // 不调用super.onHitEntity()以避免默认的实体碰撞处理
+        level().playSound(null, result.getLocation().x, result.getLocation().y , result.getLocation().z,
+                SoundEvents.SLIME_JUMP_SMALL, SoundSource.NEUTRAL,
+                1.0F, 1.0F + (level().random.nextFloat() - level().random.nextFloat()) * 0.2F);
     }
 
     @Override

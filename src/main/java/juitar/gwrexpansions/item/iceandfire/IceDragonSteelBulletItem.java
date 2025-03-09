@@ -1,15 +1,10 @@
 package juitar.gwrexpansions.item.iceandfire;
 
-import com.github.alexthe666.iceandfire.entity.EntityFireDragon;
-import com.github.alexthe666.iceandfire.entity.EntityIceDragon;
-import com.github.alexthe666.iceandfire.entity.props.EntityDataProvider;
+import juitar.gwrexpansions.entity.iceandfire.IceDragonSteelBulletEntity;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.item.BulletItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -25,13 +20,11 @@ public class IceDragonSteelBulletItem extends BulletItem {
         super(properties, damage);
     }
     @Override
-    public void onLivingEntityHit(BulletEntity bullet, LivingEntity target, @Nullable Entity shooter, Level world){
-        EntityDataProvider.getCapability(target).ifPresent(data -> data.frozenData.setFrozen(target, 300));
-        target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 300, 2));
-        target.knockback(1F, bullet.getX() - target.getX(), bullet.getZ() - target.getZ());
-        if(target instanceof EntityFireDragon){
-            target.hurt(shooter.level().damageSources().drown(),4.0F);
-        }
+    public BulletEntity createProjectile(Level world, ItemStack stack, LivingEntity shooter) {
+        IceDragonSteelBulletEntity bullet = new IceDragonSteelBulletEntity(world, shooter);
+        bullet.setItem(stack);
+        bullet.setDamage(damage);
+        return bullet;
     }
     @Override
     @OnlyIn(Dist.CLIENT)

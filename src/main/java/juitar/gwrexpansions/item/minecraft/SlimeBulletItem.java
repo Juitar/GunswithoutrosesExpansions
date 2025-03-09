@@ -4,7 +4,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.item.BulletItem;
-import juitar.gwrexpansions.entity.SlimeBulletEntity;
+import juitar.gwrexpansions.entity.minecraft.SlimeBulletEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;

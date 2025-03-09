@@ -19,7 +19,7 @@ public class VanillaItem {
 
     public static void registerItems() {
         netherite_shotgun = GWREItem.initItem(()-> new GunItem(GWREItem.defP().durability(4000).fireResistant(),0,0.6,20,5,7).projectiles(5).fireSound(GWRSounds.shotgun).repair(() -> Ingredient.of(Tags.Items.INGOTS_NETHERITE)), "netherite_shotgun");
-        netherite_sniper = GWREItem.initItem(() -> new GunItem(GWREItem.defP().durability(4000).fireResistant(), 1, 1.8, 24, 0, 10).projectileSpeed(4).headshotMult(1.5).fireSound(GWRSounds.sniper).repair(() -> Ingredient.of(Tags.Items.INGOTS_NETHERITE)), "netherite_sniper");
+        netherite_sniper = GWREItem.initItem(() -> new GunItem(GWREItem.defP().durability(4000).fireResistant(), 0, 1.8, 24, 0, 10).projectileSpeed(4).headshotMult(1.5).fireSound(GWRSounds.sniper).repair(() -> Ingredient.of(Tags.Items.INGOTS_NETHERITE)), "netherite_sniper");
         netherite_galtling = GWREItem.initItem(()-> new GatlingItem(GWREItem.defP().durability(4000).fireResistant(),1,1,4,3,10).repair(() -> Ingredient.of(Tags.Items.INGOTS_NETHERITE)),"netherite_gatling");
         slime_bullet = GWREItem.initItem(()-> new SlimeBulletItem(GWREItem.defP(),6,3),"slime_bullet");
         diamond_bullet = GWREItem.initItem(()-> new SplinterBulletItem(GWREItem.defP(),7),"diamond_bullet");

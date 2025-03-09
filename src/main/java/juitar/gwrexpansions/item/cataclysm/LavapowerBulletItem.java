@@ -1,5 +1,6 @@
 package juitar.gwrexpansions.item.cataclysm;
 
+import juitar.gwrexpansions.entity.cataclysm.LavapowerBulletEntity;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.item.BulletItem;
 import net.minecraft.ChatFormatting;
@@ -30,7 +31,11 @@ public class LavapowerBulletItem extends BulletItem {
 
     @Override
     public BulletEntity createProjectile(Level world, ItemStack stack, LivingEntity shooter){
-        return super.createProjectile(world, stack, shooter);
+        LavapowerBulletEntity bullet = new LavapowerBulletEntity(world, shooter);
+        bullet.setOwner(shooter);
+        bullet.setItem(stack);
+        bullet.setDamage(damage);
+        return bullet;
     }
 
     @Override
