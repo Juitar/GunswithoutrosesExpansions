@@ -6,7 +6,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 
 public class FireDragonSteelBulletEntity extends BulletEntity {
@@ -28,6 +27,9 @@ public class FireDragonSteelBulletEntity extends BulletEntity {
         }
 
         if (target instanceof LivingEntity livingTarget) {
+            // 保存并重置无敌时间
+            int lastHurtResistant = target.invulnerableTime;
+            target.invulnerableTime = 0;
             // 设置目标着火
             target.setSecondsOnFire(10);
 
@@ -40,7 +42,12 @@ public class FireDragonSteelBulletEntity extends BulletEntity {
                 damage += 4.0F;
             }
 
-            livingTarget.hurt(damageSources().thrown(this, shooter), damage);
+            boolean damaged = livingTarget.hurt(damageSources().thrown(this, shooter), damage);
+
+            // 如果伤害未生效,恢复无敌时间
+            if (!damaged) {
+                target.invulnerableTime = lastHurtResistant;
+            }
         }
     }
 } 

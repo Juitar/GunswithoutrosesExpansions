@@ -49,8 +49,8 @@ public class LavapowerBulletItem extends BulletItem {
                 ItemStack offHand = livingShooter.getOffhandItem();
 
                 // 检查主手或副手是否持有Lavapowergun
-                if (mainHand.getItem() instanceof  LavapowerGun||
-                        offHand.getItem() instanceof LavapowerGun) {
+                if (mainHand.getItem() instanceof LavapowerGunItem ||
+                        offHand.getItem() instanceof LavapowerGunItem) {
                     // 如果是Lavapowergun，生成更多的火焰
                     jetCount = 5;
                 }
@@ -75,8 +75,8 @@ public class LavapowerBulletItem extends BulletItem {
                 ItemStack offHand = livingShooter.getOffhandItem();
 
                 // 检查主手或副手是否持有Lavapowergun
-                if (mainHand.getItem() instanceof LavapowerGun ||
-                        offHand.getItem() instanceof LavapowerGun) {
+                if (mainHand.getItem() instanceof LavapowerGunItem ||
+                        offHand.getItem() instanceof LavapowerGunItem) {
                     // 如果是Lavapowergun，生成更多的火焰
                     jetCount = 5;
                 }

@@ -86,10 +86,17 @@ public class SlimeBulletEntity extends BulletEntity {
         if (!level().isClientSide) {
             Entity target = result.getEntity();
             Entity shooter = getOwner();
-            
+            // 保存并重置无敌时间
+            int lastHurtResistant = target.invulnerableTime;
+            target.invulnerableTime = 0;
             // 造成伤害
-            target.hurt(damageSources().thrown(this, shooter), (float) getDamage());
-            
+            float damage = (float) getDamage();
+            boolean damaged = target.hurt(damageSources().thrown(this, shooter), damage);
+
+            // 如果伤害未生效,恢复无敌时间
+            if (!damaged) {
+                target.invulnerableTime = lastHurtResistant;
+            }
             // 计算反弹方向
             Vec3 motion = getDeltaMovement();
             // 反向运动

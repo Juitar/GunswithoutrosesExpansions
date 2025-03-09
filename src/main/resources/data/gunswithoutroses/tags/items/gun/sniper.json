@@ -1,6 +1,9 @@
 {
     "replace": false,
     "values": [
-        "gwrexpansions:netherite_sniper"
+        "gwrexpansions:netherite_sniper",
+        "gwrexpansions:dragonsteel_fire_sniper",
+        "gwrexpansions:dragonsteel_ice_sniper",
+        "gwrexpansions:dragonsteel_lightning_sniper"
     ]
 }

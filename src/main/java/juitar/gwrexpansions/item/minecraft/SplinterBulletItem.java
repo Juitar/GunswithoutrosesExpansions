@@ -2,9 +2,10 @@ package juitar.gwrexpansions.item.minecraft;
 
 import juitar.gwrexpansions.registry.VanillaItem;
 import lykrast.gunswithoutroses.entity.BulletEntity;
+import lykrast.gunswithoutroses.entity.PiercingBulletEntity;
 import lykrast.gunswithoutroses.item.BulletItem;
 import lykrast.gunswithoutroses.registry.GWREntities;
-import lykrast.gunswithoutroses.registry.GWRItems;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -55,13 +56,13 @@ public class SplinterBulletItem extends BulletItem {
     }
 
     protected void spawnBulletPiece(Level world, double x, double y, double z, @Nullable Entity shooter) {
-        BulletEntity bulletPiece = new BulletEntity(GWREntities.BULLET.get(), world);
+        PiercingBulletEntity bulletPiece = new PiercingBulletEntity(GWREntities.BULLET.get(), world);
         
         // 设置基本属性
         bulletPiece.setDamage(3);
         bulletPiece.setItem(new ItemStack(VanillaItem.diamond_bullet_shrapnel.get()));
         bulletPiece.setOwner(shooter);
-        
+        bulletPiece.setPierce(2);
         // 设置位置
         bulletPiece.setPos(x, y, z);
         

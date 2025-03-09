@@ -14,9 +14,9 @@ import juitar.gwrexpansions.entity.cataclysm.LavapowerBulletEntity;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class LavapowerGun extends GunItem {
+public class LavapowerGunItem extends GunItem {
 
-    public LavapowerGun(Properties properties, int bonusDamage, double damageMultiplier, int fireDelay, double inaccuracy, int enchantability) {
+    public LavapowerGunItem(Properties properties, int bonusDamage, double damageMultiplier, int fireDelay, double inaccuracy, int enchantability) {
         super(properties, bonusDamage, damageMultiplier, fireDelay, inaccuracy, enchantability);
     }
 

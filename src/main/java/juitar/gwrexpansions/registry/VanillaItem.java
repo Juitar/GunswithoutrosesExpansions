@@ -7,7 +7,7 @@ import lykrast.gunswithoutroses.item.BulletItem;
 import lykrast.gunswithoutroses.item.GatlingItem;
 import lykrast.gunswithoutroses.item.GunItem;
 import lykrast.gunswithoutroses.registry.GWRSounds;
-import net.minecraft.world.item.Item;
+
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.registries.RegistryObject;

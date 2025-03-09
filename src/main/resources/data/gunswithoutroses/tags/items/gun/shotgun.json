@@ -2,6 +2,9 @@
   "replace": false,
   "values": [
     "gwrexpansions:netherite_shotgun",
-    "gwrexpansions:netherite_monster_shotgun"
+    "gwrexpansions:netherite_monster_shotgun",
+    "gwrexpansions:dragonsteel_fire_shotgun",
+    "gwrexpansions:dragonsteel_ice_shotgun",
+    "gwrexpansions:dragonsteel_lightning_shotgun"
   ]
 }

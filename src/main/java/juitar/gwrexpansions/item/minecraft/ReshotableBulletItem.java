@@ -2,7 +2,7 @@ package juitar.gwrexpansions.item.minecraft;
 
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.item.BulletItem;
-import lykrast.gunswithoutroses.item.GunItem;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;

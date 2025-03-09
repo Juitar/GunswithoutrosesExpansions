@@ -1,6 +1,9 @@
 {
     "replace": false,
     "values": [
-        "gwrexpansions:netherite_gatling"
+        "gwrexpansions:netherite_gatling",
+        "gwrexpansions:dragonsteel_fire_gatling",
+        "gwrexpansions:dragonsteel_ice_gatling",
+        "gwrexpansions:dragonsteel_lightning_gatling"
     ]
 }

@@ -33,10 +33,17 @@ public class LavapowerBulletEntity extends BulletEntity {
 
             Entity target = result.getEntity();
             Entity shooter = getOwner();
-            
-            // 造成伤害
-            target.hurt(damageSources().thrown(this, shooter), (float) getDamage());
-            
+            // 保存并重置无敌时间
+            int lastHurtResistant = target.invulnerableTime;
+            target.invulnerableTime = 0;
+            // 伤害计算
+            float damage = (float) getDamage();
+            boolean damaged = target.hurt(damageSources().thrown(this, shooter), damage);
+
+            // 如果伤害未生效,恢复无敌时间
+            if (!damaged) {
+                target.invulnerableTime = lastHurtResistant;
+            }
             // 生成火焰弹幕
             if (random.nextBoolean()) {
                 createXStrikeJet(target.getX(), target.getY(), target.getZ(), shooter, jetCount, 2);
