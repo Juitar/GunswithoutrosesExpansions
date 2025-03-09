@@ -5,7 +5,7 @@ public class CompatModids {
     public static final String BLOCK = "minecraft:mob_effect";
     public static final String ENTITY = "minecraft:entity_type";
 
-    public static final String GWR = "gunswithoutroses";
     public static final String CATACLYSM = "cataclysm";
+    public static final String ICEANDFIRE = "iceandfire";
     private CompatModids() {}
 }

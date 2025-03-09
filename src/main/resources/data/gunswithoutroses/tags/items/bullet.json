@@ -1,0 +1,12 @@
+{
+      "replace": false,
+      "values": [
+        "gwrexpansions:silver_bullet",
+        "gwrexpansions:diamond_bullet",
+        "gwrexpansions:netherite_bullet",
+        "gwrexpansions:lavapower_bullet",
+        "gwrexpansions:dragonsteel_ice_bullet",
+        "gwrexpansions:dragonsteel_fire_bullet",
+        "gwrexpansions:dragonsteel_lightning_bullet"
+      ]
+}

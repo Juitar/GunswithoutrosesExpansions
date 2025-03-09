@@ -1,7 +1,31 @@
 {
+  "itemGroup.gwrexpansions": "Guns wihtout rosese expansions",
   "item.gwrexpansions.netherite_shotgun":"Netherite Shotgun",
   "item.gwrexpansions.netherite_sniper":"Netherite Sniper",
   "item.gwrexpansions.netherite_gatling":"Netherite Gatling",
 
-  "item.gwrexpansions.netherite_bullet":"Netherite Bullet"
+  "item.gwrexpansions.netherite_monster_shotgun": "Netherite Monster Shotgun",
+
+  "item.gwrexpansions.slime_bullet":"Slime Bullet",
+  "item.gwrexpansions.diamond_bullet": "Diamond Bullet",
+  "item.gwrexpansions.diamond_bullet_shrapnel": "Diamond Bullet Shrapnel",
+  "item.gwrexpansions.netherite_bullet":"Netherite Bullet",
+  "item.gwrexpansions.lavapower_bullet": "Lava Power Bullet",
+
+  "item.gwrexpansions.silver_bullet": "Silver Bullet",
+  "item.gwrexpansions.dragonsteel_ice_bullet": "Dragonsteel Ice Bullet",
+  "item.gwrexpansions.dragonsteel_fire_bullet": "Dragonsteel Fire Bullet",
+  "item.gwrexpansions.dragonsteel_lightning_bullet": "Dragonsteel Lightning Bullet",
+
+  "tooltip.gwrexpansions.netherite_bullet.desc": "80% chance to drop as item after impact (except when fired from shotguns)",
+  "tooltip.gwrexpansions.slime_bullet.desc":"will bounce %d times",
+  "tooltip.gwrexpansions.diamond_bullet.desc": "Splits into multiple fragments on impact",
+  "tooltip.gwrexpansions.silver_bullet.desc": "Causes more damage to undead",
+  "tooltip.gwrexpansions.lavapower_bullet.desc": "Creates cross-shaped or X-shaped area of flame jet",
+  "tooltip.gwrexpansions.lavapower_gun.desc": "Converts Fired Netherite Bullets into Lava Power Bullets",
+  "tooltip.gwrexpansions.lavapower_gun.desc2": "creating an expanded area of flame coverage",
+
+  "tooltip.gwrexpansions.firedragon_bonus": "+%d FireDragon bonus damage",
+  "tooltip.gwrexpansions.icedragon_bonus": "+%d iceDragon bonus damage",
+  "tooltip.gwrexpansions.lightningdragon_bonus": "+%d lightningDragon bonus damage"
 }
