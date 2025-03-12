@@ -1,6 +1,7 @@
 package juitar.gwrexpansions.entity.cataclysm;
 
 import lykrast.gunswithoutroses.entity.BulletEntity;
+import lykrast.gunswithoutroses.registry.GWRDamage;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
@@ -30,27 +31,32 @@ public class LavapowerBulletEntity extends BulletEntity {
 
     @Override
     protected void onHitEntity(EntityHitResult result) {
-
-            Entity target = result.getEntity();
-            Entity shooter = getOwner();
-            // 保存并重置无敌时间
-            int lastHurtResistant = target.invulnerableTime;
-            target.invulnerableTime = 0;
-            // 伤害计算
-            float damage = (float) getDamage();
-            boolean damaged = target.hurt(damageSources().thrown(this, shooter), damage);
-
-            // 如果伤害未生效,恢复无敌时间
-            if (!damaged) {
-                target.invulnerableTime = lastHurtResistant;
+            if(!level().isClientSide) {
+                Entity target = result.getEntity();
+                Entity shooter = getOwner();
+                // 保存并重置无敌时间
+                int lastHurtResistant = target.invulnerableTime;
+                target.invulnerableTime = 0;
+                // 伤害计算
+                float damage = (float) getDamage();
+                boolean headshot = hasHeadshot(target);
+                if (headshot) {
+                    damage *= getHeadshotMultiplier();
+                }
+                boolean damaged = shooter == null
+                        ? target.hurt(GWRDamage.gunDamage(level().registryAccess(), this), damage)
+                        : target.hurt(GWRDamage.gunDamage(level().registryAccess(), this, shooter), damage);
+                // 如果伤害未生效,恢复无敌时间
+                if (!damaged) {
+                    target.invulnerableTime = lastHurtResistant;
+                }
+                // 生成火焰弹幕
+                if (random.nextBoolean()) {
+                    createXStrikeJet(target.getX(), target.getY(), target.getZ(), shooter, jetCount, 2);
+                } else {
+                    createPlusStrikeJet(target.getX(), target.getY(), target.getZ(), shooter, jetCount, 2);
+                }
             }
-            // 生成火焰弹幕
-            if (random.nextBoolean()) {
-                createXStrikeJet(target.getX(), target.getY(), target.getZ(), shooter, jetCount, 2);
-            } else {
-                createPlusStrikeJet(target.getX(), target.getY(), target.getZ(), shooter, jetCount, 2);
-            }
-
     }
 
     @Override

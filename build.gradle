@@ -151,6 +151,8 @@ dependencies {
     implementation fg.deobf("curse.maven:jei-238222:6075247")
     //jade
     implementation fg.deobf("curse.maven:jade-324717:6271651")
+    //configured
+    implementation fg.deobf("curse.maven:configured-457570:5180900")
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

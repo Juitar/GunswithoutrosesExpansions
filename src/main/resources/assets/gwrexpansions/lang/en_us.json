@@ -5,13 +5,18 @@
   "item.gwrexpansions.netherite_gatling":"Netherite Gatling",
 
   "item.gwrexpansions.netherite_monster_shotgun": "Netherite Monster Shotgun",
+  "item.gwrexpansions.cursium_sniper": "Cursium Sniper",
+  "item.gwrexpansions.ignitium_gatling": "Ignitium Gatling",
 
+  "item.gwrexpansions.golden_bullet": "golden Bullet",
   "item.gwrexpansions.slime_bullet":"Slime Bullet",
   "item.gwrexpansions.diamond_bullet": "Diamond Bullet",
   "item.gwrexpansions.diamond_bullet_shrapnel": "Diamond Bullet Shrapnel",
   "item.gwrexpansions.netherite_bullet":"Netherite Bullet",
+
   "item.gwrexpansions.lavapower_bullet": "Lava Power Bullet",
   "item.gwrexpansions.cursium_bullet": "Cursium Bullet",
+  "item.gwrexpansions.ignitium_bullet": "Ignitium Bullet",
 
   "item.gwrexpansions.dragonsteel_fire_shotgun": "Fire Dragonsteel Shotgun",
   "item.gwrexpansions.dragonsteel_ice_shotgun": "Ice Dragonsteel Shotgun",
@@ -32,16 +37,20 @@
   "tooltip.gwrexpansions.lightning_dragon_gun.desc": "Converts Fired Silver Bullets into Lightning Dragonsteel Bullets",
   "tooltip.gwrexpansions.ice_dragon_gun.desc": "Converts Fired Silver Bullets into Ice Dragonsteel Bullets",
   "tooltip.gwrexpansions.fire_dragon_gun.desc": "Converts Fired Silver Bullets into Fire Dragonsteel Bullets",
-
-  "tooltip.gwrexpansions.netherite_bullet.desc": "80% chance to drop as item after impact (except when fired from shotguns)",
+  "tooltip.gwrexpansions.golden_bullet.desc": "There is a chance that it will be broken into gold nuggets",
+  "tooltip.gwrexpansions.netherite_bullet.desc": "%f %% chance to drop as item after impact (except when fired from shotguns)",
   "tooltip.gwrexpansions.slime_bullet.desc":"will bounce %d times",
   "tooltip.gwrexpansions.diamond_bullet.desc": "Splits into multiple fragments on impact(fragments can pierce 2 entity)",
   "tooltip.gwrexpansions.silver_bullet.desc": "Causes more damage to undead",
   "tooltip.gwrexpansions.cursium_bullet.desc": "Will automatically track enemies",
+  "tooltip.gwrexpansions.cursium_sniper.desc": "Converts Fired Golden Bullets into Cursium Bullets",
+  "tooltip.gwrexpansions.cursium_sniper.desc2": "Cursium Bullets Headshots will summon  phantasmal halberds to attack mobs near the target",
   "tooltip.gwrexpansions.lavapower_bullet.desc": "Creates cross-shaped or X-shaped area of flame jet",
-  "tooltip.gwrexpansions.lavapower_gun.desc": "Converts Fired Netherite Bullets into Lava Power Bullets",
+  "tooltip.gwrexpansions.lavapower_gun.desc": "Converts Fired Golden Bullets into Lava Power Bullets",
   "tooltip.gwrexpansions.lavapower_gun.desc2": "creating an expanded area of flame coverage",
-
+  "tooltip.gwrexpansions.ignitium_bullet.desc": "apply Blazing Brand to target",
+  "tooltip.gwrexpansions.ignitium_gatling.desc": "Converts Fired Golden Bullets into Ignitium Bullets",
+  "tooltip.gwrexpansions.ignitium_gatling.desc2": "Ignitium Bullets will heal the shooter",
   "tooltip.gwrexpansions.firedragon_bonus": "+%d FireDragon bonus damage",
   "tooltip.gwrexpansions.icedragon_bonus": "+%d iceDragon bonus damage",
   "tooltip.gwrexpansions.lightningdragon_bonus": "+%d lightningDragon bonus damage"

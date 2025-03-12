@@ -100,7 +100,7 @@ public class ReshotableBulletItem extends BulletItem {
     @OnlyIn(Dist.CLIENT)
     public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
-        tooltip.add(Component.translatable("tooltip.gwrexpansions.netherite_bullet.desc", DROP_CHANCE).withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.gwrexpansions.netherite_bullet.desc", DROP_CHANCE*100).withStyle(ChatFormatting.GRAY));
     }
 
 

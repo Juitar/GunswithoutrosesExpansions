@@ -3,6 +3,7 @@ package juitar.gwrexpansions.entity.iceandfire;
 import com.github.alexthe666.iceandfire.entity.*;
 import com.github.alexthe666.iceandfire.entity.props.EntityDataProvider;
 import lykrast.gunswithoutroses.entity.BulletEntity;
+import lykrast.gunswithoutroses.registry.GWRDamage;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Entity;
@@ -31,7 +32,6 @@ public class IceDragonSteelBulletEntity extends BulletEntity {
         }
 
         if (target instanceof LivingEntity livingTarget) {
-            // 保存并重置无敌时间
             int lastHurtResistant = target.invulnerableTime;
             target.invulnerableTime = 0;
             // 添加缓慢效果
@@ -40,15 +40,19 @@ public class IceDragonSteelBulletEntity extends BulletEntity {
             // 击退效果
             livingTarget.knockback(1F, getX() - livingTarget.getX(), getZ() - livingTarget.getZ());
 
-            // 对火龙造成额外伤害
             float damage = (float) this.getDamage();
+            boolean headshot = hasHeadshot(target);
+            if (headshot) {
+                damage *= getHeadshotMultiplier();
+            }
             if (target instanceof EntityFireDragon) {
                 damage += 4.0F;
             }
 
-            boolean damaged = livingTarget.hurt(damageSources().thrown(this, shooter), damage);
-
-            // 如果伤害未生效,恢复无敌时间
+            boolean damaged = shooter == null
+                    ? target.hurt(GWRDamage.gunDamage(level().registryAccess(), this), damage)
+                    : target.hurt(GWRDamage.gunDamage(level().registryAccess(), this, shooter), damage);
+                    
             if (!damaged) {
                 target.invulnerableTime = lastHurtResistant;
             }

@@ -37,7 +37,7 @@ public class LavapowerGunItem extends GunItem {
     protected void affectBulletEntity(LivingEntity shooter, ItemStack gun, BulletEntity bullet, boolean bulletFree) {
         super.affectBulletEntity(shooter, gun, bullet, bulletFree);
         if (bullet instanceof LavapowerBulletEntity lavaBullet) {
-            lavaBullet.setJetCount(lavaBullet.getJetCount() + 7);
+            lavaBullet.setJetCount(lavaBullet.getJetCount() + 5);
         }
     }
 }

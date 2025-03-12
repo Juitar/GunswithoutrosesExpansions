@@ -2,6 +2,7 @@ package juitar.gwrexpansions.entity.iceandfire;
 
 import com.github.alexthe666.iceandfire.entity.*;
 import lykrast.gunswithoutroses.entity.BulletEntity;
+import lykrast.gunswithoutroses.registry.GWRDamage;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
@@ -39,17 +40,20 @@ public class LightningDragonSteelBulletEntity extends BulletEntity {
                 level().addFreshEntity(lightning);
             }
 
-            // 击退效果
             livingTarget.knockback(1F, getX() - livingTarget.getX(), getZ() - livingTarget.getZ());
 
-            // 对龙造成额外伤害
             float damage = (float) this.getDamage();
+            boolean headshot = hasHeadshot(target);
+            if (headshot) {
+                damage *= getHeadshotMultiplier();
+            }
             if (target instanceof EntityIceDragon || target instanceof EntityFireDragon) {
                 damage += 2.0F;
             }
-            boolean damaged = livingTarget.hurt(damageSources().thrown(this, shooter), damage);
+            boolean damaged = shooter == null
+                    ? target.hurt(GWRDamage.gunDamage(level().registryAccess(), this), damage)
+                    : target.hurt(GWRDamage.gunDamage(level().registryAccess(), this, shooter), damage);
 
-            // 如果伤害未生效,恢复无敌时间
             if (!damaged) {
                 target.invulnerableTime = lastHurtResistant;
             }

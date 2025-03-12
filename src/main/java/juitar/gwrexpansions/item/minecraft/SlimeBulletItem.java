@@ -23,7 +23,7 @@ public class SlimeBulletItem extends BulletItem {
     }
 
     @Override
-    public BulletEntity createProjectile(Level world, ItemStack stack, LivingEntity shooter) {
+    public SlimeBulletEntity createProjectile(Level world, ItemStack stack, LivingEntity shooter) {
         SlimeBulletEntity entity = new SlimeBulletEntity(world, shooter);
         entity.setItem(stack);
         entity.setDamage(damage);

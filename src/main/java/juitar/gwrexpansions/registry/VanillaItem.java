@@ -1,11 +1,13 @@
 package juitar.gwrexpansions.registry;
 
+import juitar.gwrexpansions.item.minecraft.GoldenBulletItem;
 import juitar.gwrexpansions.item.minecraft.ReshotableBulletItem;
 import juitar.gwrexpansions.item.minecraft.SlimeBulletItem;
 import juitar.gwrexpansions.item.minecraft.SplinterBulletItem;
 import lykrast.gunswithoutroses.item.BulletItem;
 import lykrast.gunswithoutroses.item.GatlingItem;
 import lykrast.gunswithoutroses.item.GunItem;
+import lykrast.gunswithoutroses.item.PiercingBulletItem;
 import lykrast.gunswithoutroses.registry.GWRSounds;
 
 import net.minecraft.world.item.crafting.Ingredient;
@@ -14,7 +16,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class VanillaItem {
     public static RegistryObject<GunItem> netherite_sniper, netherite_galtling, netherite_shotgun;
-    public static RegistryObject<BulletItem> slime_bullet,diamond_bullet,netherite_bullet;
+    public static RegistryObject<BulletItem> slime_bullet,diamond_bullet,netherite_bullet,golden_bullet;
     public static RegistryObject<BulletItem> diamond_bullet_shrapnel;
 
     public static void registerItems() {
@@ -23,8 +25,8 @@ public class VanillaItem {
         netherite_galtling = GWREItem.initItem(()-> new GatlingItem(GWREItem.defP().durability(4000).fireResistant(),1,1,4,3,10).repair(() -> Ingredient.of(Tags.Items.INGOTS_NETHERITE)),"netherite_gatling");
         slime_bullet = GWREItem.initItem(()-> new SlimeBulletItem(GWREItem.defP(),6,3),"slime_bullet");
         diamond_bullet = GWREItem.initItem(()-> new SplinterBulletItem(GWREItem.defP(),7),"diamond_bullet");
-
+        golden_bullet = GWREItem.initItem(()-> new GoldenBulletItem(GWREItem.defP(),5),"golden_bullet");
         netherite_bullet = GWREItem.initItem(()-> new ReshotableBulletItem(GWREItem.defP().fireResistant(),8),"netherite_bullet");
-        diamond_bullet_shrapnel = GWREItem.REG.register("diamond_bullet_shrapnel", () -> new BulletItem(GWREItem.defP(), 3));
+        diamond_bullet_shrapnel = GWREItem.REG.register("diamond_bullet_shrapnel", () -> new PiercingBulletItem(GWREItem.defP(), 3,2));
     }
 }
