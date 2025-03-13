@@ -39,8 +39,11 @@ public class ReshotableBulletItem extends BulletItem {
         ItemStack offHand = shooter.getOffhandItem();
         boolean isShotgun = mainHand.is(net.minecraft.tags.ItemTags.create(new ResourceLocation("gunswithoutroses:gun/shotgun"))) ||
                 offHand.is(net.minecraft.tags.ItemTags.create(new ResourceLocation("gunswithoutroses:gun/shotgun")));
-
         // 标记子弹
+        if(!isShotgun) {
+            isShotgun = mainHand.is(net.minecraft.tags.ItemTags.create(new ResourceLocation("gwrexpansions:shotgun"))) ||
+                    offHand.is(net.minecraft.tags.ItemTags.create(new ResourceLocation("gwrexpansions:shotgun")));
+        }
         CompoundTag tag = bullet.getPersistentData();
         tag.putBoolean("ShotFromShotgun", isShotgun);
 
