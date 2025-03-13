@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "tag": "gwrexpansions:lavapowerbullet_base" },
+    { "tag": "gwrexpansions:lavapowerbullet_base" },
+    { "tag": "gwrexpansions:lavapowerbullet_base" },
+    { "tag": "gwrexpansions:lavapowerbullet_base" },
+    { "tag": "gwrexpansions:lavapowerbullet_base" },
+    { "tag": "gwrexpansions:lavapowerbullet_base" },
+    { "tag": "gwrexpansions:lavapowerbullet_base" },
+    { "tag": "gwrexpansions:lavapowerbullet_base" },
+    { "item": "minecraft:slime_ball" }
+  ],
+  "result": { "item": "gwrexpansions:lavapower_bullet", "count": 8 }
+}

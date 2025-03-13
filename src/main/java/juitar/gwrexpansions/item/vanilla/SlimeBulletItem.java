@@ -1,10 +1,11 @@
-package juitar.gwrexpansions.item.minecraft;
+package juitar.gwrexpansions.item.vanilla;
 
 import java.util.List;
 import javax.annotation.Nullable;
-import lykrast.gunswithoutroses.entity.BulletEntity;
+
+import juitar.gwrexpansions.config.GWREConfig;
 import lykrast.gunswithoutroses.item.BulletItem;
-import juitar.gwrexpansions.entity.minecraft.SlimeBulletEntity;
+import juitar.gwrexpansions.entity.vanilla.SlimeBulletEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;

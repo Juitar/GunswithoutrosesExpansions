@@ -33,7 +33,7 @@
   "item.gwrexpansions.dragonsteel_fire_bullet": "Dragonsteel Fire Bullet",
   "item.gwrexpansions.dragonsteel_lightning_bullet": "Dragonsteel Lightning Bullet",
 
-
+  "tooltip.gwrexpansions.dragonsteel_gun.desc": "Increased the damage of the corresponding Elemental Dragon steel bullets",
   "tooltip.gwrexpansions.lightning_dragon_gun.desc": "Converts Fired Silver Bullets into Lightning Dragonsteel Bullets",
   "tooltip.gwrexpansions.ice_dragon_gun.desc": "Converts Fired Silver Bullets into Ice Dragonsteel Bullets",
   "tooltip.gwrexpansions.fire_dragon_gun.desc": "Converts Fired Silver Bullets into Fire Dragonsteel Bullets",

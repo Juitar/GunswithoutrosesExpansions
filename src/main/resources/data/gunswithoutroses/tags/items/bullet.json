@@ -1,6 +1,7 @@
 {
       "replace": false,
       "values": [
+        "gwrexpansions:slime_bullet",
         "gwrexpansions:silver_bullet",
         "gwrexpansions:golden_bullet",
         "gwrexpansions:diamond_bullet",

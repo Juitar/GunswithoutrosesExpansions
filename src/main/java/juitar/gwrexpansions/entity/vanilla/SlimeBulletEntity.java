@@ -1,4 +1,4 @@
-package juitar.gwrexpansions.entity.minecraft;
+package juitar.gwrexpansions.entity.vanilla;
 
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.registry.GWRDamage;

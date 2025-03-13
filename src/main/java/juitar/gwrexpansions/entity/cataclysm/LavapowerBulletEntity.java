@@ -1,5 +1,6 @@
 package juitar.gwrexpansions.entity.cataclysm;
 
+import juitar.gwrexpansions.config.GWREConfig;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.registry.GWRDamage;
 import net.minecraft.world.entity.EntityType;
@@ -19,7 +20,7 @@ import javax.annotation.Nullable;
 import com.github.L_Ender.cataclysm.entity.projectile.Flame_Jet_Entity;
 
 public class LavapowerBulletEntity extends BulletEntity {
-    private int jetCount = 5;
+    private int jetCount = GWREConfig.BULLET.lavapower.flamejetCount.get();
 
     public LavapowerBulletEntity(EntityType<? extends BulletEntity> type, Level level) {
         super(type, level);
@@ -142,9 +143,9 @@ public class LavapowerBulletEntity extends BulletEntity {
 
         if (flag) {
             if (shooter instanceof LivingEntity living) {
-                level.addFreshEntity(new Flame_Jet_Entity(level, x, (double)blockpos.getY() + d0, z, rotation, delay, 7, living));
+                level.addFreshEntity(new Flame_Jet_Entity(level, x, (double)blockpos.getY() + d0, z, rotation, delay, GWREConfig.BULLET.lavapower.flamejetDamage.get().floatValue(), living));
             } else {
-                level.addFreshEntity(new Flame_Jet_Entity(level, x, (double)blockpos.getY() + d0, z, rotation, delay, 7, null));
+                level.addFreshEntity(new Flame_Jet_Entity(level, x, (double)blockpos.getY() + d0, z, rotation, delay, GWREConfig.BULLET.lavapower.flamejetDamage.get().floatValue(), null));
             }
         }
     }

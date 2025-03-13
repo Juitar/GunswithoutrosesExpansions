@@ -1,0 +1,11 @@
+{
+	"type": "minecraft:crafting_shapeless",
+	"ingredients": [
+		{ "item": "minecraft:diamond" },
+		{ "item": "minecraft:diamond" },
+		{ "item": "minecraft:diamond" },
+		{ "item": "minecraft:diamond" },
+		{ "tag": "forge:gunpowder" }
+	],
+	"result": { "item": "gwrexpansions:diamond_bullet", "count": 32 }
+}

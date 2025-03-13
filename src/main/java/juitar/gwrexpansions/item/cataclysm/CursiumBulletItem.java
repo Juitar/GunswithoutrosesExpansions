@@ -1,7 +1,7 @@
 package juitar.gwrexpansions.item.cataclysm;
 
 import juitar.gwrexpansions.entity.cataclysm.CursiumBulletEntity;
-import juitar.gwrexpansions.entity.cataclysm.LavapowerBulletEntity;
+
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.item.BulletItem;
 import net.minecraft.ChatFormatting;
@@ -21,8 +21,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class CursiumBulletItem extends BulletItem {
-    public CursiumBulletItem(Properties properties,int damage) {
-        super(properties, damage);
+    public CursiumBulletItem(Properties properties, int damage) {
+        super(properties,damage);
     }
     @Override
     public BulletEntity createProjectile(Level world, ItemStack stack, LivingEntity shooter) {

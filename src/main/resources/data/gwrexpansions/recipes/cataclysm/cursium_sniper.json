@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "cataclysm:cursium_ingot"
+  },
+  "base": {
+    "item": "gwrexpansions:netherite_sniper"
+  },
+  "result": {
+    "item": "gwrexpansions:cursium_sniper"
+  },
+  "template": {
+    "item": "cataclysm:cursium_upgrade_smithing_template"
+  }
+}

@@ -1,6 +1,7 @@
 package juitar.gwrexpansions.entity.cataclysm;
 
 import com.github.L_Ender.cataclysm.entity.projectile.Phantom_Halberd_Entity;
+import juitar.gwrexpansions.config.GWREConfig;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.registry.GWRDamage;
 import net.minecraft.world.entity.Entity;
@@ -20,12 +21,12 @@ public class CursiumBulletEntity extends BulletEntity {
     private static final float VELOCITY_RETAIN = 0.625F;
     private static final float MIN_TRACKING_DISTANCE = 1.0F;
     private static final float MIN_VELOCITY = 1.25F;
-    private static final double PHANTOM_HALBERD_RANGE = 6.0D; // 幻影戟的搜索范围
+    private static final double PHANTOM_HALBERD_RANGE = GWREConfig.BULLET.cursium.phantomHalberdRange.get(); // 幻影戟的搜索范围
+    private static final double PHANTOM_HALBERD_DAMAGE = GWREConfig.BULLET.cursium.phantomHalberDamage.get(); // 幻影戟的伤害
 
     public CursiumBulletEntity(EntityType<? extends BulletEntity> type, Level level) {
         super(type, level);
     }
-
     public CursiumBulletEntity(Level level, LivingEntity shooter) {
         super(level, shooter);
     }
@@ -69,7 +70,7 @@ public class CursiumBulletEntity extends BulletEntity {
                         yRot,
                         20,
                         shooter instanceof LivingEntity ? (LivingEntity)shooter : null,
-                        10.0f
+                            (float) PHANTOM_HALBERD_DAMAGE
                     );
 
                     level().addFreshEntity(phantomHalberd);

@@ -32,17 +32,17 @@ public class CompatIceandfire {
             new ResourceLocation(CompatModids.ICEANDFIRE, "dragonsteel_lightning_ingot"));
     public static void registerItems(){
 
-        dragonsteel_fire_shotgun = GWREItem.initItem(()->new FireDragonGunItem(GWREItem.defP().durability(8000),GWREConfig.SHOTGUN.DragonSteel.baseDamage.get(),0.75,20,4,15).projectiles(4).fireSound(GWRSounds.shotgun).repair(()-> Ingredient.of(FIRE_DRAGON_STEEL_INGOT.get())),"dragonsteel_fire_shotgun");
-        dragonsteel_fire_sniper = GWREItem.initItem(()->new FireDragonGunItem(GWREItem.defP().durability(8000),0,1.9,24,0,15).projectileSpeed(4).headshotMult(2).fireSound(GWRSounds.sniper).repair(()-> Ingredient.of(FIRE_DRAGON_STEEL_INGOT.get())),"dragonsteel_fire_sniper");
-        dragonsteel_fire_gatling = GWREItem.initItem(()->new FireDragonGatlingItem(GWREItem.defP().durability(8000),3,1,4,4,15).repair(()-> Ingredient.of(FIRE_DRAGON_STEEL_INGOT.get())),"dragonsteel_fire_gatling");
+        dragonsteel_fire_shotgun = GWREItem.initItem(()->new FireDragonGunItem(GWREItem.defP().durability(8000),0,0.75,20,4,15,()-> GWREConfig.SHOTGUN.DragonSteel).projectiles(4).fireSound(GWRSounds.shotgun).repair(()-> Ingredient.of(FIRE_DRAGON_STEEL_INGOT.get())),"dragonsteel_fire_shotgun");
+        dragonsteel_fire_sniper = GWREItem.initItem(()->new FireDragonGunItem(GWREItem.defP().durability(8000),0,1.9,24,0,15,()-> GWREConfig.SNIPER.DragonSteel).projectileSpeed(4).headshotMult(2).fireSound(GWRSounds.sniper).repair(()-> Ingredient.of(FIRE_DRAGON_STEEL_INGOT.get())),"dragonsteel_fire_sniper");
+        dragonsteel_fire_gatling = GWREItem.initItem(()->new FireDragonGatlingItem(GWREItem.defP().durability(8000),3,1,4,4,15,()-> GWREConfig.GATLING.DragonSteel).repair(()-> Ingredient.of(FIRE_DRAGON_STEEL_INGOT.get())),"dragonsteel_fire_gatling");
 
-        dragonsteel_ice_shotgun = GWREItem.initItem(()->new IceDragonGunItem(GWREItem.defP().durability(8000),0,0.75,20,4,15).projectiles(4).fireSound(GWRSounds.shotgun).repair(()-> Ingredient.of(ICE_DRAGON_STEEL_INGOT.get())),"dragonsteel_ice_shotgun");
-        dragonsteel_ice_sniper = GWREItem.initItem(()->new IceDragonGunItem(GWREItem.defP().durability(8000),0,1.9,24,0,15).projectileSpeed(4).headshotMult(2).fireSound(GWRSounds.sniper).repair(()-> Ingredient.of(ICE_DRAGON_STEEL_INGOT.get())),"dragonsteel_ice_sniper");
-        dragonsteel_ice_gatling = GWREItem.initItem(()->new IceDragonGatlingItem(GWREItem.defP().durability(8000),3,1,4,4,15).repair(()-> Ingredient.of(ICE_DRAGON_STEEL_INGOT.get())),"dragonsteel_ice_gatling");
+        dragonsteel_ice_shotgun = GWREItem.initItem(()->new IceDragonGunItem(GWREItem.defP().durability(8000),0,0.75,20,4,15,()-> GWREConfig.SHOTGUN.DragonSteel).projectiles(4).fireSound(GWRSounds.shotgun).repair(()-> Ingredient.of(ICE_DRAGON_STEEL_INGOT.get())),"dragonsteel_ice_shotgun");
+        dragonsteel_ice_sniper = GWREItem.initItem(()->new IceDragonGunItem(GWREItem.defP().durability(8000),0,1.9,24,0,15,()-> GWREConfig.SNIPER.DragonSteel).projectileSpeed(4).headshotMult(2).fireSound(GWRSounds.sniper).repair(()-> Ingredient.of(ICE_DRAGON_STEEL_INGOT.get())),"dragonsteel_ice_sniper");
+        dragonsteel_ice_gatling = GWREItem.initItem(()->new IceDragonGatlingItem(GWREItem.defP().durability(8000),3,1,4,4,15,()-> GWREConfig.GATLING.DragonSteel).repair(()-> Ingredient.of(ICE_DRAGON_STEEL_INGOT.get())),"dragonsteel_ice_gatling");
 
-        dragonsteel_lightning_shotgun = GWREItem.initItem(()->new LightningDragonGunItem(GWREItem.defP().durability(8000),0,0.75,20,4,15).projectiles(4).fireSound(GWRSounds.shotgun).repair(()-> Ingredient.of(LIGHTNING_DRAGON_STEEL_INGOT.get())),"dragonsteel_lightning_shotgun");
-        dragonsteel_lightning_sniper = GWREItem.initItem(()->new LightningDragonGunItem(GWREItem.defP().durability(8000),0,1.9,24,0,15).projectileSpeed(4).headshotMult(2).fireSound(GWRSounds.sniper).repair(()-> Ingredient.of(LIGHTNING_DRAGON_STEEL_INGOT.get())),"dragonsteel_lightning_sniper");
-        dragonsteel_lightning_gatling = GWREItem.initItem(()->new LightningDragonGatlingItem(GWREItem.defP().durability(8000),3,1,4,4,15).repair(()-> Ingredient.of(LIGHTNING_DRAGON_STEEL_INGOT.get())),"dragonsteel_lightning_gatling");
+        dragonsteel_lightning_shotgun = GWREItem.initItem(()->new LightningDragonGunItem(GWREItem.defP().durability(8000),0,0.75,20,4,15,()-> GWREConfig.SHOTGUN.DragonSteel).projectiles(4).fireSound(GWRSounds.shotgun).repair(()-> Ingredient.of(LIGHTNING_DRAGON_STEEL_INGOT.get())),"dragonsteel_lightning_shotgun");
+        dragonsteel_lightning_sniper = GWREItem.initItem(()->new LightningDragonGunItem(GWREItem.defP().durability(8000),0,1.9,24,0,15,()-> GWREConfig.SNIPER.DragonSteel).projectileSpeed(4).headshotMult(2).fireSound(GWRSounds.sniper).repair(()-> Ingredient.of(LIGHTNING_DRAGON_STEEL_INGOT.get())),"dragonsteel_lightning_sniper");
+        dragonsteel_lightning_gatling = GWREItem.initItem(()->new LightningDragonGatlingItem(GWREItem.defP().durability(8000),3,1,4,4,15,()-> GWREConfig.GATLING.DragonSteel).repair(()-> Ingredient.of(LIGHTNING_DRAGON_STEEL_INGOT.get())),"dragonsteel_lightning_gatling");
 
 
         silver_bullet = GWREItem.initItem(()->new SilverBulletItem(GWREItem.defP(),6),"silver_bullet");

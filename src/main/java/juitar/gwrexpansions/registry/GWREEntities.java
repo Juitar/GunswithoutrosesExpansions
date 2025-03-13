@@ -8,7 +8,7 @@ import juitar.gwrexpansions.entity.cataclysm.LavapowerBulletEntity;
 import juitar.gwrexpansions.entity.iceandfire.FireDragonSteelBulletEntity;
 import juitar.gwrexpansions.entity.iceandfire.IceDragonSteelBulletEntity;
 import juitar.gwrexpansions.entity.iceandfire.LightningDragonSteelBulletEntity;
-import juitar.gwrexpansions.entity.minecraft.SlimeBulletEntity;
+import juitar.gwrexpansions.entity.vanilla.SlimeBulletEntity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.fml.ModList;

@@ -23,7 +23,13 @@ public class IceDragonSteelBulletItem extends BulletItem {
     public BulletEntity createProjectile(Level world, ItemStack stack, LivingEntity shooter) {
         IceDragonSteelBulletEntity bullet = new IceDragonSteelBulletEntity(world, shooter);
         bullet.setItem(stack);
-        bullet.setDamage(damage);
+        ItemStack mainHand = shooter.getMainHandItem();
+        ItemStack offHand = shooter.getOffhandItem();
+        if (mainHand.getItem() instanceof IceDragonGunItem || offHand.getItem() instanceof IceDragonGunItem || mainHand.getItem() instanceof IceDragonGatlingItem || offHand.getItem() instanceof IceDragonGatlingItem) {
+            bullet.setDamage(damage + 3);
+        }else{
+            bullet.setDamage(damage);
+        }
         return bullet;
     }
     @Override

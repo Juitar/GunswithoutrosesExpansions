@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "cataclysm:ignitium_ingot" },
+    { "item": "minecraft:gold_ingot" },
+    { "item": "minecraft:gold_ingot" },
+    { "item": "minecraft:gold_ingot" },
+    { "tag": "forge:gunpowder" }
+  ],
+  "result": { "item": "gwrexpansions:ignitium_bullet", "count": 32 }
+}

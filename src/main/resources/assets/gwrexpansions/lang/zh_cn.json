@@ -27,6 +27,7 @@
   "item.gwrexpansions.dragonsteel_ice_bullet": "龙霜钢弹丸",
   "item.gwrexpansions.dragonsteel_fire_bullet": "龙炎钢弹丸",
   "item.gwrexpansions.dragonsteel_lightning_bullet": "龙霆钢弹丸",
+  "tooltip.gwrexpansions.dragonsteel_gun.desc": "增加对应元素龙钢弹丸伤害",
   "tooltip.gwrexpansions.lightning_dragon_gun.desc": "发射银弹丸时转化为龙霆钢弹丸",
   "tooltip.gwrexpansions.ice_dragon_gun.desc": "发射银弹丸时转化为龙霜钢弹丸",
   "tooltip.gwrexpansions.fire_dragon_gun.desc": "发射银弹丸时转化为龙炎钢弹丸",

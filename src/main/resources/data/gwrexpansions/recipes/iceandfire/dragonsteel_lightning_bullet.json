@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "iceandfire:dragonsteel_lightning_ingot" },
+    { "item": "iceandfire:dragonsteel_lightning_ingot" },
+    { "item": "iceandfire:dragonsteel_lightning_ingot" },
+    { "item": "iceandfire:dragonsteel_lightning_ingot" },
+    { "tag": "forge:gunpowder" }
+  ],
+  "result": { "item": "gwrexpansions:dragonsteel_lightning_bullet", "count": 32 }
+}
