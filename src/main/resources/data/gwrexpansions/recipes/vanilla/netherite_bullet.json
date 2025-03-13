@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "minecraft:netherite_scrap" },
+    { "item": "minecraft:netherite_scrap" },
+    { "item": "minecraft:netherite_scrap" },
+    { "item": "minecraft:netherite_scrap" },
+    { "tag": "forge:gunpowder" }
+  ],
+  "result": { "item": "gwrexpansions:netherite_bullet", "count": 32 }
+}

@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "cataclysm:ignitium_ingot"
+  },
+  "base": {
+    "item": "gwrexpansions:netherite_gatling"
+  },
+  "result": {
+    "item": "gwrexpansions:ignitium_gatling"
+  },
+  "template": {
+    "item": "cataclysm:ignitium_upgrade_smithing_template"
+  }
+}

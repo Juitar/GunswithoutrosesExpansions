@@ -1,7 +1,8 @@
 package juitar.gwrexpansions.item.cataclysm;
 
+import juitar.gwrexpansions.config.GWREConfig;
+import juitar.gwrexpansions.item.ConfigurableGatlingItem;
 import juitar.gwrexpansions.registry.CompatCataclysm;
-import lykrast.gunswithoutroses.item.GatlingItem;
 import lykrast.gunswithoutroses.item.IBullet;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -11,10 +12,11 @@ import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.Supplier;
 
-public class IgnitiumGatlingItem extends GatlingItem {
-    public IgnitiumGatlingItem(Properties properties, int bonusDamage, double damageMultiplier, int fireDelay, double inaccuracy, int enchantability){
-        super(properties, bonusDamage, damageMultiplier, fireDelay, inaccuracy, enchantability);
+public class IgnitiumGatlingItem extends ConfigurableGatlingItem {
+    public IgnitiumGatlingItem(Properties properties, int bonusDamage, double damageMultiplier, int fireDelay, double inaccuracy, int enchantability, Supplier<GWREConfig.GunConfig> config){
+        super(properties, bonusDamage, damageMultiplier, fireDelay, inaccuracy, enchantability,config);
     }
     @Override
     protected ItemStack overrideFiredStack(LivingEntity shooter, ItemStack gun, ItemStack ammo, IBullet bulletItem, boolean bulletFree) {

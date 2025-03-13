@@ -1,5 +1,6 @@
 package juitar.gwrexpansions.item.cataclysm;
 
+
 import juitar.gwrexpansions.entity.cataclysm.IgnitiumBulletEntity;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.item.BulletItem;
@@ -11,12 +12,11 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-
 import javax.annotation.Nullable;
 import java.util.List;
 
 public class IgnitiumBulletItem extends BulletItem {
-    public IgnitiumBulletItem(Properties properties,int damage) {
+    public IgnitiumBulletItem(Properties properties,  int damage) {
         super(properties,damage);
     }
     @Override

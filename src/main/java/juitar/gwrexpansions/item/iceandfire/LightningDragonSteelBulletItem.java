@@ -23,7 +23,13 @@ public class LightningDragonSteelBulletItem extends BulletItem {
     public BulletEntity createProjectile(Level world, ItemStack stack, LivingEntity shooter) {
         LightningDragonSteelBulletEntity bullet = new LightningDragonSteelBulletEntity(world, shooter);
         bullet.setItem(stack);
-        bullet.setDamage(damage);
+        ItemStack mainHand = shooter.getMainHandItem();
+        ItemStack offHand = shooter.getOffhandItem();
+        if (mainHand.getItem() instanceof LightningDragonGunItem || offHand.getItem() instanceof LightningDragonGunItem || mainHand.getItem() instanceof LightningDragonGatlingItem || offHand.getItem() instanceof LightningDragonGatlingItem) {
+            bullet.setDamage(damage + 3);
+        }else{
+            bullet.setDamage(damage);
+        }
         return bullet;
     }
 

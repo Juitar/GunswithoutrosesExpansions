@@ -1,5 +1,4 @@
 package juitar.gwrexpansions.item.iceandfire;
-
 import juitar.gwrexpansions.entity.iceandfire.FireDragonSteelBulletEntity;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.item.BulletItem;
@@ -14,16 +13,23 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class FireDragonSteelBulletItem extends BulletItem {
-    public FireDragonSteelBulletItem(Properties properties, int damage) {
+    public FireDragonSteelBulletItem(Properties properties,  int damage) {
         super(properties, damage);
     }
     @Override
     public BulletEntity createProjectile(Level world, ItemStack stack, LivingEntity shooter) {
         FireDragonSteelBulletEntity bullet = new FireDragonSteelBulletEntity(world, shooter);
         bullet.setItem(stack);
-        bullet.setDamage(damage);
+        ItemStack mainHand = shooter.getMainHandItem();
+        ItemStack offHand = shooter.getOffhandItem();
+        if (mainHand.getItem() instanceof FireDragonGunItem || offHand.getItem() instanceof FireDragonGunItem || mainHand.getItem() instanceof FireDragonGatlingItem || offHand.getItem() instanceof FireDragonGatlingItem) {
+            bullet.setDamage(damage + 3);
+        }else{
+            bullet.setDamage(damage);
+        }
         return bullet;
     }
 

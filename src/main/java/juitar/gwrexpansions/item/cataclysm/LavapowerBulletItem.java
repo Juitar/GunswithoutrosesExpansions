@@ -17,7 +17,7 @@ import java.util.List;
 public class LavapowerBulletItem extends BulletItem {
 
     public LavapowerBulletItem(Properties properties, int damage) {
-        super(properties, damage);
+        super(properties,damage);
     }
 
     @Override

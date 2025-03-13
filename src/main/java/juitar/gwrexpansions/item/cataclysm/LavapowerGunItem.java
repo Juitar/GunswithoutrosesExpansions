@@ -1,8 +1,9 @@
 package juitar.gwrexpansions.item.cataclysm;
 
+import juitar.gwrexpansions.config.GWREConfig;
+import juitar.gwrexpansions.item.ConfigurableGunItem;
 import juitar.gwrexpansions.registry.CompatCataclysm;
 import lykrast.gunswithoutroses.entity.BulletEntity;
-import lykrast.gunswithoutroses.item.GunItem;
 import lykrast.gunswithoutroses.item.IBullet;
 import net.minecraft.ChatFormatting;
 import net.minecraft.world.entity.LivingEntity;
@@ -13,11 +14,12 @@ import juitar.gwrexpansions.entity.cataclysm.LavapowerBulletEntity;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.Supplier;
 
-public class LavapowerGunItem extends GunItem {
+public class LavapowerGunItem extends ConfigurableGunItem {
 
-    public LavapowerGunItem(Properties properties, int bonusDamage, double damageMultiplier, int fireDelay, double inaccuracy, int enchantability) {
-        super(properties, bonusDamage, damageMultiplier, fireDelay, inaccuracy, enchantability);
+    public LavapowerGunItem(Properties properties, int bonusDamage, double damageMultiplier, int fireDelay, double inaccuracy, int enchantability, Supplier<GWREConfig.GunConfig> configSupplier) {
+        super(properties, bonusDamage, damageMultiplier, fireDelay, inaccuracy, enchantability, configSupplier);
     }
 
     @Override

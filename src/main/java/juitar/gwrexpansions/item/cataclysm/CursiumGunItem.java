@@ -1,7 +1,8 @@
 package juitar.gwrexpansions.item.cataclysm;
 
+import juitar.gwrexpansions.config.GWREConfig;
+import juitar.gwrexpansions.item.ConfigurableGunItem;
 import juitar.gwrexpansions.registry.CompatCataclysm;
-import lykrast.gunswithoutroses.item.GunItem;
 import lykrast.gunswithoutroses.item.IBullet;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -11,10 +12,11 @@ import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.Supplier;
 
-public class CursiumGunItem extends GunItem {
-    public CursiumGunItem(Properties properties, int bonusDamage, double damageMultiplier, int fireDelay, double inaccuracy, int enchantability) {
-        super(properties, bonusDamage, damageMultiplier, fireDelay, inaccuracy, enchantability);
+public class CursiumGunItem extends ConfigurableGunItem {
+    public CursiumGunItem(Properties properties, int bonusDamage, double damageMultiplier, int fireDelay, double inaccuracy, int enchantability, Supplier<GWREConfig.GunConfig> configSupplier) {
+        super(properties, bonusDamage, damageMultiplier, fireDelay, inaccuracy, enchantability,configSupplier);
     }
     @Override
     protected ItemStack overrideFiredStack(LivingEntity shooter, ItemStack gun, ItemStack ammo, IBullet bulletItem, boolean bulletFree) {
