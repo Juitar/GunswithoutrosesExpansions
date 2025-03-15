@@ -101,7 +101,7 @@ public class GWREConfig {
             builder.push("Shotgun");
             netherite = new GunConfig(builder, "Netherite",0 , 0.6, 1.0, 20, 5.0);
             netheriteMonster = new GunConfig(builder, "NetheriteMonster", 0, 0.8, 1.0, 20, 4.0);
-            DragonSteel = new GunConfig(builder, "DragonSteel", 0, 0.75, 1.0, 4, 4);
+            DragonSteel = new GunConfig(builder, "DragonSteel", 0, 0.75, 1.0, 20, 4);
             builder.pop();
         }
     }
