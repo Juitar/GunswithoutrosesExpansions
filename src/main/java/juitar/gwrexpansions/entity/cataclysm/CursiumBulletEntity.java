@@ -17,6 +17,7 @@ import java.util.List;
 public class CursiumBulletEntity extends BulletEntity {
     private LivingEntity finalTarget;
     private boolean stopSeeking = false;
+    private boolean SHOT_FROM_CURSIUM = false;
     private static final float SEEKING_SPEED = 0.4775F;
     private static final float VELOCITY_RETAIN = 0.625F;
     private static final float MIN_TRACKING_DISTANCE = 1.0F;
@@ -45,35 +46,35 @@ public class CursiumBulletEntity extends BulletEntity {
             float damage = (float) this.getDamage();
             boolean headshot = hasHeadshot(target);
             if (headshot) {
-                damage *= getHeadshotMultiplier();
-
+                damage *= (float) getHeadshotMultiplier();
                 // 爆头时召唤幻影戟
-                List<LivingEntity> nearbyEntities = level().getEntitiesOfClass(
-                    LivingEntity.class,
-                    getBoundingBox().inflate(PHANTOM_HALBERD_RANGE),
-                    entity ->  entity != shooter && 
-                             entity.isAlive() && !entity.isSpectator()
-                );
-                
-                for (LivingEntity nearbyEntity : nearbyEntities) {
-                    double spawnX = nearbyEntity.getX();
-                    double spawnY = nearbyEntity.getY();
-                    double spawnZ = nearbyEntity.getZ();
-                    
-                    float yRot = (float) Math.atan2(nearbyEntity.getZ() - spawnZ, nearbyEntity.getX() - spawnX);
-
-                    Phantom_Halberd_Entity phantomHalberd = new Phantom_Halberd_Entity(
-                        level(),
-                        spawnX,
-                        spawnY,
-                        spawnZ,
-                        yRot,
-                        20,
-                        shooter instanceof LivingEntity ? (LivingEntity)shooter : null,
-                            (float) PHANTOM_HALBERD_DAMAGE
+                if (SHOT_FROM_CURSIUM) {
+                    List<LivingEntity> nearbyEntities = level().getEntitiesOfClass(
+                            LivingEntity.class,
+                            getBoundingBox().inflate(PHANTOM_HALBERD_RANGE),
+                            entity -> entity != shooter &&
+                                    entity.isAlive() && !entity.isSpectator()
                     );
+                    for (LivingEntity nearbyEntity : nearbyEntities) {
+                        double spawnX = nearbyEntity.getX();
+                        double spawnY = nearbyEntity.getY();
+                        double spawnZ = nearbyEntity.getZ();
 
-                    level().addFreshEntity(phantomHalberd);
+                        float yRot = (float) Math.atan2(nearbyEntity.getZ() - spawnZ, nearbyEntity.getX() - spawnX);
+
+                        Phantom_Halberd_Entity phantomHalberd = new Phantom_Halberd_Entity(
+                                level(),
+                                spawnX,
+                                spawnY,
+                                spawnZ,
+                                yRot,
+                                20,
+                                shooter instanceof LivingEntity ? (LivingEntity) shooter : null,
+                                (float) PHANTOM_HALBERD_DAMAGE
+                        );
+
+                        level().addFreshEntity(phantomHalberd);
+                    }
                 }
         }
             // 应用伤害
@@ -92,6 +93,9 @@ public class CursiumBulletEntity extends BulletEntity {
         this.finalTarget = target;
     }
 
+    public void setSHOT_FROM_CURSIUM(boolean SHOT_FROM_CURSIUM) {
+        this.SHOT_FROM_CURSIUM = SHOT_FROM_CURSIUM;
+    }
     @Override
     public void tick() {
         super.tick();

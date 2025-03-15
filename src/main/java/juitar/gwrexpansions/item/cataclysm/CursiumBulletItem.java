@@ -8,6 +8,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
@@ -45,7 +46,13 @@ public class CursiumBulletItem extends BulletItem {
         if (result != null && result.getEntity() instanceof LivingEntity target) {
             bullet.setFinalTarget(target);
         }
-        
+        if(shooter instanceof LivingEntity){
+            Item mainHand = shooter.getMainHandItem().getItem();
+            Item offHand = shooter.getOffhandItem().getItem();
+            if(mainHand instanceof CursiumGunItem|| offHand instanceof CursiumGunItem){
+                bullet.setSHOT_FROM_CURSIUM(true);
+            }
+        }
         return bullet;
     }
     @Override
