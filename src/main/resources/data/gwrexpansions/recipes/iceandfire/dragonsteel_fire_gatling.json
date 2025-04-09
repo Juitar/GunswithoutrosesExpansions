@@ -10,5 +10,6 @@
   },
   "result": {
     "item": "gwrexpansions:dragonsteel_fire_gatling"
-  }
+  },
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "cataclysm" }]
 } 

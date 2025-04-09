@@ -1,10 +1,10 @@
 {
     "replace": false,
     "values": [
-        "gwrexpansions:netherite_sniper",
-        "gwrexpansions:dragonsteel_fire_sniper",
-        "gwrexpansions:dragonsteel_ice_sniper",
-        "gwrexpansions:dragonsteel_lightning_sniper",
-        "gwrexpansions:cursium_sniper"
+        { "id": "gwrexpansions:netherite_sniper", "required": false },
+        { "id": "gwrexpansions:dragonsteel_fire_sniper", "required": false },
+        { "id": "gwrexpansions:dragonsteel_ice_sniper", "required": false },
+        { "id": "gwrexpansions:dragonsteel_lightning_sniper", "required": false },
+        { "id": "gwrexpansions:cursium_sniper", "required": false }
     ]
 }

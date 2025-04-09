@@ -2,6 +2,7 @@ package juitar.gwrexpansions;
 
 
 import juitar.gwrexpansions.config.GWREConfig;
+import juitar.gwrexpansions.loot.GWRELootModifiers;
 import juitar.gwrexpansions.registry.GWREEntities;
 import juitar.gwrexpansions.registry.GWREItem;
 import net.minecraft.resources.ResourceLocation;
@@ -22,6 +23,7 @@ public class GWRexpansions {
         GWREConfig.register();
         GWREItem.REG.register(eventBus);
         GWREEntities.REG.register(eventBus);
+        GWRELootModifiers.register(eventBus);
         eventBus.addListener(GWREItem::makeCreativeTab);
     }
 

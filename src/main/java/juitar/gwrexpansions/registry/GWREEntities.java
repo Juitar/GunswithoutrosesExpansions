@@ -5,6 +5,7 @@ import juitar.gwrexpansions.GWRexpansions;
 import juitar.gwrexpansions.entity.cataclysm.CursiumBulletEntity;
 import juitar.gwrexpansions.entity.cataclysm.IgnitiumBulletEntity;
 import juitar.gwrexpansions.entity.cataclysm.LavapowerBulletEntity;
+import juitar.gwrexpansions.entity.cataclysm.TidalBulletEntity;
 import juitar.gwrexpansions.entity.iceandfire.FireDragonSteelBulletEntity;
 import juitar.gwrexpansions.entity.iceandfire.IceDragonSteelBulletEntity;
 import juitar.gwrexpansions.entity.iceandfire.LightningDragonSteelBulletEntity;
@@ -24,6 +25,7 @@ public class GWREEntities {
     public static RegistryObject<EntityType<FireDragonSteelBulletEntity>> DRAGONSTEEL_FIRE_BULLET;
     public static RegistryObject<EntityType<LightningDragonSteelBulletEntity>> DRAGONSTEEL_LIGHTNING_BULLET;
     public static RegistryObject<EntityType<IgnitiumBulletEntity>> IGNITIUM_BULLET;
+    public static RegistryObject<EntityType<TidalBulletEntity>> TIDAL_BULLET;
     public static final DeferredRegister<EntityType<?>> REG = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, GWRexpansions.MODID);
 
     static {
@@ -47,6 +49,10 @@ public class GWREEntities {
                     .<IgnitiumBulletEntity>of(IgnitiumBulletEntity::new, MobCategory.MISC)
                     .sized(0.3125f, 0.3125f).setUpdateInterval(2).setTrackingRange(64).setShouldReceiveVelocityUpdates(true)
                     .build(GWRexpansions.MODID + ":ignitium_bullet"));
+            TIDAL_BULLET = REG.register("tidal_bullet", () -> EntityType.Builder
+                    .<TidalBulletEntity>of(TidalBulletEntity::new, MobCategory.MISC)
+                    .sized(0.3125f, 0.3125f).setUpdateInterval(2).setTrackingRange(64).setShouldReceiveVelocityUpdates(true)
+                    .build(GWRexpansions.MODID + ":tidal_bullet"));
         }
         if(ModList.get().isLoaded(CompatModids.ICEANDFIRE)) {
             DRAGONSTEEL_ICE_BULLET =REG.register("dragonsteel_ice_bullet", () -> EntityType.Builder

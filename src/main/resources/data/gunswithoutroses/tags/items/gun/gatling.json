@@ -1,10 +1,10 @@
 {
     "replace": false,
     "values": [
-        "gwrexpansions:netherite_gatling",
-        "gwrexpansions:dragonsteel_fire_gatling",
-        "gwrexpansions:dragonsteel_ice_gatling",
-        "gwrexpansions:dragonsteel_lightning_gatling",
-        "gwrexpansions:ignitium_gatling"
+        { "id": "gwrexpansions:netherite_gatling", "required": false },
+        { "id": "gwrexpansions:dragonsteel_fire_gatling", "required": false },
+        { "id": "gwrexpansions:dragonsteel_ice_gatling", "required": false },
+        { "id": "gwrexpansions:dragonsteel_lightning_gatling", "required": false },
+        { "id": "gwrexpansions:ignitium_gatling", "required": false }
     ]
 }

@@ -1,5 +1,6 @@
 package juitar.gwrexpansions.item.iceandfire;
 
+import juitar.gwrexpansions.entity.iceandfire.IceDragonSteelBulletEntity;
 import juitar.gwrexpansions.entity.iceandfire.LightningDragonSteelBulletEntity;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.item.BulletItem;
@@ -23,16 +24,9 @@ public class LightningDragonSteelBulletItem extends BulletItem {
     public BulletEntity createProjectile(Level world, ItemStack stack, LivingEntity shooter) {
         LightningDragonSteelBulletEntity bullet = new LightningDragonSteelBulletEntity(world, shooter);
         bullet.setItem(stack);
-        ItemStack mainHand = shooter.getMainHandItem();
-        ItemStack offHand = shooter.getOffhandItem();
-        if (mainHand.getItem() instanceof LightningDragonGunItem || offHand.getItem() instanceof LightningDragonGunItem || mainHand.getItem() instanceof LightningDragonGatlingItem || offHand.getItem() instanceof LightningDragonGatlingItem) {
-            bullet.setDamage(damage + 3);
-        }else{
-            bullet.setDamage(damage);
-        }
+        bullet.setDamage(damage);
         return bullet;
     }
-
 
     @Override
     @OnlyIn(Dist.CLIENT)

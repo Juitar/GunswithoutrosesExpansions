@@ -7,5 +7,6 @@
     { "item": "minecraft:gold_ingot" },
     { "tag": "forge:gunpowder" }
   ],
-  "result": { "item": "gwrexpansions:cursium_bullet", "count": 32 }
+  "result": { "item": "gwrexpansions:cursium_bullet", "count": 32 },
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "cataclysm" }]
 }

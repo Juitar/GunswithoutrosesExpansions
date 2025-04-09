@@ -7,6 +7,10 @@
   "item.gwrexpansions.netherite_monster_shotgun": "Netherite Monster Shotgun",
   "item.gwrexpansions.cursium_sniper": "Cursium Sniper",
   "item.gwrexpansions.ignitium_gatling": "Ignitium Gatling",
+  "item.gwrexpansions.tidal_pistol": "Tidal Pistol",
+  "item.gwrexpansions.tidal_bullet": "Tidal Bullet",
+
+  "item.gwrexpansions.destiny_seven": "Destiny Seven",
 
   "item.gwrexpansions.golden_bullet": "golden Bullet",
   "item.gwrexpansions.slime_bullet":"Slime Bullet",
@@ -53,5 +57,13 @@
   "tooltip.gwrexpansions.ignitium_gatling.desc2": "Ignitium Bullets will heal the shooter",
   "tooltip.gwrexpansions.firedragon_bonus": "+%d FireDragon bonus damage",
   "tooltip.gwrexpansions.icedragon_bonus": "+%d iceDragon bonus damage",
-  "tooltip.gwrexpansions.lightningdragon_bonus": "+%d lightningDragon bonus damage"
+  "tooltip.gwrexpansions.lightningdragon_bonus": "+%d lightningDragon bonus damage",
+  "tooltip.gwrexpansions.tidal_pistol.desc": "Converts Fired Golden Bullets into Tidal Bullets",
+  "tooltip.gwrexpansions.tidal_pistol.desc2": "Apply Abyssal curse to target,Abyssal Curse will increase the damage to target",
+  "tooltip.gwrexpansions.tidal_pistol.desc3": "Open a blast portal when the target have 5 level of Abyssal Curse",
+
+  "msg.gwrexpansions.bust": "Bust!",
+  "msg.gwrexpansions.double": "Double!",
+  "msg.gwrexpansions.triple": "Triple!",
+  "msg.gwrexpansions.jackpot": "Jackpot!"
 }

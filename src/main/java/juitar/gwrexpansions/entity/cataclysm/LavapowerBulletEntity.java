@@ -20,7 +20,7 @@ import javax.annotation.Nullable;
 import com.github.L_Ender.cataclysm.entity.projectile.Flame_Jet_Entity;
 
 public class LavapowerBulletEntity extends BulletEntity {
-    private int jetCount = GWREConfig.BULLET.lavapower.flamejetCount.get();
+    private int jetCount = GWREConfig.BulletConfig.flamejetCount.get();
 
     public LavapowerBulletEntity(EntityType<? extends BulletEntity> type, Level level) {
         super(type, level);
@@ -59,7 +59,6 @@ public class LavapowerBulletEntity extends BulletEntity {
                 }
             }
     }
-
     @Override
     protected void onHitBlock(BlockHitResult hit) {
             // 生成火焰弹幕
@@ -69,28 +68,22 @@ public class LavapowerBulletEntity extends BulletEntity {
                 createPlusStrikeJet(hit.getLocation().x, hit.getLocation().y, hit.getLocation().z, getOwner(), jetCount, 2);
             }
     }
-
     public void setJetCount(int count) {
         this.jetCount = count;
     }
-
     public int getJetCount() {
         return this.jetCount;
     }
-
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putInt("JetCount", jetCount);
     }
-
     @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         jetCount = compound.getInt("JetCount");
     }
-
-
     private void createPlusStrikeJet(double x, double y, double z, @Nullable Entity shooter, int rune, double time) {
         for (int i = 0; i < 4; i++) {
             float yawRadians = (float) (Math.toRadians(90));

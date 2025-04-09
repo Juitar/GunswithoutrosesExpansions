@@ -1,9 +1,10 @@
 package juitar.gwrexpansions.item.iceandfire;
 
 import juitar.gwrexpansions.config.GWREConfig;
+import juitar.gwrexpansions.entity.iceandfire.FireDragonSteelBulletEntity;
 import juitar.gwrexpansions.item.ConfigurableGatlingItem;
 import juitar.gwrexpansions.registry.CompatIceandfire;
-import lykrast.gunswithoutroses.item.GatlingItem;
+import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.item.IBullet;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -28,5 +29,12 @@ public class FireDragonGatlingItem extends ConfigurableGatlingItem {
     protected void addExtraStatsTooltip(ItemStack stack, @Nullable Level world, List<Component> tooltip){
         tooltip.add(Component.translatable("tooltip.gwrexpansions.fire_dragon_gun.desc").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.gunswithoutroses.gatling.hold").withStyle(ChatFormatting.GRAY));
+    }
+    @Override
+    protected void affectBulletEntity(LivingEntity shooter, ItemStack gun, BulletEntity bullet, boolean bulletFree) {
+        super.affectBulletEntity(shooter, gun, bullet, bulletFree);
+        if (bullet instanceof FireDragonSteelBulletEntity) {
+            bullet.setDamage(bullet.getDamage() + 3.0F);
+        }
     }
 }

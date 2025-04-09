@@ -149,16 +149,21 @@ dependencies {
     //ice and fire
     implementation fg.deobf("curse.maven:citadel-331936:6002521")
     implementation fg.deobf("curse.maven:ice-and-fire-dragons-264231:5633453")
+    //meet your fight
+    implementation fg.deobf("curse.maven:meet-your-fight-409371:6150315")
     //target dummy
     implementation fg.deobf("curse.maven:selene-499980:6249659")
     implementation fg.deobf("curse.maven:mmmmmmmmmmmm-225738:6237015")
     //jei
     implementation fg.deobf("curse.maven:jei-238222:6075247")
+    //just enough resources
+    implementation fg.deobf("curse.maven:just-enough-resources-jer-240630:5057220")
     //jade
     implementation fg.deobf("curse.maven:jade-324717:6271651")
     //configured
     implementation fg.deobf("curse.maven:configured-457570:5180900")
-
+    //rubidium
+    implementation fg.deobf("curse.maven:rubidium-574856:4952685")
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

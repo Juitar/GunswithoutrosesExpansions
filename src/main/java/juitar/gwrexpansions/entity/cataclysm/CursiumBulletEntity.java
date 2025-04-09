@@ -22,8 +22,8 @@ public class CursiumBulletEntity extends BulletEntity {
     private static final float VELOCITY_RETAIN = 0.625F;
     private static final float MIN_TRACKING_DISTANCE = 1.0F;
     private static final float MIN_VELOCITY = 1.25F;
-    private static final double PHANTOM_HALBERD_RANGE = GWREConfig.BULLET.cursium.phantomHalberdRange.get(); // 幻影戟的搜索范围
-    private static final double PHANTOM_HALBERD_DAMAGE = GWREConfig.BULLET.cursium.phantomHalberDamage.get(); // 幻影戟的伤害
+    private static final double PHANTOM_HALBERD_RANGE = GWREConfig.BulletConfig.phantomHalberdRange.get(); // 幻影戟的搜索范围
+    private static final double PHANTOM_HALBERD_DAMAGE = GWREConfig.BulletConfig.phantomHalberDamage.get(); // 幻影戟的伤害
 
     public CursiumBulletEntity(EntityType<? extends BulletEntity> type, Level level) {
         super(type, level);
@@ -81,12 +81,10 @@ public class CursiumBulletEntity extends BulletEntity {
             boolean damaged = shooter == null
             ? target.hurt(GWRDamage.gunDamage(level().registryAccess(), this), damage)
             : target.hurt(GWRDamage.gunDamage(level().registryAccess(), this, shooter), damage);
-
             // 如果伤害未生效，恢复无敌时间
             if (!damaged) {
                 target.invulnerableTime = lastHurtResistant;
             }
-
     }
 
     public void setFinalTarget(LivingEntity target) {

@@ -1,6 +1,6 @@
 {
   "replace": false,
   "values": [
-    "gwrexpansions:silver_bullet"
+    {"id":"gwrexpansions:silver_bullet","required":false}
     ]
 }

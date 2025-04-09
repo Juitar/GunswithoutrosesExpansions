@@ -13,37 +13,56 @@ public class GWREConfig {
 
     // 子弹配置
     public static class BulletConfig {
-        public final ForgeConfigSpec.DoubleValue phantomHalberDamage;
-        public final ForgeConfigSpec.DoubleValue phantomHalberdRange;
-        public final ForgeConfigSpec.DoubleValue flamejetDamage;
-        public final ForgeConfigSpec.IntValue flamejetCount;
+        public static ForgeConfigSpec.DoubleValue phantomHalberDamage = null;
+        public static ForgeConfigSpec.DoubleValue phantomHalberdRange = null;
+        public static ForgeConfigSpec.DoubleValue flamejetDamage = null;
+        public static ForgeConfigSpec.IntValue flamejetCount = null;
+        public static ForgeConfigSpec.DoubleValue portal_damage = null;
+        public static ForgeConfigSpec.DoubleValue portal_hpdamage = null;
 
-        public BulletConfig(ForgeConfigSpec.Builder bulider, String name, boolean hasPhantomHalber, boolean hasFlamejet) {
+        public BulletConfig(ForgeConfigSpec.Builder bulider, String name, int index) {
             bulider.push(name);
-            if(hasPhantomHalber){
-                phantomHalberDamage = bulider
-                    .comment("Phantom Halber Damage")
-                    .defineInRange("phantomHalberDamage", 10.0, 0.0, 100.0);
-                phantomHalberdRange = bulider
-                    .comment("Phantom Halberd Range")
-                    .defineInRange("phantomHalberdRange", 5.0, 0.0, 100.0);
-            } else {
-                phantomHalberDamage = null;
-                phantomHalberdRange = null;
-            }
-            
-            if(hasFlamejet){
-                flamejetDamage = bulider
-                    .comment("Flamejet Damage")
-                    .defineInRange("flamejetDamage", 7.0, 0.0, 100.0);
-                flamejetCount = bulider
-                    .comment("Flamejet Count")
-                    .defineInRange("flamejetCount", 5, 0, 20);
-            } else {
-                flamejetDamage = null;
-                flamejetCount = null;
+            switch (index) {
+                case 1:
+                    phantomHalberDamage = bulider
+                        .comment("Phantom Halber Damage")
+                        .defineInRange("phantomHalberDamage", 10.0, 0.0, 100.0);
+                    phantomHalberdRange = bulider
+                        .comment("Phantom Halberd Range")
+                        .defineInRange("phantomHalberdRange", 5.0, 0.0, 100.0);
+                    break;
+                case 2:
+                    flamejetDamage = bulider
+                        .comment("Flamejet Damage")
+                        .defineInRange("flamejetDamage", 7.0, 0.0, 100.0);
+                    flamejetCount = bulider
+                        .comment("Flamejet Count")
+                        .defineInRange("flamejetCount", 5, 0, 20);
+                    break;
+                case 3:
+                    portal_damage = bulider
+                        .comment("Portal damage")
+                        .defineInRange("Portal damage", 10.0, 0.0, 100.0);
+                    portal_hpdamage = bulider
+                        .comment("Portal hpdamage")
+                        .defineInRange("Portal hpdamage", 0.0, 0.0, 100.0);
+                default:
+                    break;
             }
             bulider.pop();
+            }
+    }
+    // 子弹配置
+    public static class BulletConfigs {
+        public final BulletConfig lavapower;
+        public final BulletConfig cursium;
+        public final BulletConfig tidal;
+        public BulletConfigs(ForgeConfigSpec.Builder builder) {
+            builder.push("Bullets");
+            lavapower = new BulletConfig(builder, "Lavapower", 1);
+            cursium = new BulletConfig(builder, "Cursium", 2);
+            tidal = new BulletConfig(builder, "Tidal", 3);
+            builder.pop();
         }
     }
     public static class GunConfig {
@@ -78,27 +97,32 @@ public class GWREConfig {
 
     // 狙击枪配置
     public static class SniperConfigs {
+        public final GunConfig diamond;
         public final GunConfig netherite;
         public final GunConfig cursium;
         public final GunConfig DragonSteel;
-
+        public final GunConfig destiny_seven;
         public SniperConfigs(ForgeConfigSpec.Builder builder) {
             builder.push("Sniper");
+            diamond = new GunConfig(builder, "Diamond", 0, 1.5, 1.5, 24, 0.0);
             netherite = new GunConfig(builder, "Netherite", 0, 1.8, 1.5, 24, 0.0);
             cursium = new GunConfig(builder, "Cursium", 0, 2.0, 2.0, 24, 0.0);
             DragonSteel = new GunConfig(builder, "DragonSteel", 0, 1.9, 1.8, 24, 0.0);
+            destiny_seven = new GunConfig(builder, "DestinySeven", 0, 1.5, 1.5, 24, 0.0);
             builder.pop();
         }
     }
 
     // 霰弹枪配置
     public static class ShotgunConfigs {
+        public final GunConfig diamond;
         public final GunConfig netherite;
         public final GunConfig netheriteMonster;
         public final GunConfig DragonSteel;
 
         public ShotgunConfigs(ForgeConfigSpec.Builder builder) {
             builder.push("Shotgun");
+            diamond = new GunConfig(builder, "Diamond", 0, 1.5, 1.5, 24, 0.0);
             netherite = new GunConfig(builder, "Netherite",0 , 0.6, 1.0, 20, 5.0);
             netheriteMonster = new GunConfig(builder, "NetheriteMonster", 0, 0.8, 1.0, 20, 4.0);
             DragonSteel = new GunConfig(builder, "DragonSteel", 0, 0.75, 1.0, 20, 4);
@@ -108,12 +132,14 @@ public class GWREConfig {
 
     // 加特林配置
     public static class GatlingConfigs {
+        public final GunConfig diamond;
         public final GunConfig netherite;
         public final GunConfig ignitium;
         public final GunConfig DragonSteel;
 
         public GatlingConfigs(ForgeConfigSpec.Builder builder) {
             builder.push("Gatling");
+            diamond = new GunConfig(builder, "Diamond", 0, 1.5, 1.5, 24, 0.0);
             netherite = new GunConfig(builder, "Netherite", 1, 1.0, 1.0, 4, 3.0);
             ignitium = new GunConfig(builder, "Ignitium", 4, 1.0, 1.0, 4, 3.0);
             DragonSteel = new GunConfig(builder, "DragonSteel", 3, 1.0, 1.0, 4, 3.0);
@@ -123,26 +149,14 @@ public class GWREConfig {
 
     // 手枪配置
     public static class PistolConfigs {
-        // TODO: 手枪配置
+        public final GunConfig tidal;
         public PistolConfigs(ForgeConfigSpec.Builder builder) {
             builder.push("Pistol");
-
+            tidal = new GunConfig(builder, "Tidal", 0, 1.0, 1.0, 18, 2.0);
             builder.pop();
         }
     }
-    // 子弹配置
-    public static class BulletConfigs {
-        public final BulletConfig lavapower;
-        public final BulletConfig cursium;
 
-
-        public BulletConfigs(ForgeConfigSpec.Builder builder) {
-            builder.push("Bullets");
-            lavapower = new BulletConfig(builder, "Lavapower", false,true);
-            cursium = new BulletConfig(builder, "Cursium", true,false);
-            builder.pop();
-        }
-    }
 
     public static final SniperConfigs SNIPER;
     public static final ShotgunConfigs SHOTGUN;

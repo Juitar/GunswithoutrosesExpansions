@@ -1,8 +1,11 @@
 package juitar.gwrexpansions.item.iceandfire;
 
 import juitar.gwrexpansions.config.GWREConfig;
+import juitar.gwrexpansions.entity.iceandfire.FireDragonSteelBulletEntity;
+import juitar.gwrexpansions.entity.iceandfire.IceDragonSteelBulletEntity;
 import juitar.gwrexpansions.item.ConfigurableGatlingItem;
 import juitar.gwrexpansions.registry.CompatIceandfire;
+import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.item.GatlingItem;
 import lykrast.gunswithoutroses.item.IBullet;
 import net.minecraft.ChatFormatting;
@@ -23,6 +26,13 @@ public class IceDragonGatlingItem extends ConfigurableGatlingItem {
     protected ItemStack overrideFiredStack(LivingEntity shooter, ItemStack gun, ItemStack ammo, IBullet bulletItem, boolean bulletFree) {
         if (ammo.is(CompatIceandfire.tagBaseBullets)) return new ItemStack(CompatIceandfire.dragonsteel_ice_bullet.get());
         else return ammo;
+    }
+    @Override
+    protected void affectBulletEntity(LivingEntity shooter, ItemStack gun, BulletEntity bullet, boolean bulletFree) {
+        super.affectBulletEntity(shooter, gun, bullet, bulletFree);
+        if (bullet instanceof IceDragonSteelBulletEntity) {
+            bullet.setDamage(bullet.getDamage() + 3.0F);
+        }
     }
     @Override
     protected void addExtraStatsTooltip(ItemStack stack, @Nullable Level world, List<Component> tooltip){

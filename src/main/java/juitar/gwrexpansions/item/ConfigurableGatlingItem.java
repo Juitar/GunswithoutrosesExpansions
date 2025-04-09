@@ -10,18 +10,34 @@ import net.minecraft.world.item.ItemStack;
 import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
+/**
+ * 可配置的加特林类
+ * 使用GWREConfig中的配置项来动态设置武器属性
+ */
 public class ConfigurableGatlingItem extends GatlingItem {
     protected final Supplier<GWREConfig.GunConfig> config;
-    public ConfigurableGatlingItem(Properties properties,
-                               int bonusDamage,        // 虚拟值
-                               double damageMultiplier,// 虚拟值
-                               int fireDelay,          // 虚拟值
-                               double inaccuracy,      // 虚拟值
-                               int enchantability,     // 虚拟值
+    
+    /**
+     * 创建可配置的加特林
+     * @param properties 物品属性
+     * @param bonusDamage 额外伤害（会被配置覆盖）
+     * @param damageMultiplier 伤害倍率（会被配置覆盖）
+     * @param fireDelay 射击延迟（会被配置覆盖）
+     * @param inaccuracy 不精确度（会被配置覆盖）
+     * @param enchantability 附魔能力
+     * @param configSupplier 配置供应器
+     */
+    public ConfigurableGatlingItem(Properties properties, 
+                               int bonusDamage,
+                               double damageMultiplier,
+                               int fireDelay,
+                               double inaccuracy,
+                               int enchantability,
                                Supplier<GWREConfig.GunConfig> configSupplier) {
         super(properties, bonusDamage, damageMultiplier, fireDelay, inaccuracy, enchantability);
         this.config = configSupplier;
     }
+    
     // 动态获取配置值
     @Override
     public double getBonusDamage(ItemStack stack, @Nullable LivingEntity shooter) {
@@ -34,7 +50,7 @@ public class ConfigurableGatlingItem extends GatlingItem {
             bonus += shooter.getAttributeValue(GWRAttributes.dmgBase.get());
         }
 
-        // 用配置值替换原版固定值
+        // 使用配置值替换原版固定值
         return config.get().bonusDamage.get() + bonus;
     }
 

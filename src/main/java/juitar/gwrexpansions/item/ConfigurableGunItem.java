@@ -1,27 +1,37 @@
 package juitar.gwrexpansions.item;
 
-import lykrast.gunswithoutroses.registry.GWRAttributes;
-import lykrast.gunswithoutroses.registry.GWREnchantments;
 import juitar.gwrexpansions.config.GWREConfig;
 import lykrast.gunswithoutroses.item.GunItem;
+import lykrast.gunswithoutroses.registry.GWRAttributes;
+import lykrast.gunswithoutroses.registry.GWREnchantments;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 
-
 import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
+/**
+ * 可配置的枪支类
+ * 使用GWREConfig中的配置项来动态设置武器属性
+ */
 public class ConfigurableGunItem extends GunItem {
     protected final Supplier<GWREConfig.GunConfig> config;
-    public ConfigurableGunItem(Properties properties, 
-                              int bonusDamage,        // 虚拟值
-                              double damageMultiplier,// 虚拟值 
-                              int fireDelay,          // 虚拟值
-                              double inaccuracy,      // 虚拟值
-                              int enchantability,     // 虚拟值
-                              Supplier<GWREConfig.GunConfig> configSupplier) {
+    
+    /**
+     * 创建可配置的枪支
+     * @param properties 物品属性
+     * @param bonusDamage 额外伤害（会被配置覆盖）
+     * @param damageMultiplier 伤害倍率（会被配置覆盖）
+     * @param fireDelay 射击延迟（会被配置覆盖）
+     * @param inaccuracy 不精确度（会被配置覆盖）
+     * @param enchantability 附魔能力
+     * @param configSupplier 配置供应器
+     */
+    public ConfigurableGunItem(Properties properties, int bonusDamage, double damageMultiplier, 
+                            int fireDelay, double inaccuracy, int enchantability,
+                            Supplier<GWREConfig.GunConfig> configSupplier) {
         super(properties, bonusDamage, damageMultiplier, fireDelay, inaccuracy, enchantability);
         this.config = configSupplier;
     }
@@ -37,8 +47,8 @@ public class ConfigurableGunItem extends GunItem {
         if (shooter != null && shooter.getAttribute(GWRAttributes.dmgBase.get()) != null) {
             bonus += shooter.getAttributeValue(GWRAttributes.dmgBase.get());
         }
-
-        // 用配置值替换原版固定值
+        
+        // 使用配置值替换原版固定值
         return config.get().bonusDamage.get() + bonus;
     }
 
@@ -64,7 +74,7 @@ public class ConfigurableGunItem extends GunItem {
         if (shooter != null && shooter.getAttribute(GWRAttributes.fireDelay.get()) != null) {
             delay = (int)(delay * shooter.getAttributeValue(GWRAttributes.fireDelay.get()));
         }
-
+        
         return Math.max(1, delay);
     }
 
@@ -77,24 +87,30 @@ public class ConfigurableGunItem extends GunItem {
         if (shooter != null && shooter.getAttribute(GWRAttributes.spread.get()) != null) {
             baseInaccuracy *= shooter.getAttributeValue(GWRAttributes.spread.get());
         }
-
+        
         // 保留原版附魔计算
         int bullseye = stack.getEnchantmentLevel(GWREnchantments.bullseye.get());
         return Math.max(0.0, bullseye >= 1 ? 
             GWREnchantments.bullseyeModify(bullseye, baseInaccuracy) : 
             baseInaccuracy);
     }
+    
     @Override
     public double getHeadshotMultiplier(ItemStack stack, @Nullable LivingEntity shooter) {
+        // 从配置获取基础值
         double mult = config.get().headshotMultiplier.get();
+        
+        // 保留原版附魔计算
         int deadeye = stack.getEnchantmentLevel((Enchantment)GWREnchantments.deadeye.get());
         if (deadeye >= 1) {
             mult = GWREnchantments.deadeyeModify(deadeye, mult);
         }
+        
+        // 保留原版属性计算
         if (shooter != null && shooter.getAttribute((Attribute)GWRAttributes.sniperMult.get()) != null) {
             mult += shooter.getAttributeValue((Attribute)GWRAttributes.sniperMult.get());
         }
-
-        return Math.max((double)1.0F, mult);
+        
+        return Math.max(1.0, mult);
     }
 }

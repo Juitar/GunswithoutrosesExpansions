@@ -11,5 +11,6 @@
     "M": { "item": "cataclysm:monstrous_horn" },
     "L": { "tag": "minecraft:logs" }
   },
-  "result": { "item": "gwrexpansions:netherite_monster_shotgun" }
+  "result": { "item": "gwrexpansions:netherite_monster_shotgun" },
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "cataclysm" }]
 }

@@ -23,13 +23,7 @@ public class FireDragonSteelBulletItem extends BulletItem {
     public BulletEntity createProjectile(Level world, ItemStack stack, LivingEntity shooter) {
         FireDragonSteelBulletEntity bullet = new FireDragonSteelBulletEntity(world, shooter);
         bullet.setItem(stack);
-        ItemStack mainHand = shooter.getMainHandItem();
-        ItemStack offHand = shooter.getOffhandItem();
-        if (mainHand.getItem() instanceof FireDragonGunItem || offHand.getItem() instanceof FireDragonGunItem || mainHand.getItem() instanceof FireDragonGatlingItem || offHand.getItem() instanceof FireDragonGatlingItem) {
-            bullet.setDamage(damage + 3);
-        }else{
-            bullet.setDamage(damage);
-        }
+        bullet.setDamage(damage);
         return bullet;
     }
 

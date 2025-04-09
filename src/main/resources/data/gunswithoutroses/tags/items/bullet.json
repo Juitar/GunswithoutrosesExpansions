@@ -1,16 +1,16 @@
 {
       "replace": false,
       "values": [
-        "gwrexpansions:slime_bullet",
-        "gwrexpansions:silver_bullet",
-        "gwrexpansions:golden_bullet",
-        "gwrexpansions:diamond_bullet",
-        "gwrexpansions:netherite_bullet",
-        "gwrexpansions:lavapower_bullet",
-        "gwrexpansions:cursium_bullet",
-        "gwrexpansions:ignitium_bullet",
-        "gwrexpansions:dragonsteel_ice_bullet",
-        "gwrexpansions:dragonsteel_fire_bullet",
-        "gwrexpansions:dragonsteel_lightning_bullet"
+        { "id": "gwrexpansions:slime_bullet", "required": false },
+        { "id": "gwrexpansions:silver_bullet", "required": false },
+        { "id": "gwrexpansions:golden_bullet", "required": false },
+        { "id": "gwrexpansions:diamond_bullet", "required": false },
+        { "id": "gwrexpansions:netherite_bullet", "required": false },
+        { "id": "gwrexpansions:lavapower_bullet", "required": false },
+        { "id": "gwrexpansions:cursium_bullet", "required": false },
+        { "id": "gwrexpansions:ignitium_bullet", "required": false },
+        { "id": "gwrexpansions:dragonsteel_ice_bullet", "required": false },
+        { "id": "gwrexpansions:dragonsteel_fire_bullet", "required": false },
+        { "id": "gwrexpansions:dragonsteel_lightning_bullet", "required": false }
       ]
 }

@@ -6,6 +6,9 @@
   "item.gwrexpansions.netherite_monster_shotgun": "合金巨兽霰弹枪",
   "item.gwrexpansions.cursium_sniper": "咒魂狙击枪",
   "item.gwrexpansions.ignitium_gatling": "腾炎加特林",
+  "item.gwrexpansions.tidal_pistol": "潮汐手枪",
+  "item.gwrexpansions.tidal_bullet": "潮汐弹丸",
+  "item.gwrexpansions.destiny_seven": "命定·柒",
   "item.gwrexpansions.golden_bullet": "金弹丸",
   "item.gwrexpansions.slime_bullet": "史莱姆弹丸",
   "item.gwrexpansions.diamond_bullet": "钻石弹丸",
@@ -47,5 +50,12 @@
   "tooltip.gwrexpansions.ignitium_gatling.desc2": "发射的腾炎弹丸具有吸血",
   "tooltip.gwrexpansions.firedragon_bonus": "+%d 火龙克制",
   "tooltip.gwrexpansions.icedragon_bonus": "+%d 冰龙克制",
-  "tooltip.gwrexpansions.lightningdragon_bonus": "+%d 雷龙克制"
+  "tooltip.gwrexpansions.lightningdragon_bonus": "+%d 雷龙克制",
+  "tooltip.gwrexpansions.tidal_pistol.desc": "发射金弹丸转化为潮汐弹丸",
+  "tooltip.gwrexpansions.tidal_pistol.desc2": "对目标施加深渊诅咒,深渊诅咒会增加对目标的伤害",
+  "tooltip.gwrexpansions.tidal_pistol.desc3": "目标达到5级诅咒时，会打开深渊冲击传送门",
+  "msg.gwrexpansions.bust": "破产！",
+  "msg.gwrexpansions.double": "双击!",
+  "msg.gwrexpansions.triple": "三连！",
+  "msg.gwrexpansions.jackpot": "头奖！"
 }
