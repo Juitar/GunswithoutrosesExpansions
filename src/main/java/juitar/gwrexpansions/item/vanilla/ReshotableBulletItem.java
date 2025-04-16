@@ -25,7 +25,6 @@ import javax.annotation.Nullable;
 public class ReshotableBulletItem extends BulletItem {
     private final Random random = new Random();
     private static final float DROP_CHANCE = 0.70f; // 70%的掉落概率
-    private static final String SHOTGUN_TAG = "gunswithoutroses:gun/shotgun";
 
     public ReshotableBulletItem(Properties properties, int damage) {
         super(properties, damage);

@@ -1,5 +1,6 @@
 package juitar.gwrexpansions.item.vanilla;
 
+import juitar.gwrexpansions.config.GWREConfig;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.item.BulletItem;
 import net.minecraft.ChatFormatting;
@@ -24,8 +25,6 @@ import java.util.Random;
 
 public class GoldenBulletItem extends BulletItem {
     private final Random random = new Random();
-    private static final float GOLD_NUGGET_CHANCE = 0.4f; // 40%概率掉落金粒
-    private static final float GOLDEN_APPLE_CHANCE = 0.033f; // 3.3%概率掉落金苹果
 
     public GoldenBulletItem(Properties properties, int damage) {
         super(properties, damage);
@@ -33,6 +32,9 @@ public class GoldenBulletItem extends BulletItem {
 
     @Override
     public void onLivingEntityHit(BulletEntity bullet, LivingEntity target, @Nullable Entity shooter, Level world) {
+        float GOLD_NUGGET_CHANCE = GWREConfig.BulletConfig.golden_nugget_drop_rate.get().floatValue();
+        float GOLDEN_APPLE_CHANCE = GWREConfig.BulletConfig.golden_apple_drop_rate.get().floatValue();
+
         // 生成金币粒子效果
         for(int i = 0; i < 15; i++) {
             double d0 = target.getRandomX(0.5D);
@@ -92,6 +94,7 @@ public class GoldenBulletItem extends BulletItem {
 
     @Override
     public void onBlockHit(BulletEntity projectile, BlockHitResult hit, @Nullable Entity shooter, Level world) {
+
         // 生成金币粒子效果
         for(int i = 0; i < 8; i++) {
             double d0 = hit.getLocation().x + (random.nextDouble() - 0.5D) * 0.5D;

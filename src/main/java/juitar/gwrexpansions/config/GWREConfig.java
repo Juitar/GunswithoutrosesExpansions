@@ -19,6 +19,8 @@ public class GWREConfig {
         public static ForgeConfigSpec.IntValue flamejetCount = null;
         public static ForgeConfigSpec.DoubleValue portal_damage = null;
         public static ForgeConfigSpec.DoubleValue portal_hpdamage = null;
+        public static ForgeConfigSpec.DoubleValue golden_nugget_drop_rate = null;
+        public static ForgeConfigSpec.DoubleValue golden_apple_drop_rate = null;
 
         public BulletConfig(ForgeConfigSpec.Builder bulider, String name, int index) {
             bulider.push(name);
@@ -46,6 +48,14 @@ public class GWREConfig {
                     portal_hpdamage = bulider
                         .comment("Portal hpdamage")
                         .defineInRange("Portal hpdamage", 0.0, 0.0, 100.0);
+                case 4:
+                    golden_nugget_drop_rate = bulider
+                        .comment("Golden Nugget Drop Rate")
+                        .defineInRange("golden_nugget_drop_rate", 0.4, 0.0, 1.0);
+                    golden_apple_drop_rate = bulider
+                        .comment("Golden Apple Drop Rate")
+                        .defineInRange("golden_apple_drop_rate", 0.033, 0.0, 1.0);
+                    break;
                 default:
                     break;
             }
@@ -57,11 +67,14 @@ public class GWREConfig {
         public final BulletConfig lavapower;
         public final BulletConfig cursium;
         public final BulletConfig tidal;
+        public final BulletConfig gold;
+
         public BulletConfigs(ForgeConfigSpec.Builder builder) {
             builder.push("Bullets");
             lavapower = new BulletConfig(builder, "Lavapower", 1);
             cursium = new BulletConfig(builder, "Cursium", 2);
             tidal = new BulletConfig(builder, "Tidal", 3);
+            gold = new BulletConfig(builder, "Gold", 4);
             builder.pop();
         }
     }
