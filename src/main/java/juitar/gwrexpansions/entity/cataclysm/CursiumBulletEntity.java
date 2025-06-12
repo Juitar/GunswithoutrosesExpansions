@@ -24,7 +24,7 @@ public class CursiumBulletEntity extends BulletEntity {
     private static final float MIN_VELOCITY = 1.25F;
     private static final double PHANTOM_HALBERD_RANGE = GWREConfig.BulletConfig.phantomHalberdRange.get(); // 幻影戟的搜索范围
     private static final double PHANTOM_HALBERD_DAMAGE = GWREConfig.BulletConfig.phantomHalberDamage.get(); // 幻影戟的伤害
-
+    private static final int PHANTOM_HALBERD_DELAY = GWREConfig.BulletConfig.phantomHalberdDelay.get();
     public CursiumBulletEntity(EntityType<? extends BulletEntity> type, Level level) {
         super(type, level);
     }
@@ -68,7 +68,7 @@ public class CursiumBulletEntity extends BulletEntity {
                                 spawnY,
                                 spawnZ,
                                 yRot,
-                                20,
+                                PHANTOM_HALBERD_DELAY,
                                 shooter instanceof LivingEntity ? (LivingEntity) shooter : null,
                                 (float) PHANTOM_HALBERD_DAMAGE
                         );

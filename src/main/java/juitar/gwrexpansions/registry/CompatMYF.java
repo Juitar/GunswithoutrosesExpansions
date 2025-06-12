@@ -9,7 +9,7 @@ import net.minecraftforge.registries.RegistryObject;
 public class CompatMYF {
     public static RegistryObject<GunItem> destiny_seven;
     public static void registerItems(){
-        destiny_seven = GWREItem.initItem(()->new DestinyGunItem(GWREItem.defP().durability(5000).fireResistant().rarity(Rarity.EPIC),
+        destiny_seven = GWREItems.initItem(()->new DestinyGunItem(GWREItems.defP().durability(5000).fireResistant().rarity(Rarity.EPIC),
                 0,0,0,0,20,
                 ()->GWREConfig.SNIPER.destiny_seven).projectileSpeed(4).headshotMult(1.5),"destiny_seven");
     }

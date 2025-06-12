@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.function.Supplier;
 
-public class GWREItem {
+public class GWREItems {
     public static final DeferredRegister<Item> REG = DeferredRegister.create(ForgeRegistries.ITEMS, GWRexpansions.MODID);
     private static List<RegistryObject<? extends Item>> orderedItemsCreative = new ArrayList<>();
 
@@ -37,7 +37,8 @@ public class GWREItem {
         VanillaItem.registerItems();
         if(ModList.get().isLoaded(CompatModids.CATACLYSM)) CompatCataclysm.registerItems();
         if(ModList.get().isLoaded(CompatModids.ICEANDFIRE)) CompatIceandfire.registerItems();
-//      if(ModList.get().isLoaded(CompatModids.MEETYOURFIGHT)) CompatMYF.registerItems(); not done yet
+        if(ModList.get().isLoaded(CompatModids.MEETYOURFIGHT)) CompatMYF.registerItems();
+        if(ModList.get().isLoaded(CompatModids.BOMD)) CompatBOMD.registerItems();
     }
 
     public static Item.Properties defP(){

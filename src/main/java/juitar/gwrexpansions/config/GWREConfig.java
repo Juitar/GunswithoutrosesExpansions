@@ -1,5 +1,6 @@
 package juitar.gwrexpansions.config;
 
+import juitar.gwrexpansions.item.vanilla.Supershotgun;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
@@ -9,12 +10,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public class GWREConfig {
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
     private static final ForgeConfigSpec SPEC;
-    private static Map<String, Double> configCache = new ConcurrentHashMap<>();
+    private static final Map<String, Double> configCache = new ConcurrentHashMap<>();
 
     // 子弹配置
     public static class BulletConfig {
         public static ForgeConfigSpec.DoubleValue phantomHalberDamage = null;
         public static ForgeConfigSpec.DoubleValue phantomHalberdRange = null;
+        public static ForgeConfigSpec.IntValue phantomHalberdDelay = null;
         public static ForgeConfigSpec.DoubleValue flamejetDamage = null;
         public static ForgeConfigSpec.IntValue flamejetCount = null;
         public static ForgeConfigSpec.DoubleValue portal_damage = null;
@@ -32,6 +34,9 @@ public class GWREConfig {
                     phantomHalberdRange = bulider
                         .comment("Phantom Halberd Range")
                         .defineInRange("phantomHalberdRange", 5.0, 0.0, 100.0);
+                    phantomHalberdDelay = bulider
+                        .comment("Phantom Halberd Delay")
+                        .defineInRange("phantomHalberdDelay", 20, 0, 100);
                     break;
                 case 2:
                     flamejetDamage = bulider
@@ -71,8 +76,8 @@ public class GWREConfig {
 
         public BulletConfigs(ForgeConfigSpec.Builder builder) {
             builder.push("Bullets");
-            lavapower = new BulletConfig(builder, "Lavapower", 1);
-            cursium = new BulletConfig(builder, "Cursium", 2);
+            cursium = new BulletConfig(builder, "Cursium", 1);
+            lavapower = new BulletConfig(builder, "Lavapower", 2);
             tidal = new BulletConfig(builder, "Tidal", 3);
             gold = new BulletConfig(builder, "Gold", 4);
             builder.pop();
@@ -110,14 +115,12 @@ public class GWREConfig {
 
     // 狙击枪配置
     public static class SniperConfigs {
-        public final GunConfig diamond;
         public final GunConfig netherite;
         public final GunConfig cursium;
         public final GunConfig DragonSteel;
         public final GunConfig destiny_seven;
         public SniperConfigs(ForgeConfigSpec.Builder builder) {
             builder.push("Sniper");
-            diamond = new GunConfig(builder, "Diamond", 0, 1.5, 1.5, 24, 0.0);
             netherite = new GunConfig(builder, "Netherite", 0, 1.8, 1.5, 24, 0.0);
             cursium = new GunConfig(builder, "Cursium", 0, 2.0, 2.0, 24, 0.0);
             DragonSteel = new GunConfig(builder, "DragonSteel", 0, 1.9, 1.8, 24, 0.0);
@@ -128,34 +131,34 @@ public class GWREConfig {
 
     // 霰弹枪配置
     public static class ShotgunConfigs {
-        public final GunConfig diamond;
-        public final GunConfig netherite;
-        public final GunConfig netheriteMonster;
+        public final GunConfig Netherite;
+        public final GunConfig NetheriteMonster;
         public final GunConfig DragonSteel;
+        public final GunConfig Supershotgun;
 
         public ShotgunConfigs(ForgeConfigSpec.Builder builder) {
             builder.push("Shotgun");
-            diamond = new GunConfig(builder, "Diamond", 0, 1.5, 1.5, 24, 0.0);
-            netherite = new GunConfig(builder, "Netherite",0 , 0.6, 1.0, 20, 5.0);
-            netheriteMonster = new GunConfig(builder, "NetheriteMonster", 0, 0.8, 1.0, 20, 4.0);
+            Netherite = new GunConfig(builder, "Netherite",0 , 0.6, 1.0, 20, 5.0);
+            NetheriteMonster = new GunConfig(builder, "NetheriteMonster", 0, 0.8, 1.0, 20, 4.0);
             DragonSteel = new GunConfig(builder, "DragonSteel", 0, 0.75, 1.0, 20, 4);
+            Supershotgun = new GunConfig(builder, "Supershotgun", 0, 1.5, 1.0, 40, 4);
             builder.pop();
         }
     }
 
     // 加特林配置
     public static class GatlingConfigs {
-        public final GunConfig diamond;
-        public final GunConfig netherite;
-        public final GunConfig ignitium;
+        public final GunConfig Netherite;
+        public final GunConfig Ignitium;
         public final GunConfig DragonSteel;
+        public final GunConfig skull;
 
         public GatlingConfigs(ForgeConfigSpec.Builder builder) {
             builder.push("Gatling");
-            diamond = new GunConfig(builder, "Diamond", 0, 1.5, 1.5, 24, 0.0);
-            netherite = new GunConfig(builder, "Netherite", 1, 1.0, 1.0, 4, 3.0);
-            ignitium = new GunConfig(builder, "Ignitium", 4, 1.0, 1.0, 4, 3.0);
+            Netherite = new GunConfig(builder, "Netherite", 1, 1.0, 1.0, 4, 3.0);
+            Ignitium = new GunConfig(builder, "Ignitium", 4, 1.0, 1.0, 4, 3.0);
             DragonSteel = new GunConfig(builder, "DragonSteel", 3, 1.0, 1.0, 4, 3.0);
+            skull = new GunConfig(builder, "Skull", 0, 1.0, 1.0, 6, 6.0);
             builder.pop();
         }
     }
@@ -191,7 +194,7 @@ public class GWREConfig {
     }
 
     public static void register() {
-        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, SPEC);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, SPEC);
     }
 
     public static void updateCachedValue(String path, double value) {

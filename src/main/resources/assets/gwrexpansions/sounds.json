@@ -1,0 +1,40 @@
+{
+  "item.skullcrusher.shoot":{
+    "category": "players",
+    "subtitle": "subtitles.gwrexpansions.skullcrusher.shoot",
+    "sounds": [
+      "gwrexpansions:skullcrusher"
+    ]
+  },
+  "item.supershotgun.shoot": {
+    "category": "players",
+    "subtitle": "subtitles.gwrexpansions.super_shotgun.shoot",
+    "sounds": [
+      "gwrexpansions:super_shotgun"
+    ]
+  },
+  "meat_hook_launch": {
+    "sounds": [
+      "gwrexpansions:meat_hook_launch"
+    ],
+    "subtitle": "subtitles.gwrexpansions.meat_hook.launch"
+  },
+  "meat_hook_hit": {
+    "sounds": [
+      "gwrexpansions:meat_hook_hit"
+    ],
+    "subtitle": "subtitles.gwrexpansions.meat_hook.hit"
+  },
+  "meat_hook_pull": {
+    "sounds": [
+      "gwrexpansions:meat_hook_pull"
+    ],
+    "subtitle": "subtitles.gwrexpansions.meat_hook.pull"
+  },
+  "meat_hook_miss": {
+    "sounds": [
+      "gwrexpansions:meat_hook_miss"
+    ],
+    "subtitle": "subtitles.gwrexpansions.meat_hook.miss"
+  }
+}

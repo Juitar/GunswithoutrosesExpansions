@@ -1,27 +1,28 @@
 {
   "itemGroup.gwrexpansions": "Guns wihtout rosese expansions",
+  "item.gwrexpansions.super_shotgun": "Super Shotgun",
   "item.gwrexpansions.netherite_shotgun":"Netherite Shotgun",
   "item.gwrexpansions.netherite_sniper":"Netherite Sniper",
   "item.gwrexpansions.netherite_gatling":"Netherite Gatling",
-
   "item.gwrexpansions.netherite_monster_shotgun": "Netherite Monster Shotgun",
   "item.gwrexpansions.cursium_sniper": "Cursium Sniper",
   "item.gwrexpansions.ignitium_gatling": "Ignitium Gatling",
   "item.gwrexpansions.tidal_pistol": "Tidal Pistol",
   "item.gwrexpansions.tidal_bullet": "Tidal Bullet",
-
   "item.gwrexpansions.destiny_seven": "Destiny Seven",
-
-  "item.gwrexpansions.golden_bullet": "golden Bullet",
+  "item.gwrexpansions.skullcrusher_pulverizer": "Skullcrusher Pulverizer",
+  "item.gwrexpansions.skulls": "Skulls",
+  "item.gwrexpansions.bone_scrap": "Bone Scrap",
+  "item.gwrexpansions.golden_bullet": "Golden Bullet",
   "item.gwrexpansions.slime_bullet":"Slime Bullet",
   "item.gwrexpansions.diamond_bullet": "Diamond Bullet",
   "item.gwrexpansions.diamond_bullet_shrapnel": "Diamond Bullet Shrapnel",
   "item.gwrexpansions.netherite_bullet":"Netherite Bullet",
-
+  "item.gwrexpansions.maws_of_gluttony": "Maws of gluttony",
+  "item.gwrexpansions.hunger_bullet": "hunger bullet",
   "item.gwrexpansions.lavapower_bullet": "Lava Power Bullet",
   "item.gwrexpansions.cursium_bullet": "Cursium Bullet",
   "item.gwrexpansions.ignitium_bullet": "Ignitium Bullet",
-
   "item.gwrexpansions.dragonsteel_fire_shotgun": "Fire Dragonsteel Shotgun",
   "item.gwrexpansions.dragonsteel_ice_shotgun": "Ice Dragonsteel Shotgun",
   "item.gwrexpansions.dragonsteel_lightning_shotgun": "Lightning Dragonsteel Shotgun",
@@ -31,12 +32,10 @@
   "item.gwrexpansions.dragonsteel_fire_gatling": "Fire Dragonsteel Gatling",
   "item.gwrexpansions.dragonsteel_ice_gatling": "Ice Dragonsteel Gatling",
   "item.gwrexpansions.dragonsteel_lightning_gatling": "Lightning Dragonsteel Gatling",
-
   "item.gwrexpansions.silver_bullet": "Silver Bullet",
   "item.gwrexpansions.dragonsteel_ice_bullet": "Dragonsteel Ice Bullet",
   "item.gwrexpansions.dragonsteel_fire_bullet": "Dragonsteel Fire Bullet",
   "item.gwrexpansions.dragonsteel_lightning_bullet": "Dragonsteel Lightning Bullet",
-
   "tooltip.gwrexpansions.dragonsteel_gun.desc": "Increased the damage of the corresponding Elemental Dragon steel bullets",
   "tooltip.gwrexpansions.lightning_dragon_gun.desc": "Converts Fired Silver Bullets into Lightning Dragonsteel Bullets",
   "tooltip.gwrexpansions.ice_dragon_gun.desc": "Converts Fired Silver Bullets into Ice Dragonsteel Bullets",
@@ -61,9 +60,22 @@
   "tooltip.gwrexpansions.tidal_pistol.desc": "Converts Fired Golden Bullets into Tidal Bullets",
   "tooltip.gwrexpansions.tidal_pistol.desc2": "Apply Abyssal curse to target,Abyssal Curse will increase the damage to target",
   "tooltip.gwrexpansions.tidal_pistol.desc3": "Open a blast portal when the target have 5 level of Abyssal Curse",
+  "tooltip.gwrexpansions.hungerbulletitem": "Uses hunger as ammo",
+  "tooltip.gwrexpansions.skullcrusher.desc": "Use Skulls as ammo,will crush other ammon",
+  "tooltip.gwrexpansions.skullcrusher.desc2": "As the firing time increases, the RPM and Damage are increased",
 
   "msg.gwrexpansions.bust": "Bust!",
   "msg.gwrexpansions.double": "Double!",
   "msg.gwrexpansions.triple": "Triple!",
-  "msg.gwrexpansions.jackpot": "Jackpot!"
+  "msg.gwrexpansions.jackpot": "Jackpot!",
+  "subtitles.gwrexpansions.skullcrusher.shoot": "Skullcrusher Shoot",
+  "subtitles.gwrexpansions.super_shotgun.shoot": "Supershotgun Shoot",
+  "subtitles.gwrexpansions.meat_hook.pull": "Meat Hook Pull",
+  "subtitles.gwrexpansions.meat_hook.miss": "Meat Hook miss",
+  "entity.gwrexpansions.meat_hook": "Meat Hook",
+  "tooltip.gwrexpansions.supershotgun.ready": "Meat Hook is ready!",
+  "tooltip.gwrexpansions.supershotgun.notready":"Meat Hook is cooling",
+  "tooltip.gwrexpansions.supershotgun.hook": "Crouch + Right-click to launch the meat hook to pull you towards the target.",
+  "subtitles.gwrexpansions.meat_hook.hit": "Meat Hook miss",
+  "subtitles.gwrexpansions.meat_hook.launch": "Meat Hook launch"
 }

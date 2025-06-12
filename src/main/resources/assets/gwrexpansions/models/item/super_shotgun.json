@@ -1,0 +1,18 @@
+{
+    "parent": "minecraft:item/handheld",
+    "loader": "forge:separate_transforms",
+    "base":{
+        "parent": "gwrexpansions:item/super_shotgun_3d"
+    },
+    "perspectives":{
+        "gui":{
+            "parent": "gwrexpansions:item/super_shotgun_2d"
+        },
+        "ground":{
+            "parent": "gwrexpansions:item/super_shotgun_2d"
+        },
+        "fixed":{
+            "parent": "gwrexpansions:item/super_shotgun_2d"
+        }
+    }
+}

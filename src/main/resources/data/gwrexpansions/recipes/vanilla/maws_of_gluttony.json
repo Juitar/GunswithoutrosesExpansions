@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BNB",
+    "RDR",
+    "RNR"
+  ],
+  "key": {
+    "B": { "tag": "forge:bones"},
+    "N": { "item": "minecraft:netherite_scrap" },
+    "R": { "item": "minecraft:rotten_flesh"},
+    "D": { "item": "minecraft:diamond" }
+  },
+  "result": { "item": "gwrexpansions:maws_of_gluttony" }
+}

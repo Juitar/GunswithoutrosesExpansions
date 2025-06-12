@@ -1,10 +1,9 @@
 package juitar.gwrexpansions;
-
-
 import juitar.gwrexpansions.config.GWREConfig;
 import juitar.gwrexpansions.loot.GWRELootModifiers;
 import juitar.gwrexpansions.registry.GWREEntities;
-import juitar.gwrexpansions.registry.GWREItem;
+import juitar.gwrexpansions.registry.GWREItems;
+import juitar.gwrexpansions.registry.GWRESounds;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -21,10 +20,11 @@ public class GWRexpansions {
     public GWRexpansions() {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         GWREConfig.register();
-        GWREItem.REG.register(eventBus);
+        GWREItems.REG.register(eventBus);
+        GWRESounds.REG.register(eventBus);
         GWREEntities.REG.register(eventBus);
         GWRELootModifiers.register(eventBus);
-        eventBus.addListener(GWREItem::makeCreativeTab);
+        eventBus.addListener(GWREItems::makeCreativeTab);
     }
 
     public static ResourceLocation resource(String path) {

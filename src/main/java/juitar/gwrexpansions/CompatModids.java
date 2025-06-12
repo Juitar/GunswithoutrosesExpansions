@@ -7,6 +7,8 @@ public class CompatModids {
 
     public static final String CATACLYSM = "cataclysm";
     public static final String ICEANDFIRE = "iceandfire";
+    public static final String BOMD = "bosses_of_mass_destruction";
+    public static final String ISS = "iron";
     public static final String MEETYOURFIGHT = "meetyourfight";
     private CompatModids() {}
 }

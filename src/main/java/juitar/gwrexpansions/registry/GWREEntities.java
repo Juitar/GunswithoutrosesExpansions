@@ -10,6 +10,8 @@ import juitar.gwrexpansions.entity.iceandfire.FireDragonSteelBulletEntity;
 import juitar.gwrexpansions.entity.iceandfire.IceDragonSteelBulletEntity;
 import juitar.gwrexpansions.entity.iceandfire.LightningDragonSteelBulletEntity;
 import juitar.gwrexpansions.entity.vanilla.SlimeBulletEntity;
+import juitar.gwrexpansions.entity.MeatHookEntity;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.fml.ModList;
@@ -69,4 +71,12 @@ public class GWREEntities {
                     .build(GWRexpansions.MODID + ":dragonsteel_lightning_bullet"));
         }
     }
+
+    // 注册肉钩实体
+    public static final RegistryObject<EntityType<MeatHookEntity>> MEAT_HOOK = REG.register("meat_hook",
+            () -> EntityType.Builder.<MeatHookEntity>of(MeatHookEntity::new, MobCategory.MISC)
+                    .sized(0.5F, 0.5F)
+                    .clientTrackingRange(4)
+                    .updateInterval(20)
+                    .build(new ResourceLocation(GWRexpansions.MODID, "meat_hook").toString()));
 }
