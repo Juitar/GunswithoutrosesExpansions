@@ -1,0 +1,35 @@
+{
+  "display": {
+    "icon": {
+      "item": "gwrexpansions:netherite_bullet"
+    },
+    "title": {
+      "translate": "advancement.gwrexpansions.unlimited_bullet_works.title"
+    },
+    "description": {
+      "translate": "advancement.gwrexpansions.unlimited_bullet_works.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "gwrexpansions:root",
+  "criteria": {
+    "has_netherite_bullet": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["gwrexpansions:netherite_bullet"]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_netherite_bullet"
+    ]
+  ]
+} 

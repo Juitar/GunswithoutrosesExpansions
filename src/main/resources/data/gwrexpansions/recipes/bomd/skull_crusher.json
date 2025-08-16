@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "AIS",
+    "BDI",
+    "NB "
+  ],
+  "key": {
+    "A": {"item": "bosses_of_mass_destruction:ancient_anima"},
+    "B": {"item": "minecraft:bone"},
+    "D": {"item": "gunswithoutroses:diamond_gatling"},
+    "N": {"item": "minecraft:netherite_scrap"},
+    "S": {"item": "gwrexpansions:skull"},
+    "I": {"item": "minecraft:iron_ingot"}
+  },
+  "result": { "item": "gwrexpansions:skullcrusher_pulverizer" },
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "bosses_of_mass_destruction" }]
+}

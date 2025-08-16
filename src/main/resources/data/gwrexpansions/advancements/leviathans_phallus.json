@@ -1,0 +1,37 @@
+{
+  "display": {
+    "icon": {
+      "item": "gwrexpansions:tidal_pistol"
+    },
+    "title": {
+      "translate": "advancement.gwrexpansions.leviathans_phallus.title"
+    },
+    "description": {
+      "translate": "advancement.gwrexpansions.leviathans_phallus.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "gwrexpansions:root",
+  "criteria": {
+    "has_tidal_pistol": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["gwrexpansions:tidal_pistol"]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_tidal_pistol"
+    ]
+  ],
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "cataclysm" }]
+} 
+ 

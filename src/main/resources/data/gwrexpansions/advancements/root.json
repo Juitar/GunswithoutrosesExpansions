@@ -1,0 +1,56 @@
+{
+  "display": {
+    "icon": {
+      "item": "gwrexpansions:netherite_shotgun"
+    },
+    "title": {
+      "translate": "advancement.gwrexpansions.root.title"
+    },
+    "description": {
+      "translate": "advancement.gwrexpansions.root.description"
+    },
+    "background": "minecraft:textures/block/iron_block.png",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_gun": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "gwrexpansions:super_shotgun",
+              "gwrexpansions:netherite_shotgun",
+              "gwrexpansions:netherite_sniper",
+              "gwrexpansions:netherite_gatling",
+              "gwrexpansions:netherite_monster_shotgun",
+              "gwrexpansions:cursium_sniper",
+              "gwrexpansions:ignitium_gatling",
+              "gwrexpansions:tidal_pistol",
+              "gwrexpansions:dragonsteel_fire_shotgun",
+              "gwrexpansions:dragonsteel_ice_shotgun",
+              "gwrexpansions:dragonsteel_lightning_shotgun",
+              "gwrexpansions:dragonsteel_fire_sniper",
+              "gwrexpansions:dragonsteel_ice_sniper",
+              "gwrexpansions:dragonsteel_lightning_sniper",
+              "gwrexpansions:dragonsteel_fire_gatling",
+              "gwrexpansions:dragonsteel_ice_gatling",
+              "gwrexpansions:dragonsteel_lightning_gatling",
+              "gwrexpansions:obsidian_launcher",
+              "gwrexpansions:hellforge_revolver",
+              "gwrexpansions:voidspike"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_gun"
+    ]
+  ]
+} 

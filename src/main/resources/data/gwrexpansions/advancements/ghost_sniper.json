@@ -1,0 +1,36 @@
+{
+  "display": {
+    "icon": {
+      "item": "gwrexpansions:cursium_sniper"
+    },
+    "title": {
+      "translate": "advancement.gwrexpansions.ghost_sniper.title"
+    },
+    "description": {
+      "translate": "advancement.gwrexpansions.ghost_sniper.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "gwrexpansions:root",
+  "criteria": {
+    "has_cursium_sniper": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["gwrexpansions:cursium_sniper"]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_cursium_sniper"
+    ]
+  ],
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "iceandfire" }]
+} 

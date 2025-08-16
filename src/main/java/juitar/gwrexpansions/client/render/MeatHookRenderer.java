@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import juitar.gwrexpansions.GWRexpansions;
 import juitar.gwrexpansions.client.model.MeatHookModel;
-import juitar.gwrexpansions.entity.MeatHookEntity;
+import juitar.gwrexpansions.entity.vanilla.MeatHookEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;

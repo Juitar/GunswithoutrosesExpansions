@@ -1,0 +1,30 @@
+{
+  "display": {
+    "icon": {
+      "item": "gwrexpansions:tidal_bullet"
+    },
+    "title": {
+      "translate": "advancement.gwrexpansions.cenobites_lament_round.title"
+    },
+    "description": {
+      "translate": "advancement.gwrexpansions.cenobites_lament_round.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "gwrexpansions:leviathans_phallus",
+  "criteria": {
+    "first_tidal_portal_created": {
+      "trigger": "gwrexpansions:first_tidal_portal_created"
+    }
+  },
+  "requirements": [
+    [
+      "first_tidal_portal_created"
+    ]
+  ],
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "cataclysm" }]
+}
+ 

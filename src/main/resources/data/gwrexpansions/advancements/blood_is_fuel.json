@@ -1,0 +1,29 @@
+{
+  "display": {
+    "icon": {
+      "item": "bosses_of_mass_destruction:coin"
+    },
+    "title": {
+      "translate": "advancement.gwrexpansions.blood_is_fuel.title"
+    },
+    "description": {
+      "translate": "advancement.gwrexpansions.blood_is_fuel.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "gwrexpansions:mankind_is_dead",
+  "criteria": {
+    "hit_four_coins": {
+      "trigger": "gwrexpansions:blood_is_fuel"
+    }
+  },
+  "requirements": [
+    [
+      "hit_four_coins"
+    ]
+  ],
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "bosses_of_mass_destruction" }]
+} 

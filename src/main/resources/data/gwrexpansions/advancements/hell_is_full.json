@@ -1,0 +1,29 @@
+{
+  "display": {
+    "icon": {
+      "item": "bosses_of_mass_destruction:coin"
+    },
+    "title": {
+      "translate": "advancement.gwrexpansions.hell_is_full.title"
+    },
+    "description": {
+      "translate": "advancement.gwrexpansions.hell_is_full.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "gwrexpansions:blood_is_fuel",
+  "criteria": {
+    "coin_ricochet_kill": {
+      "trigger": "gwrexpansions:hell_is_full"
+    }
+  },
+  "requirements": [
+    [
+      "coin_ricochet_kill"
+    ]
+  ],
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "bosses_of_mass_destruction" }]
+} 

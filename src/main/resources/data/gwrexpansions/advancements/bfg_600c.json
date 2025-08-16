@@ -1,0 +1,36 @@
+{
+  "display": {
+    "icon": {
+      "item": "gwrexpansions:ignitium_gatling"
+    },
+    "title": {
+      "translate": "advancement.gwrexpansions.bfg_600c.title"
+    },
+    "description": {
+      "translate": "advancement.gwrexpansions.bfg_600c.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "gwrexpansions:root",
+  "criteria": {
+    "has_ignitium_gatling": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["gwrexpansions:ignitium_gatling"]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_ignitium_gatling"
+    ]
+  ],
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "cataclysm" }]
+} 

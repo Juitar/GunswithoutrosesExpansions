@@ -1,6 +1,7 @@
 package juitar.gwrexpansions.item.vanilla;
 
 import juitar.gwrexpansions.config.GWREConfig;
+import juitar.gwrexpansions.advancement.GoldenAppleFromBulletTrigger;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.item.BulletItem;
 import net.minecraft.ChatFormatting;
@@ -18,6 +19,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.server.level.ServerPlayer;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -72,6 +74,11 @@ public class GoldenBulletItem extends BulletItem {
                             random.nextGaussian() * 0.05D,
                             random.nextGaussian() * 0.05D,
                             random.nextGaussian() * 0.05D);
+                }
+                
+                // 触发成就 - 检查射手是否是玩家
+                if (shooter instanceof ServerPlayer player) {
+                    GoldenAppleFromBulletTrigger.onGoldenAppleFromBullet(player);
                 }
             }
         }

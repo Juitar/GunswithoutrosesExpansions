@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "item": "gwrexpansions:diamond_bullet_shrapnel"
+    },
+    "title": {
+      "translate": "advancement.gwrexpansions.stakeholders_shrapnel.title"
+    },
+    "description": {
+      "translate": "advancement.gwrexpansions.stakeholders_shrapnel.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "gwrexpansions:root",
+  "criteria": {
+    "shrapnel_hit_shooter": {
+      "trigger": "gwrexpansions:shrapnel_hit_shooter"
+    }
+  },
+  "requirements": [
+    [
+      "shrapnel_hit_shooter"
+    ]
+  ]
+} 

@@ -1,0 +1,29 @@
+{
+  "display": {
+    "icon": {
+      "item": "bosses_of_mass_destruction:obsidian_launcher"
+    },
+    "title": {
+      "translate": "advancement.gwrexpansions.avada_kedavra.title"
+    },
+    "description": {
+      "translate": "advancement.gwrexpansions.avada_kedavra.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "gwrexpansions:obsidian_wand",
+  "criteria": {
+    "cast_three_spells": {
+      "trigger": "gwrexpansions:avada_kedavra"
+    }
+  },
+  "requirements": [
+    [
+      "cast_three_spells"
+    ]
+  ],
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "bosses_of_mass_destruction" }]
+} 

@@ -10,7 +10,12 @@ import juitar.gwrexpansions.entity.iceandfire.FireDragonSteelBulletEntity;
 import juitar.gwrexpansions.entity.iceandfire.IceDragonSteelBulletEntity;
 import juitar.gwrexpansions.entity.iceandfire.LightningDragonSteelBulletEntity;
 import juitar.gwrexpansions.entity.vanilla.SlimeBulletEntity;
-import juitar.gwrexpansions.entity.MeatHookEntity;
+import juitar.gwrexpansions.entity.vanilla.MeatHookEntity;
+import juitar.gwrexpansions.entity.BOMD.BudBulletEntity;
+import juitar.gwrexpansions.entity.BOMD.CoinEntity;
+import juitar.gwrexpansions.entity.BOMD.ObsidianCoreEntity;
+import juitar.gwrexpansions.entity.BOMD.SporeEntity;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -28,8 +33,13 @@ public class GWREEntities {
     public static RegistryObject<EntityType<LightningDragonSteelBulletEntity>> DRAGONSTEEL_LIGHTNING_BULLET;
     public static RegistryObject<EntityType<IgnitiumBulletEntity>> IGNITIUM_BULLET;
     public static RegistryObject<EntityType<TidalBulletEntity>> TIDAL_BULLET;
-    public static final DeferredRegister<EntityType<?>> REG = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, GWRexpansions.MODID);
+    public static RegistryObject<EntityType<ObsidianCoreEntity>> OBSIDIAN_CORE;
+    public static RegistryObject<EntityType<MeatHookEntity>> MEAT_HOOK;
+    public static RegistryObject<EntityType<CoinEntity>> COIN;
+    public static RegistryObject<EntityType<BudBulletEntity>> BUD;
+    public static RegistryObject<EntityType<SporeEntity>> SPORE;
 
+    public static final DeferredRegister<EntityType<?>> REG = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, GWRexpansions.MODID);
     static {
         SLIME_BULLET = REG.register("slime_bullet", () -> EntityType.Builder
                 .<SlimeBulletEntity>of(SlimeBulletEntity::new, MobCategory.MISC)
@@ -38,6 +48,12 @@ public class GWREEntities {
                 .setTrackingRange(64)
                 .setShouldReceiveVelocityUpdates(true)
                 .build(GWRexpansions.MODID + ":slime_bullet"));
+        MEAT_HOOK = REG.register("meat_hook",
+                () -> EntityType.Builder.<MeatHookEntity>of(MeatHookEntity::new, MobCategory.MISC)
+                        .sized(0.5F, 0.5F)
+                        .clientTrackingRange(4)
+                        .updateInterval(20)
+                        .build(new ResourceLocation(GWRexpansions.MODID, "meat_hook").toString()));
         if(ModList.get().isLoaded(CompatModids.CATACLYSM)) {
             LAVAPOWER_BULLET = REG.register("lavapower_bullet", () -> EntityType.Builder
                     .<LavapowerBulletEntity>of(LavapowerBulletEntity::new, MobCategory.MISC)
@@ -70,13 +86,33 @@ public class GWREEntities {
                     .sized(0.3125f, 0.3125f).setUpdateInterval(2).setTrackingRange(64).setShouldReceiveVelocityUpdates(true)
                     .build(GWRexpansions.MODID + ":dragonsteel_lightning_bullet"));
         }
+        if(ModList.get().isLoaded(CompatModids.BOMD)) {
+            OBSIDIAN_CORE = REG.register("obsidian_core",
+                    () -> EntityType.Builder.<ObsidianCoreEntity>of(ObsidianCoreEntity::new, MobCategory.MISC)
+                            .sized(0.5f, 0.5f)
+                            .clientTrackingRange(4)
+                            .updateInterval(20)
+                            .build("obsidian_core"));
+            COIN = REG.register("coin",
+                    () -> EntityType.Builder.<CoinEntity>of(CoinEntity::new, MobCategory.MISC)
+                            .sized(0.25f, 0.25f)
+                            .clientTrackingRange(4)
+                            .updateInterval(10)
+                            .build("coin"));
+            BUD = REG.register("bud", () -> EntityType.Builder
+                    .<BudBulletEntity>of(BudBulletEntity::new, MobCategory.MISC)
+                    .sized(0.3125f, 0.3125f)
+                    .setUpdateInterval(2)
+                    .setTrackingRange(64)
+                    .setShouldReceiveVelocityUpdates(true)
+                    .build(GWRexpansions.MODID + ":bud"));
+            SPORE = REG.register("spore", () -> EntityType.Builder
+                    .<SporeEntity>of(SporeEntity::new, MobCategory.MISC)
+                    .sized(0.25f, 0.25f)
+                    .setUpdateInterval(2)
+                    .setTrackingRange(32)
+                    .setShouldReceiveVelocityUpdates(true)
+                    .build(GWRexpansions.MODID + ":spore"));
+        }
     }
-
-    // 注册肉钩实体
-    public static final RegistryObject<EntityType<MeatHookEntity>> MEAT_HOOK = REG.register("meat_hook",
-            () -> EntityType.Builder.<MeatHookEntity>of(MeatHookEntity::new, MobCategory.MISC)
-                    .sized(0.5F, 0.5F)
-                    .clientTrackingRange(4)
-                    .updateInterval(20)
-                    .build(new ResourceLocation(GWRexpansions.MODID, "meat_hook").toString()));
 }

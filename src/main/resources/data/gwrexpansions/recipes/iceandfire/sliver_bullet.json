@@ -1,12 +1,13 @@
+
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    { "item": "iceandfire:silver_ingot" },
-    { "item": "iceandfire:silver_ingot" },
-    { "item": "iceandfire:silver_ingot" },
-    { "item": "iceandfire:silver_ingot" },
+    { "tag": "forge:ingots/silver" },
+    { "tag": "forge:ingots/silver" },
+    { "tag": "forge:ingots/silver" },
+    { "tag": "forge:ingots/silver" },
     { "tag": "forge:gunpowder" }
   ],
-  "result": { "item": "gwrexpansions:sliver_bullet", "count": 32 },
+  "result": { "item": "gwrexpansions:silver_bullet", "count": 32 },
   "conditions": [{ "type": "forge:mod_loaded", "modid": "iceandfire" }]
 }

@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "item": "gwrexpansions:slime_bullet"
+    },
+    "title": {
+      "translate": "advancement.gwrexpansions.bounce_master.title"
+    },
+    "description": {
+      "translate": "advancement.gwrexpansions.bounce_master.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "gwrexpansions:root",
+  "criteria": {
+    "bounce_master": {
+      "trigger": "gwrexpansions:slime_bullet_triple_kill"
+    }
+  },
+  "requirements": [
+    [
+      "bounce_master"
+    ]
+  ]
+} 

@@ -1,0 +1,37 @@
+{
+  "display": {
+    "icon": {
+      "item": "gwrexpansions:netherite_monster_shotgun"
+    },
+    "title": {
+      "translate": "advancement.gwrexpansions.die_insect.title"
+    },
+    "description": {
+      "translate": "advancement.gwrexpansions.die_insect.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "gwrexpansions:root",
+  "criteria": {
+    "has_netherite_monster_shotgun": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["gwrexpansions:netherite_monster_shotgun"]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_netherite_monster_shotgun"
+    ]
+  ],
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "cataclysm" }]
+}
+ 

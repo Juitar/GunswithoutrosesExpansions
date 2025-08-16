@@ -1,0 +1,36 @@
+{
+  "display": {
+    "icon": {
+      "item": "bosses_of_mass_destruction:hellforge_revolver"
+    },
+    "title": {
+      "translate": "advancement.gwrexpansions.mankind_is_dead.title"
+    },
+    "description": {
+      "translate": "advancement.gwrexpansions.mankind_is_dead.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "gwrexpansions:root",
+  "criteria": {
+    "has_hellforge_revolver": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["bosses_of_mass_destruction:hellforge_revolver"]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_hellforge_revolver"
+    ]
+  ],
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "bosses_of_mass_destruction" }]
+} 

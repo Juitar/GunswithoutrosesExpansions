@@ -13,28 +13,75 @@
       "gwrexpansions:super_shotgun"
     ]
   },
-  "meat_hook_launch": {
+  "item.obsidian_launcher.shoot": {
+    "category": "players",
+    "subtitle": "subtitles.gwrexpansions.obsidian_launcher.shoot",
+    "sounds": [
+      "gwrexpansions:obsidian_launcher_fire"
+    ]
+  },
+  "meat_hook.launch": {
     "sounds": [
       "gwrexpansions:meat_hook_launch"
     ],
     "subtitle": "subtitles.gwrexpansions.meat_hook.launch"
   },
-  "meat_hook_hit": {
+  "meat_hook.hit": {
     "sounds": [
       "gwrexpansions:meat_hook_hit"
     ],
     "subtitle": "subtitles.gwrexpansions.meat_hook.hit"
   },
-  "meat_hook_pull": {
+  "meat_hook.pull": {
     "sounds": [
       "gwrexpansions:meat_hook_pull"
     ],
     "subtitle": "subtitles.gwrexpansions.meat_hook.pull"
   },
-  "meat_hook_miss": {
+  "meat_hook.miss": {
     "sounds": [
       "gwrexpansions:meat_hook_miss"
     ],
     "subtitle": "subtitles.gwrexpansions.meat_hook.miss"
+  },
+  "obsidian_core.hit": {
+    "sounds": [
+      "gwrexpansions:obsidian_core_hit"
+    ],
+    "subtitle": "subtitles.gwrexpansions.obsidian_core.hit"
+  },
+  "obsidian_core.miss": {
+    "sounds": [
+      "gwrexpansions:obsidian_core_miss"
+    ],
+    "subtitle": "subtitles.gwrexpansions.obsidian_core.miss"
+  },
+  "item.hellforge_revolver.shoot": {
+    "category": "players",
+    "subtitle": "subtitles.gwrexpansions.hellforge_revolver.shoot",
+    "sounds": [
+      "gwrexpansions:revolver_shoot"
+    ]
+  },
+  "item.hellforge_revolver.reload": {
+    "category": "players",
+    "subtitle": "subtitles.gwrexpansions.hellforge_revolver.reload",
+    "sounds": [
+      "gwrexpansions:revolver_reload"
+    ]
+  },
+  "item.hellforge_revolver.coin_flip": {
+    "category": "players",
+    "subtitle": "subtitles.gwrexpansions.hellforge_revolver.coin_flip",
+    "sounds": [
+      "gwrexpansions:coin_flip"
+    ]
+  },
+  "item.hellforge_revolver.coin_hit": {
+    "category": "players",
+    "subtitle": "subtitles.gwrexpansions.hellforge_revolver.coin_hit",
+    "sounds": [
+      "gwrexpansions:coin_hit"
+    ]
   }
 }

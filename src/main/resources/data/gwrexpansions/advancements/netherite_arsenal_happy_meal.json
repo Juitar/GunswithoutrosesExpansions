@@ -1,0 +1,57 @@
+{
+  "display": {
+    "icon": {
+      "item":  "gwrexpansions:netherite_sniper"
+    },
+    "title": {
+      "translate": "advancement.gwrexpansions.netherite_arsenal_happy_meal.title"
+    },
+    "description": {
+      "translate": "advancement.gwrexpansions.netherite_arsenal_happy_meal.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "gwrexpansions:root",
+  "criteria": {
+    "has_netherite_shotgun": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["gwrexpansions:netherite_shotgun"]
+          }
+        ]
+      }
+    },
+    "has_netherite_sniper": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["gwrexpansions:netherite_sniper"]
+          }
+        ]
+      }
+    },
+    "has_netherite_gatling": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["gwrexpansions:netherite_gatling"]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_netherite_shotgun",
+      "has_netherite_sniper", 
+      "has_netherite_gatling"
+    ]
+  ]
+} 

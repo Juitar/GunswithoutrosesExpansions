@@ -1,0 +1,17 @@
+
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BLB",
+    "SIS",
+    "BSB"
+  ],
+  "key": {
+    "B": {"item": "minecraft:bone"},
+    "I": {"item": "minecraft:iron_ingot"},
+    "S": {"item": "minecraft:soul_sand"},
+    "L": {"item": "minecraft:blaze_powder"}
+  },
+  "result": { "item": "gwrexpansions:skull","count": 16 },
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "bosses_of_mass_destruction" }]
+}

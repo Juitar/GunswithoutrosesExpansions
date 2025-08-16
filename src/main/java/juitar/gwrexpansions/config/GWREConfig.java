@@ -112,7 +112,29 @@ public class GWREConfig {
             builder.pop();
         }
     }
+    public static class BurstgunConfig {
+        // 包含基础枪支配置
+        public final GunConfig gunConfig;
+        public final ForgeConfigSpec.IntValue burstSize;
+        public final ForgeConfigSpec.IntValue burstDelay;
 
+        public BurstgunConfig(ForgeConfigSpec.Builder builder, String name, int defaultDamage,
+                               double defaultMultiplier, double defaultHeadshot,
+                               int defaultDelay, double defaultInaccuracy,int defualtburstSize, int defualtburstDelay) {
+            // 创建基础枪支配置
+            gunConfig = new GunConfig(builder, name, defaultDamage, defaultMultiplier, defaultHeadshot, defaultDelay, defaultInaccuracy);
+
+            // 在同一个分组中添加burst特有的配置
+            builder.push(name + "_Burst");
+            burstSize = builder
+                .comment("Burst Size")
+                .defineInRange("burstSize", defualtburstSize, 1, 10);
+            burstDelay = builder
+                .comment("Burst Delay")
+                .defineInRange("burstDelay", defualtburstDelay, 1, 100);
+            builder.pop();
+        }
+    }
     // 狙击枪配置
     public static class SniperConfigs {
         public final GunConfig netherite;
@@ -128,14 +150,21 @@ public class GWREConfig {
             builder.pop();
         }
     }
-
+    //爆发枪配置
+    public static class BurstgunConfigs{
+        public final BurstgunConfig voidBurst;
+        public BurstgunConfigs(ForgeConfigSpec.Builder builder){
+            builder.push("Burstgun");
+            voidBurst = new BurstgunConfig(builder, "Void", 2, 1.0, 1.0, 25, 0.0,3,5);
+            builder.pop();
+        }
+    }
     // 霰弹枪配置
     public static class ShotgunConfigs {
         public final GunConfig Netherite;
         public final GunConfig NetheriteMonster;
         public final GunConfig DragonSteel;
         public final GunConfig Supershotgun;
-
         public ShotgunConfigs(ForgeConfigSpec.Builder builder) {
             builder.push("Shotgun");
             Netherite = new GunConfig(builder, "Netherite",0 , 0.6, 1.0, 20, 5.0);
@@ -166,29 +195,42 @@ public class GWREConfig {
     // 手枪配置
     public static class PistolConfigs {
         public final GunConfig tidal;
+        public final GunConfig hellforge;
+
         public PistolConfigs(ForgeConfigSpec.Builder builder) {
             builder.push("Pistol");
             tidal = new GunConfig(builder, "Tidal", 0, 1.0, 1.0, 18, 2.0);
+            hellforge = new GunConfig(builder, "Hellforge", 0, 1.0, 1.2, 60, 1.0);
             builder.pop();
         }
     }
 
-
+    public static class LauncherConfigs {
+        public final GunConfig Obisidian;
+        public LauncherConfigs(ForgeConfigSpec.Builder builder) {
+            builder.push("Launcher");
+            Obisidian = new GunConfig(builder, "Obsidian", 30, 1.0, 1.0, 60, 0.0);
+            builder.pop();
+        }
+    }
+    public static final LauncherConfigs LAUNCHER;
+    public static final BurstgunConfigs BURSTGUN;
     public static final SniperConfigs SNIPER;
     public static final ShotgunConfigs SHOTGUN;
     public static final GatlingConfigs GATLING;
     public static final PistolConfigs PISTOL;
     public static final BulletConfigs BULLET;
 
+
     static {
         BUILDER.push("Guns Without Roses Expansions Config");
-
         SNIPER = new SniperConfigs(BUILDER);
         SHOTGUN = new ShotgunConfigs(BUILDER);
         GATLING = new GatlingConfigs(BUILDER);
         PISTOL = new PistolConfigs(BUILDER);
         BULLET = new BulletConfigs(BUILDER);
-
+        LAUNCHER = new LauncherConfigs(BUILDER);
+        BURSTGUN = new BurstgunConfigs(BUILDER);
         BUILDER.pop();
         SPEC = BUILDER.build();
     }

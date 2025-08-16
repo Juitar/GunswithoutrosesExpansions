@@ -1,0 +1,29 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:cooked_chicken"
+    },
+    "title": {
+      "translate": "advancement.gwrexpansions.steves_lava_chicken.title"
+    },
+    "description": {
+      "translate": "advancement.gwrexpansions.steves_lava_chicken.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "gwrexpansions:die_insect",
+  "criteria": {
+    "chicken_burned_by_flame_jet": {
+      "trigger": "gwrexpansions:chicken_burned_by_flame_jet"
+    }
+  },
+  "requirements": [
+    [
+      "chicken_burned_by_flame_jet"
+    ]
+  ],
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "cataclysm" }]
+} 

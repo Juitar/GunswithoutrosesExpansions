@@ -1,0 +1,1 @@
+give @p gwrexpansions:super_shotgun{display:{Name:'{"text":"SUPER SHOTGUN","color":"gold","bold":true,"italic":false}',Lore:['{"text":"奖励武器","color":"yellow","italic":false}','{"text":"完成所有成就的证明","color":"gray","italic":false}']}} 1 

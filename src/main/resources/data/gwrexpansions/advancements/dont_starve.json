@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "item": "gwrexpansions:hunger_bullet"
+    },
+    "title": {
+      "translate": "advancement.gwrexpansions.dont_starve.title"
+    },
+    "description": {
+      "translate": "advancement.gwrexpansions.dont_starve.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "gwrexpansions:root",
+  "criteria": {
+    "hunger_bullet_deplete_food": {
+      "trigger": "gwrexpansions:hunger_bullet_deplete_food"
+    }
+  },
+  "requirements": [
+    [
+      "hunger_bullet_deplete_food"
+    ]
+  ]
+} 

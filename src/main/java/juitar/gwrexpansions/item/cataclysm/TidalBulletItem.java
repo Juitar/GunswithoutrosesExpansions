@@ -15,6 +15,7 @@ public class TidalBulletItem extends BulletItem {
     public BulletEntity createProjectile(Level world, ItemStack stack, LivingEntity shooter){
        TidalBulletEntity bullet = new TidalBulletEntity(world, shooter);
        bullet.setItem(stack);
+       bullet.setWaterInertia(1.25);
        bullet.setDamage(damage);
        return bullet;
     }

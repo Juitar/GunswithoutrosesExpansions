@@ -37,7 +37,7 @@ public class GWREItems {
         VanillaItem.registerItems();
         if(ModList.get().isLoaded(CompatModids.CATACLYSM)) CompatCataclysm.registerItems();
         if(ModList.get().isLoaded(CompatModids.ICEANDFIRE)) CompatIceandfire.registerItems();
-        if(ModList.get().isLoaded(CompatModids.MEETYOURFIGHT)) CompatMYF.registerItems();
+//      if(ModList.get().isLoaded(CompatModids.MEETYOURFIGHT)) CompatMYF.registerItems();
         if(ModList.get().isLoaded(CompatModids.BOMD)) CompatBOMD.registerItems();
     }
 

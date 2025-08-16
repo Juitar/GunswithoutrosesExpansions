@@ -10,8 +10,11 @@ import lykrast.gunswithoutroses.registry.GWREnchantments;
 import lykrast.gunswithoutroses.registry.GWRItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -26,6 +29,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
+import java.util.function.Predicate;
 
 public class Skullcrusher extends ConfigurableGatlingItem {
     private static final String CONSECUTIVE_TIME_KEY = "ConsecutiveShootTime";
@@ -49,37 +53,7 @@ public class Skullcrusher extends ConfigurableGatlingItem {
         super(properties, bonusDamage, damageMultiplier, fireDelay, inaccuracy, enchantability, configSupplier);
         this.chanceFreeShot = (double)0.25F;
     }
-    @Override
-    protected void shoot(Level world, Player player, ItemStack gun, ItemStack ammo, IBullet bulletItem, boolean bulletFree) {
-        ItemStack override = this.overrideFiredStack(player, gun, ammo, bulletItem, bulletFree);
-        if (override != ammo) {
-            ammo = override;
-            bulletItem = (IBullet)override.getItem();
-        }
-        boolean Fire = false;
-        int shots = this.getProjectilesPerShot(gun, player);
-        if(bulletItem.equals(CompatBOMD.skulls.get())) {
-            shots = 3 + (new Random().nextInt(3));
-            Fire = true;
-        }
-        if(Fire) {
-        for(int i = 0; i < shots; ++i) {
-                BulletEntity shot = bulletItem.createProjectile(world, ammo, player);
-                shot = CompatBOMD.bone_scrap.get().createProjectile(world, new ItemStack(CompatBOMD.bone_scrap.get()), player);
-                shot.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, (float)this.getProjectileSpeed(gun, player), (float)this.getInaccuracy(gun, player));
-                shot.setDamage(Math.max((double)0.0F, shot.getDamage() + this.getBonusDamage(gun, player)) * this.getDamageMultiplier(gun, player));
-                if (player.getAttribute((Attribute) GWRAttributes.knockback.get()) != null) {
-                    shot.setKnockbackStrength(shot.getKnockbackStrength() + player.getAttributeValue((Attribute)GWRAttributes.knockback.get()));
-                }
-                shot.setHeadshotMultiplier(this.getHeadshotMultiplier(gun, player));
-                this.affectBulletEntity(player, gun, shot, bulletFree);
-                world.addFreshEntity(shot);
-            }
-        }
-        else{
-            return;
-        }
-    }
+    
     @Override
     protected void addExtraStatsTooltip(ItemStack stack, @Nullable Level world, List<Component> tooltip) {
         tooltip.add(Component.translatable("tooltip.gwrexpansions.skullcrusher.desc").withStyle(ChatFormatting.GRAY));
@@ -117,42 +91,57 @@ public class Skullcrusher extends ConfigurableGatlingItem {
             
             // 更新连续射击计数
             long currentTime = world.getGameTime();
-            // 获取当前连续射击计数
             int consecutiveTime = gun.getOrCreateTag().getInt(CONSECUTIVE_TIME_KEY);
-            // 增加计数，上限为MAX_CONSECUTIVE_TIME
             consecutiveTime = Math.min(MAX_CONSECUTIVE_TIME, consecutiveTime + 2);
-            // 保存回NBT
             gun.getOrCreateTag().putInt(CONSECUTIVE_TIME_KEY, consecutiveTime);
-            // 更新最后射击时间
             gun.getOrCreateTag().putLong(LAST_SHOT_TIME_KEY, currentTime);
-            // 只在射击时更新计数器，不再检查超时
+            
             if (used > 0 && used % this.getFireDelay(gun, player) == 0) {
+                // 检查玩家是否有skull物品
+                boolean hasSkull = false;
+                ItemStack skullAmmo = ItemStack.EMPTY;
                 
-                // 以下是原有的射击逻辑
-                ItemStack ammo = player.getProjectile(gun);
-                if (!ammo.isEmpty() || player.getAbilities().instabuild) {
+                // 检查玩家背包中是否有skull弹药
+                for (ItemStack stack : player.getInventory().items) {
+                    if (!stack.isEmpty() && stack.getItem().equals(CompatBOMD.skull.get())) {
+                        hasSkull = true;
+                        skullAmmo = stack;
+                        break;
+                    }
+                }
+                
+                // 检查副手
+                if (!hasSkull && !player.getOffhandItem().isEmpty() && player.getOffhandItem().getItem().equals(CompatBOMD.skull.get())) {
+                    hasSkull = true;
+                    skullAmmo = player.getOffhandItem();
+                }
+                
+                // 只有当玩家有skull或者是创造模式时才能射击
+                if (hasSkull || player.getAbilities().instabuild) {
                     if (!world.isClientSide) {
-                        if (ammo.isEmpty()) {
-                            ammo = new ItemStack((ItemLike) CompatBOMD.skulls.get());
+                        // 生成3-5个骨头碎片弹射物
+                        int shots = 3 + (new Random().nextInt(3));
+                        
+                        for (int i = 0; i < shots; ++i) {
+                            // 直接使用bone_scrap作为子弹实体
+                            BulletEntity shot = CompatBOMD.bone_scrap.get().createProjectile(world, new ItemStack(CompatBOMD.bone_scrap.get()), player);
+                            shot.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, (float)this.getProjectileSpeed(gun, player), (float)this.getInaccuracy(gun, player));
+                            shot.setDamage(Math.max((double)0.0F, shot.getDamage() + this.getBonusDamage(gun, player)) * this.getDamageMultiplier(gun, player));
+                            if (player.getAttribute((Attribute) GWRAttributes.knockback.get()) != null) {
+                                shot.setKnockbackStrength(shot.getKnockbackStrength() + player.getAttributeValue((Attribute)GWRAttributes.knockback.get()));
+                            }
+                            shot.setHeadshotMultiplier(this.getHeadshotMultiplier(gun, player));
+                            this.affectBulletEntity(player, gun, shot, player.getAbilities().instabuild);
+                            world.addFreshEntity(shot);
                         }
-                        IBullet parentBullet = (IBullet)(ammo.getItem() instanceof IBullet ? ammo.getItem() : (Item)CompatBOMD.skulls.get());
-                        ItemStack firedAmmo = ammo;
-                        IBullet firedBullet = parentBullet;
-                        if (parentBullet.hasDelegate(ammo, player)) {
-                            firedAmmo = parentBullet.getDelegate(ammo, player);
-                            firedBullet = (IBullet)(firedAmmo.getItem() instanceof IBullet ? firedAmmo.getItem() : (Item)CompatBOMD.skulls.get());
-                        }
-
-                        boolean bulletFree = player.getAbilities().instabuild || !this.shouldConsumeAmmo(gun, player);
-                        if (!(firedAmmo.getItem() instanceof IBullet)) {
-                            firedAmmo = new ItemStack((ItemLike) CompatBOMD.skulls.get());
-                        }
-
-                        this.shoot(world, player, gun, firedAmmo, firedBullet, bulletFree);
-                        gun.hurtAndBreak(1, player, (p) -> p.broadcastBreakEvent(player.getUsedItemHand()));
+                        
+                        // 消耗弹药
+                        boolean bulletFree = player.getAbilities().instabuild || this.shouldConsumeAmmo(gun, player);
                         if (!bulletFree) {
-                            parentBullet.consume(ammo, player);
+                            skullAmmo.shrink(1);
                         }
+                        
+                        gun.hurtAndBreak(1, player, (p) -> p.broadcastBreakEvent(player.getUsedItemHand()));
                     }
 
                     world.playSound((Player)null, player.getX(), player.getY(), player.getZ(), this.getFireSound(), SoundSource.PLAYERS, 1.0F, world.getRandom().nextFloat() * 0.4F + 0.8F);
@@ -161,6 +150,36 @@ public class Skullcrusher extends ConfigurableGatlingItem {
             }
         }
     }
+//原use方法
+@Override
+public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
+    ItemStack itemstack = player.getItemInHand(hand);
+    
+    // 检查玩家是否有skull物品
+    boolean hasSkull = false;
+    
+    // 检查玩家背包中是否有skull物品
+    for (ItemStack stack : player.getInventory().items) {
+        if (!stack.isEmpty() && stack.getItem().equals(CompatBOMD.skull.get())) {
+            hasSkull = true;
+            break;
+        }
+    }
+    
+    // 检查副手
+    if (!hasSkull && !player.getOffhandItem().isEmpty() && player.getOffhandItem().getItem().equals(CompatBOMD.skull.get())) {
+        hasSkull = true;
+    }
+    
+    // 只有当玩家有skull物品或者是创造模式时才能使用
+    if (!player.getAbilities().instabuild && !hasSkull) {
+        return InteractionResultHolder.fail(itemstack);
+    }
+    else {
+        player.startUsingItem(hand);
+        return InteractionResultHolder.consume(itemstack);
+    }
+}
 
     @Override
     public int getFireDelay(ItemStack stack, @Nullable LivingEntity shooter) {

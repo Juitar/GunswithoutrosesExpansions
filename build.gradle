@@ -145,7 +145,7 @@ dependencies {
     implementation fg.deobf("curse.maven:lionfish-api-1001614:5911889")
     implementation fg.deobf("curse.maven:lendercataclysm-551586:6261679")
     //Guns without roses
-    implementation fg.deobf("curse.maven:guns-without-roses-405077:6127884")
+    implementation fg.deobf("curse.maven:guns-without-roses-405077:6843150")
     //ice and fire
     implementation fg.deobf("curse.maven:citadel-331936:6002521")
     implementation fg.deobf("curse.maven:ice-and-fire-dragons-264231:5633453")

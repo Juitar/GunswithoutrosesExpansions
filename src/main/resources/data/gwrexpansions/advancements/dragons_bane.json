@@ -1,0 +1,46 @@
+{
+  "display": {
+    "icon": {
+      "item": "gwrexpansions:dragonsteel_fire_shotgun"
+    },
+    "title": {
+      "translate": "advancement.gwrexpansions.dragons_bane.title"
+    },
+    "description": {
+      "translate": "advancement.gwrexpansions.dragons_bane.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "gwrexpansions:root",
+  "criteria": {
+    "has_dragonsteel_weapon": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "gwrexpansions:dragonsteel_fire_shotgun",
+              "gwrexpansions:dragonsteel_ice_shotgun",
+              "gwrexpansions:dragonsteel_lightning_shotgun",
+              "gwrexpansions:dragonsteel_fire_sniper",
+              "gwrexpansions:dragonsteel_ice_sniper",
+              "gwrexpansions:dragonsteel_lightning_sniper",
+              "gwrexpansions:dragonsteel_fire_gatling",
+              "gwrexpansions:dragonsteel_ice_gatling",
+              "gwrexpansions:dragonsteel_lightning_gatling"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_dragonsteel_weapon"
+    ]
+  ],
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "iceandfire" }]
+} 

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "NOO",
+    "OHN",
+    "LOO"
+  ],
+  "key": {
+    "N": {"item": "minecraft:netherite_ingot"},
+    "O": {"item": "minecraft:obsidian"},
+    "H": {"item": "bosses_of_mass_destruction:obsidian_heart"},
+    "L": {"item": "minecraft:lever"}
+  },
+  "result": { "item": "gwrexpansions:obsidian_launcher" },
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "bosses_of_mass_destruction" }]
+}

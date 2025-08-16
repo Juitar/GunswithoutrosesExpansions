@@ -2,12 +2,14 @@ package juitar.gwrexpansions.entity.cataclysm;
 
 import com.github.L_Ender.cataclysm.entity.AnimationMonster.BossMonsters.The_Leviathan.Abyss_Blast_Portal_Entity;
 import com.github.L_Ender.cataclysm.init.ModEffect;
+import juitar.gwrexpansions.advancement.FirstTidalPortalCreatedTrigger;
 import juitar.gwrexpansions.config.GWREConfig;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.item.IBullet;
 import lykrast.gunswithoutroses.registry.GWRDamage;
 import lykrast.gunswithoutroses.registry.GWRItems;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -33,10 +35,6 @@ public class TidalBulletEntity extends BulletEntity {
     }
     public TidalBulletEntity(Level level, LivingEntity shooter) {
         super(level, shooter);
-    }
-    @Override
-    protected double waterInertia() {
-        return 1.2; // 在水中加速
     }
     @Override
     protected void onHitEntity(EntityHitResult raytrace) {
@@ -127,6 +125,11 @@ public class TidalBulletEntity extends BulletEntity {
             );
             world.addFreshEntity(portal);
             world.playSound(null, portalPos, SoundEvents.ENDERMAN_TELEPORT, SoundSource.HOSTILE, 1.0F, 1.0F);
+            
+            // 触发成就 - 检查射手是否是玩家
+            if (shooter instanceof ServerPlayer player) {
+                FirstTidalPortalCreatedTrigger.onFirstTidalPortalCreated(player);
+            }
         }
     }
 }

@@ -161,10 +161,7 @@ public class SlimeBulletEntity extends BulletEntity {
         return ParticleTypes.ITEM_SLIME;
     }
 
-    @Override
-    protected double waterInertia() {
-        return 0.7; // 在水中的减速较小
-    }
+
 
     public void setMaxBounces(int maxBounces) {
         this.maxBounces = maxBounces;

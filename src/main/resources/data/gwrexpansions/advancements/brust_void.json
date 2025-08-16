@@ -1,0 +1,36 @@
+{
+  "display": {
+    "icon": {
+      "item": "bosses_of_mass_destruction:void_piercer"
+    },
+    "title": {
+      "translate": "advancement.gwrexpansions.brust_void.title"
+    },
+    "description": {
+      "translate": "advancement.gwrexpansions.brust_void.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "gwrexpansions:root",
+  "criteria": {
+    "has_void_piercer": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["bosses_of_mass_destruction:void_piercer"]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_void_piercer"
+    ]
+  ],
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "bosses_of_mass_destruction" }]
+} 

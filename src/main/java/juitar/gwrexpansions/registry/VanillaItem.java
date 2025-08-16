@@ -22,7 +22,7 @@ public class VanillaItem {
 
         netherite_shotgun = GWREItems.initItem(() -> new ConfigurableGunItem(
             GWREItems.defP().durability(4000).fireResistant(),
-            0, 0.0, 0, 0.0, 0,
+            0, 0.0, 0, 0.0, 15,
             () -> GWREConfig.SHOTGUN.Netherite
         )
             .projectiles(5)
@@ -32,7 +32,7 @@ public class VanillaItem {
 
         netherite_sniper = GWREItems.initItem(() -> new ConfigurableGunItem(
             GWREItems.defP().durability(4000).fireResistant(),
-            0, 0.0, 0, 0.0, 0,
+            0, 0.0, 0, 0.0, 15,
             () -> GWREConfig.SNIPER.netherite
         )
             .projectileSpeed(4)
@@ -43,7 +43,7 @@ public class VanillaItem {
 
         netherite_gatling = GWREItems.initItem(() -> new ConfigurableGatlingItem(
             GWREItems.defP().durability(4000).fireResistant(),
-            0, 0.0, 0, 0.0, 0,
+            0, 0.0, 4, 0.0, 15,
             () -> GWREConfig.GATLING.Netherite
         )
             .repair(() -> Ingredient.of(Tags.Items.INGOTS_NETHERITE)),

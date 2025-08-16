@@ -9,7 +9,7 @@
     { "tag": "gwrexpansions:lavapowerbullet_base" },
     { "tag": "gwrexpansions:lavapowerbullet_base" },
     { "tag": "gwrexpansions:lavapowerbullet_base" },
-    { "item": "minecraft:slime_ball" }
+    { "item": "cataclysm:lava_power_cell" }
   ],
   "result": { "item": "gwrexpansions:lavapower_bullet", "count": 8 },
   "conditions": [{ "type": "forge:mod_loaded", "modid": "cataclysm" }]

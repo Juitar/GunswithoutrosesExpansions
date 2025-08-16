@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " G ",
+    "GOG",
+    " G "
+  ],
+  "key": {
+    "O": {"item": "minecraft:obsidian"},
+    "G": {"item": "minecraft:gunpowder"}
+  },
+  "result": { "item": "gwrexpansions:obsidian_core", "count": 8},
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "bosses_of_mass_destruction" }]
+}

@@ -1,10 +1,12 @@
 package juitar.gwrexpansions.item.vanilla;
 
+import juitar.gwrexpansions.advancement.HungerBulletDepleteFoodTrigger;
 import juitar.gwrexpansions.registry.VanillaItem;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.item.BulletItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -26,6 +28,11 @@ public class HungerBulletItem extends BulletItem {
         public void consume(ItemStack stack, Player player) {
             if (player.getFoodData().getFoodLevel() <= 0) player.hurt(player.damageSources().starve(), 1);
             player.getFoodData().addExhaustion(3);
+            
+            // 触发成就追踪 - 检查是否是服务器端玩家
+            if (player instanceof ServerPlayer serverPlayer) {
+                HungerBulletDepleteFoodTrigger.onHungerBulletUsed(serverPlayer);
+            }
         }
 
         @Override
