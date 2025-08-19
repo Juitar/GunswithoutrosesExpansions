@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "bosses_of_mass_destruction:obsidian_launcher"
+      "item": "gwrexpansions:obsidian_launcher"
     },
     "title": {
       "translate": "advancement.gwrexpansions.avada_kedavra.title"

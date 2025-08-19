@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
+    { "id": "gwrexpansions:super_shotgun", "required": false },
     { "id": "gwrexpansions:netherite_shotgun", "required": false },
     { "id": "gwrexpansions:netherite_monster_shotgun", "required": false },
     { "id": "gwrexpansions:dragonsteel_fire_shotgun", "required": false },

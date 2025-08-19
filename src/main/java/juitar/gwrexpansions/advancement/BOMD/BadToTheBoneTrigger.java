@@ -1,19 +1,20 @@
-package juitar.gwrexpansions.advancement;
+package juitar.gwrexpansions.advancement.BOMD;
 
 import com.google.gson.JsonObject;
 import juitar.gwrexpansions.GWRexpansions;
+import juitar.gwrexpansions.advancement.GWRECriteria;
 import net.minecraft.advancements.critereon.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.fml.common.Mod;
 
 /**
- * 子弹通过硬币反弹后杀死满血敌人成就触发器
+ * 获得头骨粉碎者成就触发器
  */
 @Mod.EventBusSubscriber(modid = GWRexpansions.MODID)
-public class HellIsFullTrigger extends SimpleCriterionTrigger<HellIsFullTrigger.TriggerInstance> {
+public class BadToTheBoneTrigger extends SimpleCriterionTrigger<BadToTheBoneTrigger.TriggerInstance> {
 
-    private static final ResourceLocation ID = new ResourceLocation(GWRexpansions.MODID, "hell_is_full");
+    private static final ResourceLocation ID = new ResourceLocation(GWRexpansions.MODID, "bad_to_the_bone");
 
     @Override
     public ResourceLocation getId() {
@@ -31,10 +32,10 @@ public class HellIsFullTrigger extends SimpleCriterionTrigger<HellIsFullTrigger.
 
     /**
      * 供BOMD模组代码调用的静态方法
-     * 当玩家子弹通过硬币反弹后杀死满血敌人时调用此方法
+     * 当玩家获得头骨粉碎者时调用此方法
      */
-    public static void onCoinRicochetKill(ServerPlayer player) {
-        GWRECriteria.HELL_IS_FULL.trigger(player);
+    public static void onSkullCrusherObtained(ServerPlayer player) {
+        GWRECriteria.BAD_TO_THE_BONE.trigger(player);
     }
 
     public static class TriggerInstance extends AbstractCriterionTriggerInstance {

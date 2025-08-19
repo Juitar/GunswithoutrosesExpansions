@@ -1,5 +1,12 @@
 package juitar.gwrexpansions.advancement;
 
+import juitar.gwrexpansions.advancement.BOMD.AvadaKedavraTrigger;
+import juitar.gwrexpansions.advancement.BOMD.BadToTheBoneTrigger;
+import juitar.gwrexpansions.advancement.BOMD.BrustVoidTrigger;
+import juitar.gwrexpansions.advancement.BOMD.HellIsFullTrigger;
+import juitar.gwrexpansions.advancement.BOMD.MankindIsDeadTrigger;
+import juitar.gwrexpansions.advancement.BOMD.ObsidianCakeTrigger;
+import juitar.gwrexpansions.advancement.BOMD.ObsidianWandTrigger;
 import net.minecraft.advancements.CriteriaTriggers;
 
 /**

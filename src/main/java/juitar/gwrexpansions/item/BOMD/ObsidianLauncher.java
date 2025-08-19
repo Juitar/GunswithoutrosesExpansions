@@ -1,5 +1,6 @@
 package juitar.gwrexpansions.item.BOMD;
 
+import juitar.gwrexpansions.advancement.BOMD.AvadaKedavraTrigger;
 import juitar.gwrexpansions.client.render.ObsidianLauncherHudRenderer;
 import juitar.gwrexpansions.config.GWREConfig;
 import juitar.gwrexpansions.entity.BOMD.ObsidianCoreEntity;
@@ -7,7 +8,9 @@ import juitar.gwrexpansions.item.ConfigurableLauncherItem;
 import juitar.gwrexpansions.registry.CompatBOMD;
 import juitar.gwrexpansions.registry.GWREEntities;
 import juitar.gwrexpansions.registry.GWRESounds;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.sounds.SoundSource;
@@ -29,8 +32,14 @@ public class ObsidianLauncher extends ConfigurableLauncherItem {
     private static final int MAX_RANGE_WITH_FULL_CHARGE = 45; // 满充能最大射程
     private static final int MAX_CHARGE_TIME = 40; // 最大充能时间（刻）
     
+    // NBT标签键
+    private static final String NBT_SPELLS_CAST = "SpellsCast";
+    private static final String NBT_FIRE_SPELL_CAST = "FireSpellCast";
+    private static final String NBT_FROST_SPELL_CAST = "FrostSpellCast";
+    private static final String NBT_HOLY_SPELL_CAST = "HolySpellCast";
+    
     /**
-     * 创建黑曜石发射器
+     * 创建黑曜石发射器 
      *
      * @param properties       物品属性
      * @param bonusDamage      额外伤害（会被配置覆盖）
@@ -99,6 +108,31 @@ public class ObsidianLauncher extends ConfigurableLauncherItem {
                 .withStyle(ChatFormatting.DARK_GREEN));
         tooltip.add(Component.translatable("item.gwrexpansions.obsidian_launcher.tooltip.charge_info")
                 .withStyle(ChatFormatting.GRAY));
+        
+        // 显示法术释放统计
+        CompoundTag tag = stack.getOrCreateTag();
+        boolean fireCast = tag.getBoolean(NBT_FIRE_SPELL_CAST);
+        boolean frostCast = tag.getBoolean(NBT_FROST_SPELL_CAST);
+        boolean holyCast = tag.getBoolean(NBT_HOLY_SPELL_CAST);
+        
+        int spellsCast = 0;
+        if (fireCast) spellsCast++;
+        if (frostCast) spellsCast++;
+        if (holyCast) spellsCast++;
+        
+        tooltip.add(Component.literal(""));
+        tooltip.add(Component.translatable("item.gwrexpansions.obsidian_launcher.tooltip.spells_cast", spellsCast, 3)
+                .withStyle(ChatFormatting.YELLOW));
+        
+        if (fireCast) {
+            tooltip.add(Component.translatable("item.gwrexpansions.obsidian_launcher.tooltip.fire_spell").withStyle(ChatFormatting.RED));
+        }
+        if (frostCast) {
+            tooltip.add(Component.translatable("item.gwrexpansions.obsidian_launcher.tooltip.frost_spell").withStyle(ChatFormatting.AQUA));
+        }
+        if (holyCast) {
+            tooltip.add(Component.translatable("item.gwrexpansions.obsidian_launcher.tooltip.holy_spell").withStyle(ChatFormatting.YELLOW));
+        }
     }
     
     @Override
@@ -106,6 +140,12 @@ public class ObsidianLauncher extends ConfigurableLauncherItem {
         // 随机生成法术类型
         ObsidianCoreEntity.SpellType[] spellTypes = ObsidianCoreEntity.SpellType.values();
         ObsidianCoreEntity.SpellType spellType = spellTypes[level.getRandom().nextInt(spellTypes.length)];
+        
+        // 记录法术释放
+        recordSpellCast(gun, spellType);
+        
+        // 检查是否释放了三种不同的法术
+        checkAndTriggerAvadaKedavra(player, gun);
         
         // 创建并发射黑曜石核心实体，传入随机法术类型
         ObsidianCoreEntity coreEntity = new ObsidianCoreEntity(GWREEntities.OBSIDIAN_CORE.get(), level, player, spellType);
@@ -160,6 +200,66 @@ public class ObsidianLauncher extends ConfigurableLauncherItem {
         
         // 武器损耗
         gun.hurtAndBreak(1, player, (p) -> p.broadcastBreakEvent(player.getUsedItemHand()));
+    }
+    
+    /**
+     * 记录法术释放
+     */
+    private void recordSpellCast(ItemStack gun, ObsidianCoreEntity.SpellType spellType) {
+        CompoundTag tag = gun.getOrCreateTag();
+        
+        switch (spellType) {
+            case FIRE:
+                tag.putBoolean(NBT_FIRE_SPELL_CAST, true);
+                break;
+            case FROST:
+                tag.putBoolean(NBT_FROST_SPELL_CAST, true);
+                break;
+            case HOLY:
+                tag.putBoolean(NBT_HOLY_SPELL_CAST, true);
+                break;
+        }
+    }
+    
+    /**
+     * 检查并触发AvadaKedavra成就
+     */
+    private void checkAndTriggerAvadaKedavra(Player player, ItemStack gun) {
+        if (!(player instanceof net.minecraft.server.level.ServerPlayer serverPlayer)) {
+            return;
+        }
+        
+        CompoundTag tag = gun.getOrCreateTag();
+        boolean fireCast = tag.getBoolean(NBT_FIRE_SPELL_CAST);
+        boolean frostCast = tag.getBoolean(NBT_FROST_SPELL_CAST);
+        boolean holyCast = tag.getBoolean(NBT_HOLY_SPELL_CAST);
+        
+        // 如果三种法术都释放过了，触发成就
+        if (fireCast && frostCast && holyCast) {
+            AvadaKedavraTrigger.onThreeSpellsCast(serverPlayer);
+        }
+    }
+    
+    /**
+     * 重写onUseTick方法，在蓄力时播放obsidian_pull音效
+     */
+    @Override
+    public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int remainingUseDuration) {
+        if (!level.isClientSide) {
+            // 计算已使用时间
+            int useTicks = getUseDuration(stack) - remainingUseDuration;
+            
+            // 存储蓄力时间
+            CompoundTag tag = stack.getOrCreateTag();
+            tag.putInt("UseTicks", Math.min(useTicks, MAX_CHARGE_TIME));
+            
+            // 每10刻播放一次蓄力音效
+            if (useTicks % 20 == 0 && useTicks >= 0) {
+                level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), 
+                      GWRESounds.OBSIDIAN_PULL.get(), SoundSource.PLAYERS, 
+                      0.5F, 1.0F);
+            }
+        }
     }
     
     /**

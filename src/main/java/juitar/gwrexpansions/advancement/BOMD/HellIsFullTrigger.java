@@ -1,19 +1,20 @@
-package juitar.gwrexpansions.advancement;
+package juitar.gwrexpansions.advancement.BOMD;
 
 import com.google.gson.JsonObject;
 import juitar.gwrexpansions.GWRexpansions;
+import juitar.gwrexpansions.advancement.GWRECriteria;
 import net.minecraft.advancements.critereon.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.fml.common.Mod;
 
 /**
- * 利用回溯的黑曜石核心杀死敌人成就触发器
+ * 子弹通过硬币反弹后杀死满血敌人成就触发器
  */
 @Mod.EventBusSubscriber(modid = GWRexpansions.MODID)
-public class ObsidianCakeTrigger extends SimpleCriterionTrigger<ObsidianCakeTrigger.TriggerInstance> {
+public class HellIsFullTrigger extends SimpleCriterionTrigger<HellIsFullTrigger.TriggerInstance> {
 
-    private static final ResourceLocation ID = new ResourceLocation(GWRexpansions.MODID, "obsidian_cake");
+    private static final ResourceLocation ID = new ResourceLocation(GWRexpansions.MODID, "hell_is_full");
 
     @Override
     public ResourceLocation getId() {
@@ -31,10 +32,10 @@ public class ObsidianCakeTrigger extends SimpleCriterionTrigger<ObsidianCakeTrig
 
     /**
      * 供BOMD模组代码调用的静态方法
-     * 当玩家利用回溯的黑曜石核心杀死敌人时调用此方法
+     * 当玩家子弹通过硬币反弹后杀死满血敌人时调用此方法
      */
-    public static void onObsidianCoreKill(ServerPlayer player) {
-        GWRECriteria.OBSIDIAN_CAKE.trigger(player);
+    public static void onCoinRicochetKill(ServerPlayer player) {
+        GWRECriteria.HELL_IS_FULL.trigger(player);
     }
 
     public static class TriggerInstance extends AbstractCriterionTriggerInstance {

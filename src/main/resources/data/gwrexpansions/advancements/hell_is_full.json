@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "bosses_of_mass_destruction:coin"
+      "item": "minecraft:gold_nugget"
     },
     "title": {
       "translate": "advancement.gwrexpansions.hell_is_full.title"

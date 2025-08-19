@@ -39,9 +39,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.MobType;
+import juitar.gwrexpansions.advancement.BOMD.ObsidianCakeTrigger;
 
 import java.util.List;
 import java.util.Random;
+import net.minecraft.server.level.ServerPlayer;
 
 public class ObsidianCoreEntity extends AbstractArrow {
     private static final EntityDataAccessor<Boolean> RETURNING = SynchedEntityData.defineId(ObsidianCoreEntity.class, EntityDataSerializers.BOOLEAN);
@@ -351,7 +353,13 @@ public class ObsidianCoreEntity extends AbstractArrow {
             // 对实体造成伤害
             if (entity instanceof LivingEntity livingEntity) {
                 float damage = (float)(this.getBaseDamage() * RETURN_DAMAGE_FACTOR);
+                boolean wasAlive = livingEntity.isAlive();
                 entity.hurt(this.damageSources().arrow(this, this.getOwner() instanceof LivingEntity ? (LivingEntity)this.getOwner() : null), damage);
+                
+                // 检查是否是回溯时击杀敌人（ObsidianCake成就）
+                if (wasAlive && !livingEntity.isAlive() && this.getOwner() instanceof ServerPlayer player) {
+                    ObsidianCakeTrigger.onObsidianCoreKill(player);
+                }
             }
         }
     }
@@ -452,7 +460,11 @@ public class ObsidianCoreEntity extends AbstractArrow {
             // 仅在服务端处理AOE伤害
             if (!this.level().isClientSide) {
                 // 传递已击中实体，确保AOE伤害不重复应用于直接击中目标
-                this.dealAOEDamage(hitEntity);
+                if (hitEntity instanceof LivingEntity livingTarget) {
+                    this.dealAOEDamage(livingTarget);
+                } else {
+                    this.dealAOEDamage(hitEntity.blockPosition());
+                }
                 this.hasDealtAOE = true;
             }
         }
@@ -498,104 +510,41 @@ public class ObsidianCoreEntity extends AbstractArrow {
         this.setDeltaMovement(Vec3.ZERO);
     }
     
-    private void dealAOEDamage(Entity hitEntity) {
-        // 获取AOE范围内的所有实体
-        float actualRadius = AOE_RADIUS * getAOERadiusMultiplier();
-        List<Entity> entities = this.level().getEntities(this, 
-            hitEntity.getBoundingBox().inflate(actualRadius), 
-            entity -> entity != this && entity != hitEntity && entity != this.getOwner());
+    /**
+     * 处理AOE伤害
+     */
+    private void dealAOEDamage(LivingEntity target) {
+        if (hasDealtAOE) return; // 防止重复造成AOE伤害
         
-        // 获取施法属性
-        SpellType spellType = getSpellType();
+        hasDealtAOE = true;
         
-        // 计算神圣属性的伤害吸收累计等级
-        int absorptionLevel = 0;
+        // 获取AOE范围
+        float aoeRadius = AOE_RADIUS * getAOERadiusMultiplier();
         
-        // 对每个实体造成伤害
-        for (Entity entity : entities) {
-            if (entity instanceof LivingEntity livingTarget) {
-                // 计算距离
-                double distance = entity.distanceTo(hitEntity);
+        // 获取范围内的所有生物
+        List<LivingEntity> nearbyEntities = this.level().getEntitiesOfClass(
+            LivingEntity.class,
+            this.getBoundingBox().inflate(aoeRadius),
+            entity -> entity != target && entity != this.getOwner() && entity.isAlive()
+        );
+        
+        // 对范围内的生物造成伤害
+        for (LivingEntity entity : nearbyEntities) {
+            double distance = this.distanceTo(entity);
+            if (distance <= aoeRadius) {
+                // 计算伤害衰减
+                float damageMultiplier = 1.0f - (float)(distance / aoeRadius) * 0.5f;
+                float damage = (float)this.getBaseDamage() * AOE_DAMAGE_FACTOR * damageMultiplier;
                 
-                // 计算伤害系数，从1.0衰减到0.5
-                float damageFactor = AOE_DAMAGE_FACTOR;
-                if (distance > 0) {
-                    // 线性衰减：近处为100%，远处为50%
-                    float distanceFactor = 1.0f - (float)(distance / actualRadius) * 0.5f;
-                    damageFactor = AOE_DAMAGE_FACTOR * Math.max(0.5f, distanceFactor);
-                }
+                // 造成伤害
+                entity.hurt(this.damageSources().mobAttack(this.getOwner() instanceof LivingEntity ? (LivingEntity)this.getOwner() : null), damage);
                 
-                // 应用伤害
-                float damage = (float)(this.getBaseDamage() * damageFactor);
+                // 应用法术效果
+                applySpellEffects(entity, damage);
                 
-                // 根据施法属性应用不同效果
-                switch (spellType) {
-                    case FIRE:
-                        // 火焰伤害增强25%
-                        damage *= 1.25f;
-                        // 点燃目标，持续5-7秒
-                        int fireDuration = 5 + this.random.nextInt(3);
-                        livingTarget.setSecondsOnFire(fireDuration);
-                        // 向上击飞
-                        livingTarget.push(0, 0.5, 0);
-                        break;
-                        
-                    case FROST:
-                        // 减速效果，50%减速，持续5秒
-                        livingTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 1));
-                        // 对火焰免疫实体额外伤害
-                        if (livingTarget.fireImmune()) {
-                            damage *= 1.5f;
-                        }
-                        break;
-                        
-                    case HOLY:
-                        // 神圣伤害对亡灵生物更有效
-                        if (livingTarget.getMobType().equals(MobType.UNDEAD)) {
-                            damage *= 1.25f;
-                        }
-                        // 每击中一个敌人累计1级伤害吸收等级
-                        absorptionLevel++;
-                        break;
-                }
-                
-                // 应用最终伤害
-                entity.hurt(this.damageSources().arrow(this, this.getOwner() instanceof LivingEntity ? (LivingEntity)this.getOwner() : null), damage);
-                
-                // 添加击退效果
-                Vec3 knockbackVector = entity.position().subtract(hitEntity.position()).normalize();
-                entity.push(knockbackVector.x * 0.4, 0.2, knockbackVector.z * 0.4);
+                // 注意：这里不触发ObsidianCake成就，因为这是初始击中时的AOE伤害
+                // ObsidianCake成就只在回溯时击杀敌人才触发
             }
-        }
-        
-        // 神圣伤害额外效果：给予发射者伤害吸收效果
-        if (spellType == SpellType.HOLY && absorptionLevel > 0) {
-            Entity owner = this.getOwner();
-            if (owner instanceof LivingEntity livingOwner) {
-                // 最高3级伤害吸收效果，每级30秒
-                int effectLevel = Math.min(2, absorptionLevel - 1); // 转换为0-2的等级
-                livingOwner.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 600, effectLevel));
-                
-                // 播放神圣效果音效
-                this.level().playSound(null, livingOwner.getX(), livingOwner.getY(), livingOwner.getZ(), 
-                    SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 1.0F, 1.0F);
-            }
-        }
-        
-        // 根据施法属性播放不同AOE音效
-        switch (spellType) {
-            case FIRE:
-                this.level().playSound(null, hitEntity.getX(), hitEntity.getY(), hitEntity.getZ(), 
-                    SoundEvents.FIRECHARGE_USE, SoundSource.NEUTRAL, 1.0F, 0.8F);
-                break;
-            case FROST:
-                this.level().playSound(null, hitEntity.getX(), hitEntity.getY(), hitEntity.getZ(), 
-                    SoundEvents.GLASS_BREAK, SoundSource.NEUTRAL, 1.0F, 0.6F);
-                break;
-            case HOLY:
-                this.level().playSound(null, hitEntity.getX(), hitEntity.getY(), hitEntity.getZ(), 
-                    SoundEvents.BELL_RESONATE, SoundSource.NEUTRAL, 1.0F, 1.2F);
-                break;
         }
     }
     
@@ -702,6 +651,41 @@ public class ObsidianCoreEntity extends AbstractArrow {
             case HOLY:
                 this.level().playSound(null, hitPos,
                     SoundEvents.BELL_RESONATE, SoundSource.NEUTRAL, 1.0F, 1.2F);
+                break;
+        }
+    }
+    
+    /**
+     * 应用法术效果到目标
+     */
+    private void applySpellEffects(LivingEntity target, float damage) {
+        SpellType spellType = getSpellType();
+        
+        switch (spellType) {
+            case FIRE:
+                // 火焰伤害增强25%
+                damage *= 1.25f;
+                // 点燃目标，持续5-7秒
+                int fireDuration = 5 + this.random.nextInt(3);
+                target.setSecondsOnFire(fireDuration);
+                // 向上击飞
+                target.push(0, 0.5, 0);
+                break;
+                
+            case FROST:
+                // 减速效果，50%减速，持续5秒
+                target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 1));
+                // 对火焰免疫实体额外伤害
+                if (target.fireImmune()) {
+                    damage *= 1.5f;
+                }
+                break;
+                
+            case HOLY:
+                // 神圣伤害对亡灵生物更有效
+                if (target.getMobType().equals(MobType.UNDEAD)) {
+                    damage *= 1.25f;
+                }
                 break;
         }
     }

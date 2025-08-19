@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "bosses_of_mass_destruction:obsidian_core"
+      "item": "gwrexpansions:obsidian_core"
     },
     "title": {
       "translate": "advancement.gwrexpansions.obsidian_cake.title"

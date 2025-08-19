@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    {"id":"gwrexpansions:tidal_pistol","required":false}
+    {"id":"gwrexpansions:tidal_pistol","required":false},
+    {"id":"gwrexpansions:hellforge_revolver","required":false}
   ]
 }

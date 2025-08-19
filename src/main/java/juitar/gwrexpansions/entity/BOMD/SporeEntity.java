@@ -7,6 +7,8 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -15,11 +17,10 @@ import net.minecraft.world.phys.Vec3;
  * 孢子子弹实体 - 速度慢且持续减速，速度到零后60tick消失，造成伤害可给射手治疗
  */
 public class SporeEntity extends BulletEntity {
-    private static final int MAX_LIFETIME_AFTER_STOP = 60; // 停止后60tick消失
-    private static final double MIN_SPEED = 0.01; // 最小速度阈值
-    private static final double DECELERATION_RATE = 0.98; // 减速率（每tick乘以此值）
+    private static final int MAX_LIFETIME_AFTER_STOP = 100; // 停止后100tick消失
+    private static final double MIN_SPEED = 0.0; // 最小速度阈值
+    private static final double DECELERATION_RATE = 0.99; // 减速率（每tick乘以此值）
     private static final float HEAL_RATIO = 0.5f; // 治疗比例（伤害的50%）
-    private static final double SPIKE_DAMAGE = 6.0; // 尖刺伤害
 
     private int stoppedTicks = 0; // 停止后的tick计数
     private boolean hasStopped = false; // 是否已经停止
@@ -130,6 +131,11 @@ public class SporeEntity extends BulletEntity {
             // 孢子击中后立即消失
             this.discard();
         }
+    }
+
+    @Override
+    public net.minecraft.world.item.ItemStack getItemRaw() {
+        return new net.minecraft.world.item.ItemStack(juitar.gwrexpansions.registry.CompatBOMD.spore.get());
     }
 
 }

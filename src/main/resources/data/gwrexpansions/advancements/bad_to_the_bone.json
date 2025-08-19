@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "bosses_of_mass_destruction:skull_crusher"
+      "item": "gwrexpansions:skullcrusher_pulverizer"
     },
     "title": {
       "translate": "advancement.gwrexpansions.bad_to_the_bone.title"
@@ -21,7 +21,7 @@
       "conditions": {
         "items": [
           {
-            "items": ["bosses_of_mass_destruction:skull_crusher"]
+            "items": ["gwrexpansions:skullcrusher_pulverizer"]
           }
         ]
       }

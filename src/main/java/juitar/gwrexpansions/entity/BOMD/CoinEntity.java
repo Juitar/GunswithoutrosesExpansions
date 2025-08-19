@@ -1,5 +1,7 @@
 package juitar.gwrexpansions.entity.BOMD;
 
+import juitar.gwrexpansions.advancement.BloodIsFuelTrigger;
+import juitar.gwrexpansions.advancement.BOMD.BOMDGameplayEventHandler;
 import juitar.gwrexpansions.registry.GWREEntities;
 import juitar.gwrexpansions.registry.GWRESounds;
 import juitar.gwrexpansions.util.CoinTargetUtils;
@@ -23,6 +25,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
+import net.minecraft.server.level.ServerPlayer;
 
 /**
  * 硬币实体 - 由Hellforge抛射的硬币
@@ -198,6 +201,14 @@ public class CoinEntity extends ThrowableItemProjectile {
                 // 增加反弹计数
                 bulletData.putInt("CoinBounceCount", bounceCount + 1);
                 System.out.println("DEBUG: 硬币处理 - 设置新反弹次数=" + (bounceCount + 1));
+
+                // 记录硬币反弹子弹用于成就追踪
+                BOMDGameplayEventHandler.recordCoinBounceBullet(bullet);
+
+                // 检查是否一发子弹命中四个硬币（BLOOD IS FUEL成就）
+                if (bounceCount == 3 && owner instanceof ServerPlayer player) { // 第4次反弹 = 命中4个硬币
+                    BloodIsFuelTrigger.onFourCoinsHit(player);
+                }
 
                 // 设置子弹位置到硬币位置
                 bullet.setPos(this.getX(), this.getY(), this.getZ());

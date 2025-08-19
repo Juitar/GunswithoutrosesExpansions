@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "bosses_of_mass_destruction:hellforge_revolver"
+      "item": "gwrexpansions:hellforge_revolver"
     },
     "title": {
       "translate": "advancement.gwrexpansions.mankind_is_dead.title"
@@ -21,7 +21,7 @@
       "conditions": {
         "items": [
           {
-            "items": ["bosses_of_mass_destruction:hellforge_revolver"]
+            "items": ["gwrexpansions:hellforge_revolver"]
           }
         ]
       }

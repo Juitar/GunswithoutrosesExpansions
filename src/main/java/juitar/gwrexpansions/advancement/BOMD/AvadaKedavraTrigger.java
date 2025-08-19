@@ -1,19 +1,20 @@
-package juitar.gwrexpansions.advancement;
+package juitar.gwrexpansions.advancement.BOMD;
 
 import com.google.gson.JsonObject;
 import juitar.gwrexpansions.GWRexpansions;
+import juitar.gwrexpansions.advancement.GWRECriteria;
 import net.minecraft.advancements.critereon.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.fml.common.Mod;
 
 /**
- * 获得虚空之刺成就触发器
+ * 用黑曜石发射器释放三个不同魔咒成就触发器
  */
 @Mod.EventBusSubscriber(modid = GWRexpansions.MODID)
-public class BrustVoidTrigger extends SimpleCriterionTrigger<BrustVoidTrigger.TriggerInstance> {
+public class AvadaKedavraTrigger extends SimpleCriterionTrigger<AvadaKedavraTrigger.TriggerInstance> {
 
-    private static final ResourceLocation ID = new ResourceLocation(GWRexpansions.MODID, "brust_void");
+    private static final ResourceLocation ID = new ResourceLocation(GWRexpansions.MODID, "avada_kedavra");
 
     @Override
     public ResourceLocation getId() {
@@ -31,10 +32,10 @@ public class BrustVoidTrigger extends SimpleCriterionTrigger<BrustVoidTrigger.Tr
 
     /**
      * 供BOMD模组代码调用的静态方法
-     * 当玩家获得虚空之刺时调用此方法
+     * 当玩家用黑曜石发射器释放三个不同魔咒时调用此方法
      */
-    public static void onVoidPiercerObtained(ServerPlayer player) {
-        GWRECriteria.BRUST_VOID.trigger(player);
+    public static void onThreeSpellsCast(ServerPlayer player) {
+        GWRECriteria.AVADA_KEDAVRA.trigger(player);
     }
 
     public static class TriggerInstance extends AbstractCriterionTriggerInstance {

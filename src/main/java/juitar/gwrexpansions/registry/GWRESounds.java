@@ -22,6 +22,7 @@ public class GWRESounds {
     public static final RegistryObject<SoundEvent> OBSIDIAN_LAUNCHER_FIRE = initSound("item.obsidian_launcher.shoot");
     public static final RegistryObject<SoundEvent> OBSIDIAN_CORE_HIT  = initSound("obsidian_core.hit");
     public static final RegistryObject<SoundEvent> OBSIDIAN_CORE_MISS = initSound("obsidian_core.miss");
+    public static final RegistryObject<SoundEvent> OBSIDIAN_PULL = initSound("item.obsidian_launcher.pull");
 
     // 狱锻之轮声音
     public static final RegistryObject<SoundEvent> HELLFORGE_REVOLVER_SHOOT = initSound("item.hellforge_revolver.shoot");

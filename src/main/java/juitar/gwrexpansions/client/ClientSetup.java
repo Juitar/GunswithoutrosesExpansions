@@ -51,8 +51,6 @@ public class ClientSetup {
         if(ModList.get().isLoaded(CompatModids.BOMD)) {
             event.registerEntityRenderer(GWREEntities.OBSIDIAN_CORE.get(), ObsidianCoreRenderer::new);
             event.registerEntityRenderer(GWREEntities.COIN.get(), CoinEntityRenderer::new);
-            // 注册花苞弹和孢子子弹渲染器 - 使用默认的子弹渲染器
-            event.registerEntityRenderer(GWREEntities.BUD.get(), context -> new net.minecraft.client.renderer.entity.ThrownItemRenderer<>(context, 1.0F, true));
             event.registerEntityRenderer(GWREEntities.SPORE.get(), context -> new net.minecraft.client.renderer.entity.ThrownItemRenderer<>(context, 0.5F, true));
 
         }

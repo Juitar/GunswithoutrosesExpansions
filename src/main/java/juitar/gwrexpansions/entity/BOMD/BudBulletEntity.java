@@ -34,8 +34,6 @@ import java.util.function.Supplier;
  * 花苞弹实体 - 击中实体后向四处分散孢子子弹
  */
 public class BudBulletEntity extends BulletEntity {
-    private static final int INDICATOR_DELAY = 60; // 15tick延迟
-
     public BudBulletEntity(EntityType<? extends BulletEntity> type, Level level) {
         super(type, level);
     }
@@ -103,9 +101,9 @@ public class BudBulletEntity extends BulletEntity {
      * 生成孢子子弹向四处分散
      */
     private void spawnSpores(double x, double y, double z, Entity shooter) {
-        // 生成3-5个孢子子弹
-        int sporeCount = this.level().random.nextInt(3) + 3; // 3 to 5
-
+        // 生成8个孢子子弹，围成一圈
+        int sporeCount = 8; // 固定为8个
+        
         for (int i = 0; i < sporeCount; i++) {
             SporeEntity spore = new SporeEntity(GWREEntities.SPORE.get(), this.level(), (LivingEntity) shooter);
 
@@ -113,13 +111,13 @@ public class BudBulletEntity extends BulletEntity {
             spore.setDamage(2); // 孢子伤害较低
             spore.setPos(x, y, z);
 
-            // 生成随机方向（360度水平散射，稍微向上）
-            float yRot = this.level().random.nextFloat() * 360.0F;
-            float xRot = -10.0F - this.level().random.nextFloat() * 5.0F; // -10到-15度向上
-
+            // 计算均匀分布的角度（每个孢子间隔45度，形成一个完整的圆）
+            float yRot = i * 45.0F; // 360度/8 = 45度
+            float xRot = -10.0F; // 保持水平发射
+            
             // 设置较慢的初始速度
-            float speed = 0.4F; // 0.5-0.8的速度
-            spore.shootFromRotation(spore, xRot, yRot, 0.0F, speed, 2.0F);
+            float speed = 0.2F;
+            spore.shootFromRotation(spore, xRot, yRot, 0.0F, speed, 0.0F); // 移除散射，使发射更精确
 
             this.level().addFreshEntity(spore);
         }

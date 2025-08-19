@@ -21,7 +21,7 @@ public class GWRexpansions {
     public static final Logger LOG = LogManager.getLogger();
 
     public GWRexpansions() {
-        IEventBus eventBus = FMLJavaModLoadingContext .get().getModEventBus();
+        IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         GWREConfig.register();
 
         // 只在客户端注册客户端配置

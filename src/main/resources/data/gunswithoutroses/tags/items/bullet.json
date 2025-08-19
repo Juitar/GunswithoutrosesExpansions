@@ -11,6 +11,8 @@
         { "id": "gwrexpansions:ignitium_bullet", "required": false },
         { "id": "gwrexpansions:dragonsteel_ice_bullet", "required": false },
         { "id": "gwrexpansions:dragonsteel_fire_bullet", "required": false },
-        { "id": "gwrexpansions:dragonsteel_lightning_bullet", "required": false }
+        { "id": "gwrexpansions:dragonsteel_lightning_bullet", "required": false },
+        { "id": "gwrexpansions:bone_scrap", "required": false },
+        { "id": "gwrexpansions:bud_bullet", "required": false }
       ]
 }

@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "bosses_of_mass_destruction:obsidian_launcher"
+      "item": "gwrexpansions:obsidian_launcher"
     },
     "title": {
       "translate": "advancement.gwrexpansions.obsidian_wand.title"
@@ -21,7 +21,7 @@
       "conditions": {
         "items": [
           {
-            "items": ["bosses_of_mass_destruction:obsidian_launcher"]
+            "items": ["gwrexpansions:obsidian_launcher"]
           }
         ]
       }

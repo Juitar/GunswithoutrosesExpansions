@@ -83,6 +83,9 @@
   "item.gwrexpansions.obsidian_launcher.tooltip.range.values": "最小 %s - 最大 %s 格",
   "item.gwrexpansions.obsidian_launcher.tooltip.charge_info": "充能时间越长，射程越远",
   "subtitles.gwrexpansions.obsidian_launcher.shoot": "黑曜石发射器开火",
+  "subtitles.gwrexpansions.obsidian_launcher.pull": "黑曜石发射器蓄力",
+  "subtitles.gwrexpansions.obsidian_core.hit": "黑曜石核心击中",
+  "subtitles.gwrexpansions.obsidian_core.miss": "黑曜石核心未命中",
   "item.gwrexpansions.hellforge_revolver": "狱锻之轮",
   "tooltip.gwrexpansions.hellforge_revolver.desc1": "标记目标'瞄准'效果，每 %d 次射击获得硬币",
   "tooltip.gwrexpansions.hellforge_revolver.desc2": "抛射硬币，射击硬币使子弹追踪",
@@ -141,5 +144,27 @@
   "advancement.gwrexpansions.cenobites_lament_round.title": "地狱修士之丸",
   "advancement.gwrexpansions.cenobites_lament_round.description": "第一次使用潮汐弹丸 创建传送门",
   "advancement.gwrexpansions.dragons_bane.title": "龙之克星",
-  "advancement.gwrexpansions.dragons_bane.description": "获得任意一把龙钢武器"
+  "advancement.gwrexpansions.dragons_bane.description": "获得任意一把龙钢武器",
+  
+  "advancement.gwrexpansions.obsidian_wand.title": "黑曜石魔杖",
+  "advancement.gwrexpansions.obsidian_wand.description": "获得黑曜石发射器",
+  "advancement.gwrexpansions.avada_kedavra.title": "阿瓦达肯大瓜！",
+  "advancement.gwrexpansions.avada_kedavra.description": "用黑曜石发射器释放三个不同的魔咒",
+  "advancement.gwrexpansions.obsidian_cake.title": "黑曜石皮饼",
+  "advancement.gwrexpansions.obsidian_cake.description": "利用回溯的黑曜石核心杀死一个敌人",
+  "advancement.gwrexpansions.bad_to_the_bone.title": "坏到骨子里了",
+  "advancement.gwrexpansions.bad_to_the_bone.description": "获得头骨粉碎者",
+  "advancement.gwrexpansions.mankind_is_dead.title": "人类已死",
+  "advancement.gwrexpansions.mankind_is_dead.description": "获得锻狱之轮",
+  "advancement.gwrexpansions.blood_is_fuel.title": "血为柴薪",
+  "advancement.gwrexpansions.blood_is_fuel.description": "一发子弹命中四个硬币",
+  "advancement.gwrexpansions.hell_is_full.title": "地狱已满",
+  "advancement.gwrexpansions.hell_is_full.description": "子弹通过硬币反弹后杀死一个满血敌人",
+  "advancement.gwrexpansions.brust_void.title": "爆发虚空",
+  "advancement.gwrexpansions.brust_void.description": "获得虚空之刺",
+  
+  "item.gwrexpansions.obsidian_launcher.tooltip.spells_cast": "已释放法术: %d/3",
+  "item.gwrexpansions.obsidian_launcher.tooltip.fire_spell": "• 火焰法术",
+  "item.gwrexpansions.obsidian_launcher.tooltip.frost_spell": "• 冰霜法术",
+  "item.gwrexpansions.obsidian_launcher.tooltip.holy_spell": "• 神圣法术"
 }

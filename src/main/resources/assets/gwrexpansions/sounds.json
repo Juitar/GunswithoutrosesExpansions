@@ -83,5 +83,12 @@
     "sounds": [
       "gwrexpansions:coin_hit"
     ]
+  },
+  "item.obsidian_launcher.pull": {
+    "category": "players",
+    "subtitle": "subtitles.gwrexpansions.obsidian_launcher.pull",
+    "sounds": [
+      "gwrexpansions:obsidian_pull"
+    ]
   }
 }

@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "bosses_of_mass_destruction:void_piercer"
+      "item": "gwrexpansions:voidspike"
     },
     "title": {
       "translate": "advancement.gwrexpansions.brust_void.title"
@@ -16,12 +16,12 @@
   },
   "parent": "gwrexpansions:root",
   "criteria": {
-    "has_void_piercer": {
+    "has_voidspike": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
-            "items": ["bosses_of_mass_destruction:void_piercer"]
+            "items": ["gwrexpansions:voidspike"]
           }
         ]
       }
@@ -29,7 +29,7 @@
   },
   "requirements": [
     [
-      "has_void_piercer"
+      "has_voidspike"
     ]
   ],
   "conditions": [{ "type": "forge:mod_loaded", "modid": "bosses_of_mass_destruction" }]

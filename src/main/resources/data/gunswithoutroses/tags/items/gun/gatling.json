@@ -5,6 +5,7 @@
         { "id": "gwrexpansions:dragonsteel_fire_gatling", "required": false },
         { "id": "gwrexpansions:dragonsteel_ice_gatling", "required": false },
         { "id": "gwrexpansions:dragonsteel_lightning_gatling", "required": false },
-        { "id": "gwrexpansions:ignitium_gatling", "required": false }
+        { "id": "gwrexpansions:ignitium_gatling", "required": false },
+        { "id": "gwrexpansions:skullcrusher_pulverizer", "required": false }
     ]
 }

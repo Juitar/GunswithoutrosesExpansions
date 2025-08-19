@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class Supershotgun extends ConfigurableGunItem {
@@ -82,6 +83,11 @@ public class Supershotgun extends ConfigurableGunItem {
             // 可以在这里添加额外的清理逻辑
         }
         super.releaseUsing(stack, world, entity, timeLeft);
+    }
+
+    @Override
+    public boolean canBeDepleted() {
+        return false;
     }
 
     @Override
