@@ -90,6 +90,7 @@
   "tooltip.gwrexpansions.hellforge_revolver.desc1": "Marks targets with 'Aimed' effect, earn coins every %d shots",
   "tooltip.gwrexpansions.hellforge_revolver.desc2": "Throw coins, shoot them to made the bullets able to tracking",
   "tooltip.gwrexpansions.hellforge_revolver.desc3": "Tracking bullets deal +1.5% max HP damage per Aimed level",
+  "tooltip.gwrexpansions.hellforge_revolver.desc4": "Bullets can ricochet between multiple coins, increasing damage with each bounce",
   "tooltip.gwrexpansions.hellforge_revolver.shots": "Shots: %d/%d",
   "tooltip.gwrexpansions.hellforge_revolver.coins": "Coins: %d/%d",
   "tooltip.gwrexpansions.hellforge_revolver.usage": "Shift + Right Click to throw coin (consumes 1 coin)",
@@ -109,9 +110,23 @@
   "tooltip.gwrexpansions.voidflower.line1": "Converts hunger ammo to bud bullets",
   "tooltip.gwrexpansions.voidflower.line2": "Bud bullets scatter spore bullets on hit",
   "tooltip.gwrexpansions.voidflower.line3": "Spore heals the shooter",
-  "tooltip.gwrexpansions.hellforge_revolver.line1":"MANKIND IS DEAD.",
-  "tooltip.gwrexpansions.hellforge_revolver.line2":"BLOOD IS FUEL.",
-  "tooltip.gwrexpansions.hellforge_revolver.line3":"HELL IS FULL.",
+  "tooltip.gwrexpansions.hellforge_revolver.line1": "MANKIND IS DEAD.",
+  "tooltip.gwrexpansions.hellforge_revolver.line2": "BLOOD IS FUEL.",
+  "tooltip.gwrexpansions.hellforge_revolver.line3": "HELL IS FULL.",
+  
+  "tooltip.gwrexpansions.obsidian_launcher.desc": "Fires Obsidian Cores that randomly cast one of three different spell effects",
+  "tooltip.gwrexpansions.obsidian_launcher.desc2": "Longer charge time increases range and damage",
+  "tooltip.gwrexpansions.obsidian_core.desc": "Ammunition for the Obsidian Launcher, can cast fire, frost, or holy spells",
+  
+  "tooltip.gwrexpansions.skull.desc": "Ammunition for the Skullcrusher, shatters into multiple bone fragments when crushed",
+  "tooltip.gwrexpansions.bone_scrap.desc": "Sharp bone fragments created from crushed skulls, capable of piercing damage",
+  
+  "tooltip.gwrexpansions.voidspike.desc": "Void Spike, a rapid-fire biological weapon that releases healing spores",
+  "tooltip.gwrexpansions.bud_bullet.desc": "Explodes on impact, releasing 8 slow-moving spores",
+  "tooltip.gwrexpansions.spore.desc": "Slow-moving spores that heal the shooter when they hit enemies",
+  
+  "tooltip.gwrexpansions.coin.desc": "Thrown by the Hellforge Revolver, shooting coins makes bullets track targets",
+  "tooltip.gwrexpansions.tracking_bullet.desc": "Tracking bullets that ricochet off coins, increasing damage with each bounce",
 
   "advancement.gwrexpansions.root.title": "Guns Without Roses: Expansions",
   "advancement.gwrexpansions.root.description": "Obtain a gun to start your expansion journey",

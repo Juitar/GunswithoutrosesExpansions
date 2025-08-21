@@ -90,6 +90,7 @@
   "tooltip.gwrexpansions.hellforge_revolver.desc1": "标记目标'瞄准'效果，每 %d 次射击获得硬币",
   "tooltip.gwrexpansions.hellforge_revolver.desc2": "抛射硬币，射击硬币使子弹追踪",
   "tooltip.gwrexpansions.hellforge_revolver.desc3": "追踪子弹每级瞄准效果额外造成1.5%最大生命值伤害",
+  "tooltip.gwrexpansions.hellforge_revolver.desc4": "子弹可在多个硬币间连续反弹，每次反弹增加伤害",
   "tooltip.gwrexpansions.hellforge_revolver.shots": "射击次数: %d/%d",
   "tooltip.gwrexpansions.hellforge_revolver.coins": "硬币: %d/%d",
   "tooltip.gwrexpansions.hellforge_revolver.usage": "Shift + 右键 抛射硬币（消耗1枚硬币）",
@@ -109,13 +110,27 @@
   "tooltip.gwrexpansions.voidflower.line1": "将饥饿弹药转化为花苞弹",
   "tooltip.gwrexpansions.voidflower.line2": "花苞弹击中后分散孢子子弹",
   "tooltip.gwrexpansions.voidflower.line3": "孢子可治疗射手",
-  "tooltip.gwrexpansions.hellforge_revolver.line1": "MANKIND IS DEAD.",
-  "tooltip.gwrexpansions.hellforge_revolver.line2": "BLOOD IS FUEL.",
-  "tooltip.gwrexpansions.hellforge_revolver.line3": "HELL IS FULL.",
-
+  "tooltip.gwrexpansions.hellforge_revolver.line1": "人类已死。",
+  "tooltip.gwrexpansions.hellforge_revolver.line2": "血为柴薪。",
+  "tooltip.gwrexpansions.hellforge_revolver.line3": "地狱已满。",
+  
+  "tooltip.gwrexpansions.obsidian_launcher.desc": "发射黑曜石核心，随机释放三种不同的法术效果",
+  "tooltip.gwrexpansions.obsidian_launcher.desc2": "充能越久，射程和伤害越高",
+  "tooltip.gwrexpansions.obsidian_core.desc": "黑曜石发射器的弹药，可释放火焰、冰霜或神圣法术",
+  
+  "tooltip.gwrexpansions.skull.desc": "头骨粉碎者的弹药，被粉碎后产生多个骨片弹射物",
+  "tooltip.gwrexpansions.bone_scrap.desc": "由头骨粉碎产生的锋利骨片，能造成穿透伤害",
+  
+  "tooltip.gwrexpansions.voidspike.desc": "虚空之刺，连发式生物武器，能释放治愈性孢子",
+  "tooltip.gwrexpansions.bud_bullet.desc": "击中目标后爆炸，释放8个缓慢移动的孢子",
+  "tooltip.gwrexpansions.spore.desc": "缓慢移动的孢子，击中敌人时会治疗射手",
+  
+  "tooltip.gwrexpansions.coin.desc": "由狱锻之轮抛射，射击硬币可使子弹追踪目标",
+  "tooltip.gwrexpansions.tracking_bullet.desc": "通过硬币反弹后的追踪子弹，伤害随反弹次数增加",
 
   "advancement.gwrexpansions.root.title": "枪炮扩展",
   "advancement.gwrexpansions.root.description": "获得一把枪，开始你的枪炮扩展之旅",
+  "advancement.gwrexpansions.test_achievement.title": "测试成就",
   "advancement.gwrexpansions.test_achievement.description": "获得史莱姆弹丸来测试成就系统",
   "advancement.gwrexpansions.bounce_master.title": "弹跳大师",
   "advancement.gwrexpansions.bounce_master.description": "用一颗史莱姆弹丸弹射杀死四个目标",
@@ -129,7 +144,7 @@
   "advancement.gwrexpansions.netherite_arsenal_happy_meal.description": "获取三把下界合金枪械",
   "advancement.gwrexpansions.dont_starve.title": "饥荒",
   "advancement.gwrexpansions.dont_starve.description": "暴食之袋消耗光饱食度",
-  "advancement.gwrexpansions.rip_and_tear.title": "RIP AND TEAR",
+  "advancement.gwrexpansions.rip_and_tear.title": "撕裂与撕碎",
   "advancement.gwrexpansions.rip_and_tear.description": "完成所有本mod成就",
   "advancement.gwrexpansions.bfg_600c.title": "BFG 600℃",
   "advancement.gwrexpansions.bfg_600c.description": "获得腾炎加特林",
