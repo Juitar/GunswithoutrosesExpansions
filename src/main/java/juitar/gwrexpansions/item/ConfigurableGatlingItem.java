@@ -65,19 +65,24 @@ public class ConfigurableGatlingItem extends GatlingItem {
 
     @Override
     public int getFireDelay(ItemStack stack, @Nullable LivingEntity shooter) {
+        return Math.max(1, (int)Math.ceil(getFireDelayFractional(stack, shooter)));
+    }
+
+    @Override
+    public double getFireDelayFractional(ItemStack stack, @Nullable LivingEntity shooter) {
         // 从配置获取基础值
-        int baseDelay = config.get().fireDelay.get();
+        double baseDelay = config.get().fireDelay.get().doubleValue();
 
         // 保留原版附魔计算
         int sleight = stack.getEnchantmentLevel(GWREnchantments.sleightOfHand.get());
-        int delay = sleight > 0 ? GWREnchantments.sleightModify(sleight, baseDelay) : baseDelay;
+        double delay = sleight > 0 ? GWREnchantments.sleightModifyFractional(sleight, baseDelay) : baseDelay;
 
         // 保留原版属性计算
         if (shooter != null && shooter.getAttribute(GWRAttributes.fireDelay.get()) != null) {
-            delay = (int)(delay * shooter.getAttributeValue(GWRAttributes.fireDelay.get()));
+            delay = delay * shooter.getAttributeValue(GWRAttributes.fireDelay.get());
         }
 
-        return Math.max(1, delay);
+        return Math.max(1.0, delay);
     }
 
     @Override

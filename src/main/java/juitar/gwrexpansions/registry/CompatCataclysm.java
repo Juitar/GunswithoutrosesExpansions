@@ -34,7 +34,7 @@ public class CompatCataclysm {
     public static void registerItems() {
 
         netherite_monster_shotgun = GWREItems.initItem( () -> new LavapowerGunItem(GWREItems.defP().durability(10000).fireResistant().rarity(Rarity.EPIC)
-                ,0,0.8,25,2,20,
+                ,0,0.8,25,4.0,20,
                 () -> GWREConfig.SHOTGUN.NetheriteMonster).projectiles(5).fireSound(GWRSounds.shotgun).repair(()-> Ingredient.of(MONSTROUS_HORN.get())),
                 "netherite_monster_shotgun");
 
@@ -48,7 +48,7 @@ public class CompatCataclysm {
                 () -> GWREConfig.GATLING.Ignitium).repair(()-> Ingredient.of(IGNITIUM_INGOT.get())),"ignitium_gatling");
 
         tidal_pistol = GWREItems.initItem( () -> new TidalGunItem(GWREItems.defP().durability(10000).fireResistant().rarity(Rarity.EPIC),
-                0,1.5,0,0,0,
+                0,1.5,0,2.0,0,
                 () -> GWREConfig.PISTOL.tidal),"tidal_pistol");
 
         ignitium_bullet = GWREItems.initItem( () -> new IgnitiumBulletItem(GWREItems.defP().fireResistant(),12),"ignitium_bullet");

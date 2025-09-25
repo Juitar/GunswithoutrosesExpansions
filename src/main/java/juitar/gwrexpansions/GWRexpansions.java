@@ -33,8 +33,6 @@ public class GWRexpansions {
         GWREEffects.REG.register(eventBus);
         GWRELootModifiers.register(eventBus);
         eventBus.addListener(GWREItems::makeCreativeTab);
-
-        // 注册自定义进度触发器
         juitar.gwrexpansions.advancement.GWRECriteria.register();
     }
 

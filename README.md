@@ -73,6 +73,4 @@ This mod expands the Guns Without Roses mod with powerful new weapons, unique am
 * Bosses of Mass Destruction ≥1.1.1 (Optional)
 
 ## Links
-
 * [Discord](https://discord.gg/vjpr74mEJV)
-* [GitHub](https://github.com/Juitar/GunswithoutrosesExpansions)
