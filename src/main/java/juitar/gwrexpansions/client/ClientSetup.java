@@ -13,6 +13,7 @@ import juitar.gwrexpansions.client.gui.CoinCounterOverlay;
 import juitar.gwrexpansions.config.ClientConfig;
 import juitar.gwrexpansions.registry.GWREEntities;
 import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -45,10 +46,23 @@ public class ClientSetup {
 
     @SubscribeEvent
     public static void registerEntityRenders(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerEntityRenderer(GWREEntities.SLIME_BULLET.get(), ThrownItemRenderer::new);
         // 注册肉钩渲染器
         event.registerEntityRenderer(GWREEntities.MEAT_HOOK.get(), MeatHookRenderer::new);
         // 注册其他实体渲染器
+        if(ModList.get().isLoaded(CompatModids.CATACLYSM)) {
+            event.registerEntityRenderer(GWREEntities.LAVAPOWER_BULLET.get(), ThrownItemRenderer::new);
+            event.registerEntityRenderer(GWREEntities.CURSIUM_BULLET.get(), ThrownItemRenderer::new);
+            event.registerEntityRenderer(GWREEntities.IGNITIUM_BULLET.get(), ThrownItemRenderer::new);
+            event.registerEntityRenderer(GWREEntities.TIDAL_BULLET.get(), ThrownItemRenderer::new);
+        }
+        if(ModList.get().isLoaded(CompatModids.ICEANDFIRE)) {
+            event.registerEntityRenderer(GWREEntities.DRAGONSTEEL_ICE_BULLET.get(), ThrownItemRenderer::new);
+            event.registerEntityRenderer(GWREEntities.DRAGONSTEEL_FIRE_BULLET.get(), ThrownItemRenderer::new);
+            event.registerEntityRenderer(GWREEntities.DRAGONSTEEL_LIGHTNING_BULLET.get(), ThrownItemRenderer::new);
+        }
         if(ModList.get().isLoaded(CompatModids.BOMD)) {
+            event.registerEntityRenderer(GWREEntities.BUD.get(), ThrownItemRenderer::new);
             event.registerEntityRenderer(GWREEntities.OBSIDIAN_CORE.get(), ObsidianCoreRenderer::new);
             event.registerEntityRenderer(GWREEntities.COIN.get(), CoinEntityRenderer::new);
             event.registerEntityRenderer(GWREEntities.SPORE.get(), context -> new net.minecraft.client.renderer.entity.ThrownItemRenderer<>(context, 0.5F, true));

@@ -2,8 +2,11 @@ package juitar.gwrexpansions.entity.cataclysm;
 
 
 import com.github.L_Ender.cataclysm.init.ModEffect;
+import juitar.gwrexpansions.registry.GWREEntities;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.registry.GWRDamage;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -20,7 +23,7 @@ public class IgnitiumBulletEntity extends BulletEntity {
     }
 
     public IgnitiumBulletEntity(Level level, LivingEntity shooter) {
-        super(level, shooter);
+        super(GWREEntities.IGNITIUM_BULLET.get(), shooter, level);
     }
 
 
@@ -62,6 +65,11 @@ public class IgnitiumBulletEntity extends BulletEntity {
 
     public void setHealing(boolean healing) {
         this.Healing = healing;
+    }
+
+    @Override
+    protected ParticleOptions getTrailParticle() {
+        return ParticleTypes.FLAME;
     }
 
     @Override

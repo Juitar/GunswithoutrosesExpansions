@@ -172,6 +172,8 @@ dependencies {
     implementation fg.deobf("curse.maven:cloth-config-348521:5729105")
         //CerbonsAPI
     implementation fg.deobf("curse.maven:cerbons-api-955605:5050080")
+    // alex's caves
+    implementation fg.deobf("curse.maven:alexs-caves-924854:5848216")
 //    Irons Spells and Spellbooks
 //    implementation fg.deobf("curse.maven:irons-spells-n-spellbooks-855414:6488484")
 }

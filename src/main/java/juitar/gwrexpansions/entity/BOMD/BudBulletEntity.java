@@ -39,7 +39,7 @@ public class BudBulletEntity extends BulletEntity {
     }
 
     public BudBulletEntity(Level level, LivingEntity shooter) {
-        super(level, shooter);
+        super(GWREEntities.BUD.get(), shooter, level);
     }
 
     @Override

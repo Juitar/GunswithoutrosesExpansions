@@ -2,6 +2,7 @@ package juitar.gwrexpansions.entity.iceandfire;
 
 import com.github.alexthe666.iceandfire.entity.*;
 import com.github.alexthe666.iceandfire.entity.props.EntityDataProvider;
+import juitar.gwrexpansions.registry.GWREEntities;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.registry.GWRDamage;
 import net.minecraft.world.entity.EntityType;
@@ -19,7 +20,7 @@ public class IceDragonSteelBulletEntity extends BulletEntity {
     }
 
     public IceDragonSteelBulletEntity(Level level, LivingEntity shooter) {
-        super(level, shooter);
+        super(GWREEntities.DRAGONSTEEL_ICE_BULLET.get(), shooter, level);
     }
 
     @Override

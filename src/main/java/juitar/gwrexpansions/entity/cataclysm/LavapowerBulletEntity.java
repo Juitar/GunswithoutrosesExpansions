@@ -1,8 +1,11 @@
 package juitar.gwrexpansions.entity.cataclysm;
 
 import juitar.gwrexpansions.config.GWREConfig;
+import juitar.gwrexpansions.registry.GWREEntities;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.registry.GWRDamage;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
@@ -18,7 +21,6 @@ import net.minecraft.world.entity.Entity;
 import javax.annotation.Nullable;
 
 import com.github.L_Ender.cataclysm.entity.projectile.Flame_Jet_Entity;
-
 public class LavapowerBulletEntity extends BulletEntity {
     private int jetCount = GWREConfig.BulletConfig.flamejetCount.get();
 
@@ -27,7 +29,7 @@ public class LavapowerBulletEntity extends BulletEntity {
     }
 
     public LavapowerBulletEntity(Level level, LivingEntity shooter) {
-        super(level, shooter);
+        super(GWREEntities.LAVAPOWER_BULLET.get(), shooter, level);
     }
 
     @Override
@@ -53,19 +55,22 @@ public class LavapowerBulletEntity extends BulletEntity {
                 }
                 // 生成火焰弹幕
                 if (random.nextBoolean()) {
-                    createXStrikeJet(target.getX(), target.getY(), target.getZ(), shooter, jetCount, 2);
+                    createXStrikeJet(level(), target.getX(), target.getY(), target.getZ(), shooter, jetCount, 2);
                 } else {
-                    createPlusStrikeJet(target.getX(), target.getY(), target.getZ(), shooter, jetCount, 2);
+                    createPlusStrikeJet(level(), target.getX(), target.getY(), target.getZ(), shooter, jetCount, 2);
                 }
             }
     }
     @Override
     protected void onHitBlock(BlockHitResult hit) {
+            if (level().isClientSide) {
+                return;
+            }
             // 生成火焰弹幕
             if (random.nextBoolean()) {
-                createXStrikeJet(hit.getLocation().x, hit.getLocation().y, hit.getLocation().z, getOwner(), jetCount, 2);
+                createXStrikeJet(level(), hit.getLocation().x, hit.getLocation().y, hit.getLocation().z, getOwner(), jetCount, 2);
             } else {
-                createPlusStrikeJet(hit.getLocation().x, hit.getLocation().y, hit.getLocation().z, getOwner(), jetCount, 2);
+                createPlusStrikeJet(level(), hit.getLocation().x, hit.getLocation().y, hit.getLocation().z, getOwner(), jetCount, 2);
             }
     }
     public void setJetCount(int count) {
@@ -74,6 +79,12 @@ public class LavapowerBulletEntity extends BulletEntity {
     public int getJetCount() {
         return this.jetCount;
     }
+
+    @Override
+    protected ParticleOptions getTrailParticle() {
+        return ParticleTypes.LAVA;
+    }
+
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
@@ -84,28 +95,28 @@ public class LavapowerBulletEntity extends BulletEntity {
         super.readAdditionalSaveData(compound);
         jetCount = compound.getInt("JetCount");
     }
-    private void createPlusStrikeJet(double x, double y, double z, @Nullable Entity shooter, int rune, double time) {
+    private void createPlusStrikeJet(Level level, double x, double y, double z, @Nullable Entity shooter, int rune, double time) {
         for (int i = 0; i < 4; i++) {
             float yawRadians = (float) (Math.toRadians(90));
             float throwAngle = yawRadians + i * (float)Math.PI / 2;
             for (int k = 0; k < rune; ++k) {
                 double d2 = 0.8D * (double)(k + 1);
                 int d3 = (int)(time * (k + 1));
-                spawnJet(shooter.level(), x + Math.cos(throwAngle) * 1.25D * d2,
+                spawnJet(level, x + Math.cos(throwAngle) * 1.25D * d2,
                         z + Math.sin(throwAngle) * 1.25D * d2,
                         y - 2, y + 2, throwAngle, d3, shooter);
             }
         }
     }
 
-    private void createXStrikeJet(double x, double y, double z, @Nullable Entity shooter, int rune, double time) {
+    private void createXStrikeJet(Level level, double x, double y, double z, @Nullable Entity shooter, int rune, double time) {
         for (int i = 0; i < 4; i++) {
             float yawRadians = (float) (Math.toRadians(45));
             float throwAngle = yawRadians + i * (float)Math.PI / 2;
             for (int k = 0; k < rune; ++k) {
                 double d2 = 0.8D * (double)(k + 1);
                 int d3 = (int)(time * (k + 1));
-                spawnJet(shooter.level(), x + Math.cos(throwAngle) * 1.25D * d2,
+                spawnJet(level, x + Math.cos(throwAngle) * 1.25D * d2,
                         z + Math.sin(throwAngle) * 1.25D * d2,
                         y - 2, y + 2, throwAngle, d3, shooter);
             }

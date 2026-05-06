@@ -1,9 +1,12 @@
 package juitar.gwrexpansions.entity.cataclysm;
 
 import com.github.L_Ender.cataclysm.entity.projectile.Phantom_Halberd_Entity;
+import com.github.L_Ender.cataclysm.init.ModParticle;
 import juitar.gwrexpansions.config.GWREConfig;
+import juitar.gwrexpansions.registry.GWREEntities;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.registry.GWRDamage;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -29,7 +32,7 @@ public class CursiumBulletEntity extends BulletEntity {
         super(type, level);
     }
     public CursiumBulletEntity(Level level, LivingEntity shooter) {
-        super(level, shooter);
+        super(GWREEntities.CURSIUM_BULLET.get(), shooter, level);
     }
 
     @Override
@@ -94,6 +97,12 @@ public class CursiumBulletEntity extends BulletEntity {
     public void setSHOT_FROM_CURSIUM(boolean SHOT_FROM_CURSIUM) {
         this.SHOT_FROM_CURSIUM = SHOT_FROM_CURSIUM;
     }
+
+    @Override
+    protected ParticleOptions getTrailParticle() {
+        return ModParticle.PHANTOM_WING_FLAME.get();
+    }
+
     @Override
     public void tick() {
         super.tick();

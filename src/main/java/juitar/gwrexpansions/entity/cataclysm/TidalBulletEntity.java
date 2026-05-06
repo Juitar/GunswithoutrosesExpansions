@@ -4,11 +4,14 @@ import com.github.L_Ender.cataclysm.entity.AnimationMonster.BossMonsters.The_Lev
 import com.github.L_Ender.cataclysm.init.ModEffect;
 import juitar.gwrexpansions.advancement.FirstTidalPortalCreatedTrigger;
 import juitar.gwrexpansions.config.GWREConfig;
+import juitar.gwrexpansions.registry.GWREEntities;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.item.IBullet;
 import lykrast.gunswithoutroses.registry.GWRDamage;
 import lykrast.gunswithoutroses.registry.GWRItems;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -34,8 +37,14 @@ public class TidalBulletEntity extends BulletEntity {
         super(type, world);
     }
     public TidalBulletEntity(Level level, LivingEntity shooter) {
-        super(level, shooter);
+        super(GWREEntities.TIDAL_BULLET.get(), shooter, level);
     }
+
+    @Override
+    protected ParticleOptions getTrailParticle() {
+        return ParticleTypes.REVERSE_PORTAL;
+    }
+
     @Override
     protected void onHitEntity(EntityHitResult raytrace) {
         if (!this.level().isClientSide) {

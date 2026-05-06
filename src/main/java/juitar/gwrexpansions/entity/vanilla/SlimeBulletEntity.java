@@ -1,5 +1,6 @@
 package juitar.gwrexpansions.entity.vanilla;
 
+import juitar.gwrexpansions.registry.GWREEntities;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.registry.GWRDamage;
 import net.minecraft.core.particles.ParticleOptions;
@@ -30,7 +31,7 @@ public class SlimeBulletEntity extends BulletEntity {
     }
 
     public SlimeBulletEntity(Level level, LivingEntity shooter) {
-        super(level, shooter);
+        super(GWREEntities.SLIME_BULLET.get(), shooter, level);
     }
 
     @Override

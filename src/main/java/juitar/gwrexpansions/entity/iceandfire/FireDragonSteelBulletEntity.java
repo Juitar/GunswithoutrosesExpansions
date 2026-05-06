@@ -1,6 +1,7 @@
 package juitar.gwrexpansions.entity.iceandfire;
 
 import com.github.alexthe666.iceandfire.entity.*;
+import juitar.gwrexpansions.registry.GWREEntities;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 
 import lykrast.gunswithoutroses.registry.GWRDamage;
@@ -16,7 +17,7 @@ public class FireDragonSteelBulletEntity extends BulletEntity {
     }
 
     public FireDragonSteelBulletEntity(Level level, LivingEntity shooter) {
-        super(level, shooter);
+        super(GWREEntities.DRAGONSTEEL_FIRE_BULLET.get(), shooter, level);
     }
 
     @Override
