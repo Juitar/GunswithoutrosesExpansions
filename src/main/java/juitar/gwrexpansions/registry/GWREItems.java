@@ -39,6 +39,7 @@ public class GWREItems {
         if(ModList.get().isLoaded(CompatModids.ICEANDFIRE)) CompatIceandfire.registerItems();
 //      if(ModList.get().isLoaded(CompatModids.MEETYOURFIGHT)) CompatMYF.registerItems();
         if(ModList.get().isLoaded(CompatModids.BOMD)) CompatBOMD.registerItems();
+        if(ModList.get().isLoaded(CompatModids.ALEXSCAVES)) CompatAlexsCaves.registerItems();
     }
 
     public static Item.Properties defP(){

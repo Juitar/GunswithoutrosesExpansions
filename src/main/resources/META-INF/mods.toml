@@ -46,3 +46,9 @@ versionRange = "[1.1.1,)"
 mandatory= false
 ordering = "NONE"
 side = "BOTH"
+[[dependencies.${mod_id}]]
+modId = "alexscaves"
+versionRange = "[2.0.2,)"
+mandatory = false
+ordering = "NONE"
+side = "BOTH"
