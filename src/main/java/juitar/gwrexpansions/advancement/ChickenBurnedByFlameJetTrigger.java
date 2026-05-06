@@ -1,7 +1,7 @@
 package juitar.gwrexpansions.advancement;
 
 import com.google.gson.JsonObject;
-import com.github.L_Ender.cataclysm.entity.projectile.Flame_Jet_Entity;
+import juitar.gwrexpansions.CompatModids;
 import juitar.gwrexpansions.GWRexpansions;
 import net.minecraft.advancements.critereon.*;
 import net.minecraft.resources.ResourceLocation;
@@ -11,6 +11,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Chicken;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 
 /**
@@ -45,6 +46,11 @@ public class ChickenBurnedByFlameJetTrigger extends SimpleCriterionTrigger<Chick
 
     @SubscribeEvent
     public static void onLivingDeath(LivingDeathEvent event) {
+        // 如果Cataclysm模组未加载,直接返回
+        if (!ModList.get().isLoaded(CompatModids.CATACLYSM)) {
+            return;
+        }
+        
         LivingEntity deadEntity = event.getEntity();
         Entity killer = event.getSource().getDirectEntity();
         
@@ -53,19 +59,28 @@ public class ChickenBurnedByFlameJetTrigger extends SimpleCriterionTrigger<Chick
             return;
         }
         
-        // 检查杀手是否是火焰喷射实体
-        if (!(killer instanceof Flame_Jet_Entity)) {
+        // 检查杀手是否是火焰喷射实体(使用类名字符串比较,避免直接引用Cataclysm类)
+        if (killer == null) {
             return;
         }
         
-        // 检查火焰喷射实体的拥有者是否是玩家
-        Entity flameJetOwner = ((Flame_Jet_Entity) killer).getCaster();
-        if (!(flameJetOwner instanceof ServerPlayer player)) {
+        String killerClassName = killer.getClass().getName();
+        if (!killerClassName.equals("com.github.L_Ender.cataclysm.entity.projectile.Flame_Jet_Entity")) {
             return;
         }
         
-        // 触发成就
-        GWRECriteria.CHICKEN_BURNED_BY_FLAME_JET.trigger(player);
+        // 使用反射获取火焰喷射实体的拥有者
+        try {
+            // 调用 getCaster() 方法
+            Entity flameJetOwner = (Entity) killer.getClass().getMethod("getCaster").invoke(killer);
+            
+            if (flameJetOwner instanceof ServerPlayer player) {
+                // 触发成就
+                GWRECriteria.CHICKEN_BURNED_BY_FLAME_JET.trigger(player);
+            }
+        } catch (Exception e) {
+            GWRexpansions.LOG.error("Failed to get flame jet owner for chicken burn achievement", e);
+        }
     }
 
     public static class TriggerInstance extends AbstractCriterionTriggerInstance {

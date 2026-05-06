@@ -34,6 +34,13 @@ public class AllAchievementsCompletedTrigger extends SimpleCriterionTrigger<AllA
     @SubscribeEvent
     public static void onAdvancementGranted(AdvancementEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
+            ResourceLocation advancementId = event.getAdvancement().getId();
+            
+            // 避免在RIP AND TEAR成就本身触发时造成递归检查
+            if (advancementId.toString().equals("gwrexpansions:rip_and_tear")) {
+                return;
+            }
+            
             // 检查是否完成所有成就
             if (AdvancementManager.hasCompletedAllAchievements(player)) {
                 GWRECriteria.ALL_ACHIEVEMENTS_COMPLETED.trigger(player);

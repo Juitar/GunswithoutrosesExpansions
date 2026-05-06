@@ -6,12 +6,10 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.players.PlayerList;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -94,8 +92,7 @@ public class AdvancementManager {
             // 检查是否完成所有成就
             if (hasCompletedAllAchievements(player)) {
                 // 触发RIP AND TEAR成就
-                // 这里需要实现一个特殊的触发器来检查所有成就完成情况
-                GWRexpansions.LOG.info("Player {} has completed all achievements!", player.getName().getString());
+                GWRECriteria.ALL_ACHIEVEMENTS_COMPLETED.trigger(player);
             }
         }
     }
