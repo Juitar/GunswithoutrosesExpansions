@@ -404,6 +404,10 @@ public class GWREConfig {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, SPEC);
     }
 
+    public static void save() {
+        SPEC.save();
+    }
+
     public static void updateCachedValue(String path, double value) {
         configCache.put(path, value);
     }

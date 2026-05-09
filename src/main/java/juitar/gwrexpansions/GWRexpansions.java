@@ -24,8 +24,11 @@ public class GWRexpansions {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         GWREConfig.register();
 
-        // 只在客户端注册客户端配置
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> ClientConfig::register);
+        // 只在客户端注册客户端配置和配置界面
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+            ClientConfig.register();
+            juitar.gwrexpansions.client.gui.GWREConfigScreen.register();
+        });
 
         GWREItems.REG.register(eventBus);
         GWRESounds.REG.register(eventBus);

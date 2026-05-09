@@ -114,6 +114,10 @@ public class ClientConfig {
     public static void register() {
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, CLIENT_SPEC, "gwrexpansions-client.toml");
     }
+
+    public static void save() {
+        CLIENT_SPEC.save();
+    }
     
     /**
      * 获取硬币计数器位置
