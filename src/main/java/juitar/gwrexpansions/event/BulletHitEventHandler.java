@@ -8,6 +8,7 @@ import juitar.gwrexpansions.item.meetyourfight.DuskfallEclipseBlasterItem;
 import juitar.gwrexpansions.registry.GWREEffects;
 import juitar.gwrexpansions.util.CoinTargetUtils;
 import lykrast.gunswithoutroses.entity.BulletEntity;
+import lykrast.meetyourfight.entity.ProjectileLineEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -34,6 +35,13 @@ public class BulletHitEventHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onProjectileImpact(ProjectileImpactEvent event) {
+        if (event.getProjectile() instanceof ProjectileLineEntity projectile
+                && event.getRayTraceResult() instanceof EntityHitResult entityHit
+                && isFriendlyDuskfallSpiritProjectileHit(projectile, entityHit.getEntity())) {
+            event.setImpactResult(ProjectileImpactEvent.ImpactResult.SKIP_ENTITY);
+            return;
+        }
+
         if (!(event.getProjectile() instanceof BulletEntity bullet)
                 || !(event.getRayTraceResult() instanceof EntityHitResult entityHit)) {
             return;
@@ -65,6 +73,14 @@ public class BulletHitEventHandler {
 
             // 检查事件是否已被取消
             if (event.isCanceled()) {
+                return;
+            }
+
+            if (cancelFriendlyDuskfallSpiritDamage(event)) {
+                return;
+            }
+
+            if (redirectDuskfallSpiritDamageToOwner(event)) {
                 return;
             }
 
@@ -131,6 +147,56 @@ public class BulletHitEventHandler {
                 event.setAmount((float) (event.getAmount() * (1.0D - reduction)));
             }
         }
+    }
+
+    private static boolean cancelFriendlyDuskfallSpiritDamage(LivingHurtEvent event) {
+        if (!(event.getSource().getDirectEntity() instanceof ProjectileLineEntity projectile)
+                || !(projectile.getOwner() instanceof DuskRoseSpiritEntity spirit)) {
+            return false;
+        }
+
+        if (isFriendlyDuskfallSpiritProjectileHit(projectile, event.getEntity())) {
+            event.setCanceled(true);
+            return true;
+        }
+
+        return false;
+    }
+
+    private static boolean redirectDuskfallSpiritDamageToOwner(LivingHurtEvent event) {
+        if (!(event.getSource().getDirectEntity() instanceof ProjectileLineEntity projectile)
+                || !(projectile.getOwner() instanceof DuskRoseSpiritEntity spirit)) {
+            return false;
+        }
+
+        Player owner = spirit.getOwnerPlayer();
+        if (owner == null || !owner.isAlive() || event.getSource().getEntity() == owner) {
+            return false;
+        }
+
+        LivingEntity target = event.getEntity();
+        int originalInvulnerableTime = target.invulnerableTime;
+        event.setCanceled(true);
+        target.invulnerableTime = 0;
+        target.hurt(target.damageSources().mobProjectile(projectile, owner), event.getAmount());
+        target.invulnerableTime = Math.max(target.invulnerableTime, originalInvulnerableTime);
+        return true;
+    }
+
+    private static boolean isFriendlyDuskfallSpiritProjectileHit(ProjectileLineEntity projectile, Entity target) {
+        if (!(projectile.getOwner() instanceof DuskRoseSpiritEntity spirit)) {
+            return false;
+        }
+
+        if (target instanceof Player player && spirit.isOwnedBy(player)) {
+            return true;
+        }
+
+        if (target instanceof DuskRoseSpiritEntity otherSpirit && spirit.hasSameOwner(otherSpirit)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

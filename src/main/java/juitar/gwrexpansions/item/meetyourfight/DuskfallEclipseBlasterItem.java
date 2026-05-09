@@ -1,11 +1,11 @@
 package juitar.gwrexpansions.item.meetyourfight;
 
 import juitar.gwrexpansions.config.GWREConfig;
+import juitar.gwrexpansions.entity.meetyourfight.DuskfallPiercingBulletEntity;
 import juitar.gwrexpansions.entity.meetyourfight.DuskRoseSpiritEntity;
 import juitar.gwrexpansions.item.ConfigurableBurstGunItem;
 import juitar.gwrexpansions.registry.GWREEntities;
 import lykrast.gunswithoutroses.entity.BulletEntity;
-import lykrast.gunswithoutroses.entity.PiercingBulletEntity;
 import lykrast.gunswithoutroses.item.IBullet;
 import lykrast.gunswithoutroses.registry.GWRAttributes;
 import net.minecraft.ChatFormatting;
@@ -55,13 +55,17 @@ public class DuskfallEclipseBlasterItem extends ConfigurableBurstGunItem {
 
     private BulletEntity createPiercingShot(Level level, LivingEntity shooter, ItemStack ammo, IBullet bulletItem) {
         BulletEntity original = bulletItem.createProjectile(level, ammo, shooter);
-        PiercingBulletEntity piercing = new PiercingBulletEntity(level, shooter);
+        DuskfallPiercingBulletEntity piercing = new DuskfallPiercingBulletEntity(level, shooter);
         piercing.setItem(ammo.copyWithCount(1));
         piercing.setDamage(original.getDamage());
         piercing.setWaterInertia(original.getWaterInertia());
+        piercing.setKnockbackStrength(original.getKnockbackStrength());
+        piercing.setHeadshotMultiplier(original.getHeadshotMultiplier());
+        piercing.getPersistentData().merge(original.getPersistentData());
         piercing.setOwner(shooter);
         piercing.setPierce(GWREConfig.BURSTGUN.duskfallEclipse.pierceCount.get());
         piercing.setPierceMultiplier(GWREConfig.BURSTGUN.duskfallEclipse.pierceDamageMultiplier.get());
+        piercing.setEffectDelegate(original);
         return piercing;
     }
 

@@ -154,6 +154,8 @@ public class GWREConfig {
         public final ForgeConfigSpec.IntValue spiritAttackCooldownTicks;
         public final ForgeConfigSpec.IntValue spiritWarnTicks;
         public final ForgeConfigSpec.DoubleValue spiritAttackDamage;
+        public final ForgeConfigSpec.DoubleValue spiritMaxHealth;
+        public final ForgeConfigSpec.DoubleValue spiritArmor;
         public final ForgeConfigSpec.IntValue lastTargetMemoryTicks;
 
         public DuskfallEclipseConfig(ForgeConfigSpec.Builder builder) {
@@ -182,6 +184,10 @@ public class GWREConfig {
                     .defineInRange("spiritWarnTicks", 14, 0, 200);
             spiritAttackDamage = builder.comment("Damage dealt by each spirit assist attack.")
                     .defineInRange("spiritAttackDamage", 5.0, 0.0, 1000.0);
+            spiritMaxHealth = builder.comment("Maximum health for player-owned Dusk Rose Spirits.")
+                    .defineInRange("spiritMaxHealth", 40.0, 1.0, 1000.0);
+            spiritArmor = builder.comment("Armor for player-owned Dusk Rose Spirits.")
+                    .defineInRange("spiritArmor", 5.0, 0.0, 1000.0);
             lastTargetMemoryTicks = builder.comment("Ticks spirits remember the last target hit by this weapon.")
                     .defineInRange("lastTargetMemoryTicks", 200, 0, 6000);
             builder.pop();
