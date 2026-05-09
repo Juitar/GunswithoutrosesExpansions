@@ -14,7 +14,9 @@
   "item.gwrexpansions.extinction_burstgun": "灭绝爆裂枪",
   "item.gwrexpansions.blood_pact_revolver": "血契左轮",
   "item.gwrexpansions.abyssal_harpoon_gun": "深渊鱼叉炮",
-  "item.gwrexpansions.raycat_fusion_irradiator": "Raycat聚变照射器",
+  "item.gwrexpansions.raycat_fusion_irradiator": "Raycat聚变射线",
+  "item.gwrexpansions.mirecaller_shotgun": "巨颌霰炮",
+  "item.gwrexpansions.duskfall_eclipse_blaster": "暮影蚀光",
   "item.gwrexpansions.destiny_seven": "命定·柒",
   "item.gwrexpansions.skullcrusher_pulverizer": "头骨粉碎者",
   "item.gwrexpansions.skull": "头骨",
@@ -78,6 +80,11 @@
   "tooltip.gwrexpansions.blood_pact_revolver.desc": "Forlorn Hollows: 消耗生命装填血契弹；高风险高回报",
   "tooltip.gwrexpansions.abyssal_harpoon_gun.desc": "Abyssal Chasm: 命中后持续拖拽目标并造成伤害",
   "tooltip.gwrexpansions.raycat_fusion_irradiator.desc": "Toxic Caves: 持续锁定同一目标时伤害逐渐提高",
+  "tooltip.gwrexpansions.mirecaller_shotgun.desc": "开火时抛出沼雷；每三次布雷后，下一次开火会以自身为中心X状排雷，并强化本次射击",
+  "tooltip.gwrexpansions.mirecaller_shotgun.ready": "X状排雷就绪",
+  "tooltip.gwrexpansions.mirecaller_shotgun.charges": "沼雷: %d/%d",
+  "tooltip.gwrexpansions.duskfall_eclipse_blaster.desc": "低白值六连发；发射弹丸可穿透多个实体",
+  "tooltip.gwrexpansions.duskfall_eclipse_blaster.spirits": "最多维持 %d 个暮玫灵体；每个提供 +%d%% 伤害与 %d%% 减伤",
   "tooltip.gwrexpansions.hungerbulletitem": "消耗饥饿等级作为子弹",
   "tooltip.gwrexpansions.skullcrusher.desc": "粉碎头骨作为子弹",
   "tooltip.gwrexpansions.skullcrusher.desc2": "随着开火时间增加，增加射速以及伤害",
@@ -90,6 +97,7 @@
   "subtitles.gwrexpansions.meat_hook.pull": "肉钩拉动",
   "subtitles.gwrexpansions.meat_hook.miss": "肉钩未命中",
   "entity.gwrexpansions.meat_hook": "肉钩",
+  "entity.gwrexpansions.dusk_rose_spirit": "暮玫灵体",
   "tooltip.gwrexpansions.supershotgun.ready": "肉钩就绪",
   "tooltip.gwrexpansions.supershotgun.notready": "肉钩正在冷却",
   "tooltip.gwrexpansions.supershotgun.hook": "潜行+右键点击发射肉钩，将你拉向目标",
@@ -133,21 +141,16 @@
   "tooltip.gwrexpansions.hellforge_revolver.line1": "人类已死。",
   "tooltip.gwrexpansions.hellforge_revolver.line2": "血为柴薪。",
   "tooltip.gwrexpansions.hellforge_revolver.line3": "地狱已满。",
-  
   "tooltip.gwrexpansions.obsidian_launcher.desc": "发射黑曜石核心，随机释放三种不同的法术效果",
   "tooltip.gwrexpansions.obsidian_launcher.desc2": "充能越久，射程和伤害越高",
   "tooltip.gwrexpansions.obsidian_core.desc": "黑曜石发射器的弹药，可释放火焰、冰霜或神圣法术",
-  
   "tooltip.gwrexpansions.skull.desc": "头骨粉碎者的弹药，被粉碎后产生多个骨片弹射物",
   "tooltip.gwrexpansions.bone_scrap.desc": "由头骨粉碎产生的锋利骨片，能造成穿透伤害",
-  
   "tooltip.gwrexpansions.voidspike.desc": "虚空之刺，连发式生物武器，能释放治愈性孢子",
   "tooltip.gwrexpansions.bud_bullet.desc": "击中目标后爆炸，释放8个缓慢移动的孢子",
   "tooltip.gwrexpansions.spore.desc": "缓慢移动的孢子，击中敌人时会治疗射手",
-  
   "tooltip.gwrexpansions.coin.desc": "由狱锻之轮抛射，射击硬币可使子弹追踪目标",
   "tooltip.gwrexpansions.tracking_bullet.desc": "通过硬币反弹后的追踪子弹，伤害随反弹次数增加",
-
   "advancement.gwrexpansions.root.title": "枪炮扩展",
   "advancement.gwrexpansions.root.description": "获得一把枪，开始你的枪炮扩展之旅",
   "advancement.gwrexpansions.test_achievement.title": "测试成就",
@@ -180,7 +183,6 @@
   "advancement.gwrexpansions.cenobites_lament_round.description": "第一次使用潮汐弹丸 创建传送门",
   "advancement.gwrexpansions.dragons_bane.title": "龙之克星",
   "advancement.gwrexpansions.dragons_bane.description": "获得任意一把龙钢武器",
-  
   "advancement.gwrexpansions.obsidian_wand.title": "黑曜石魔杖",
   "advancement.gwrexpansions.obsidian_wand.description": "获得黑曜石发射器",
   "advancement.gwrexpansions.avada_kedavra.title": "阿瓦达肯大瓜！",
@@ -197,7 +199,6 @@
   "advancement.gwrexpansions.hell_is_full.description": "子弹通过硬币反弹后杀死一个满血敌人",
   "advancement.gwrexpansions.brust_void.title": "爆发虚空",
   "advancement.gwrexpansions.brust_void.description": "获得虚空之刺",
-  
   "item.gwrexpansions.obsidian_launcher.tooltip.spells_cast": "已释放法术: %d/3",
   "item.gwrexpansions.obsidian_launcher.tooltip.fire_spell": "• 火焰法术",
   "item.gwrexpansions.obsidian_launcher.tooltip.frost_spell": "• 冰霜法术",

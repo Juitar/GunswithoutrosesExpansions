@@ -52,3 +52,9 @@ versionRange = "[2.0.2,)"
 mandatory = false
 ordering = "NONE"
 side = "BOTH"
+[[dependencies.${mod_id}]]
+modId = "meetyourfight"
+versionRange = "[0,)"
+mandatory = false
+ordering = "NONE"
+side = "BOTH"

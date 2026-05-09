@@ -69,6 +69,10 @@ public class ClientSetup {
             event.registerEntityRenderer(GWREEntities.SPORE.get(), context -> new net.minecraft.client.renderer.entity.ThrownItemRenderer<>(context, 0.5F, true));
 
         }
+        if(ModList.get().isLoaded(CompatModids.MEETYOURFIGHT)) {
+            event.registerEntityRenderer(GWREEntities.DUSK_ROSE_SPIRIT.get(),
+                    context -> new net.minecraft.client.renderer.entity.ThrownItemRenderer<>(context, 0.8F, true));
+        }
         if(ModList.get().isLoaded(CompatModids.ALEXSCAVES)) {
             event.registerEntityRenderer(GWREEntities.MAGNETIC_PIN.get(), MagneticPinRenderer::new);
             event.registerEntityRenderer(GWREEntities.MAGNETIC_BULLET.get(), ThrownItemRenderer::new);

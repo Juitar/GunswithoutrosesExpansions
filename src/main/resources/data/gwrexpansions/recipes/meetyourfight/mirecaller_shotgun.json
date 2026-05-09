@@ -1,0 +1,34 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ITI",
+    "MSG",
+    "ITI"
+  ],
+  "key": {
+    "I": {
+      "tag": "forge:ingots/iron"
+    },
+    "T": {
+      "item": "minecraft:tnt"
+    },
+    "M": {
+      "item": "meetyourfight:mossy_tooth"
+    },
+    "S": {
+      "item": "gunswithoutroses:diamond_shotgun"
+    },
+    "G": {
+      "item": "minecraft:gunpowder"
+    }
+  },
+  "result": {
+    "item": "gwrexpansions:mirecaller_shotgun"
+  },
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "meetyourfight"
+    }
+  ]
+}

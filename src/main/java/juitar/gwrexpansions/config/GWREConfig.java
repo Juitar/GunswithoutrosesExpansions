@@ -142,6 +142,52 @@ public class GWREConfig {
         }
     }
 
+    public static class DuskfallEclipseConfig extends BurstgunConfig {
+        public final ForgeConfigSpec.IntValue pierceCount;
+        public final ForgeConfigSpec.DoubleValue pierceDamageMultiplier;
+        public final ForgeConfigSpec.IntValue maxSpirits;
+        public final ForgeConfigSpec.IntValue spiritSummonIntervalTicks;
+        public final ForgeConfigSpec.IntValue unequippedGraceTicks;
+        public final ForgeConfigSpec.DoubleValue damageBonusPerSpirit;
+        public final ForgeConfigSpec.DoubleValue damageReductionPerSpirit;
+        public final ForgeConfigSpec.DoubleValue spiritAutoTargetRange;
+        public final ForgeConfigSpec.IntValue spiritAttackCooldownTicks;
+        public final ForgeConfigSpec.IntValue spiritWarnTicks;
+        public final ForgeConfigSpec.DoubleValue spiritAttackDamage;
+        public final ForgeConfigSpec.IntValue lastTargetMemoryTicks;
+
+        public DuskfallEclipseConfig(ForgeConfigSpec.Builder builder) {
+            super(builder, "DuskfallEclipse", 0, 0.65, 1.0, 28, 1.5, 6, 3);
+
+            builder.push("DuskfallEclipse_Mechanics");
+            pierceCount = builder.comment("Number of additional entities each shot can pierce.")
+                    .defineInRange("pierceCount", 2, 0, 16);
+            pierceDamageMultiplier = builder.comment("Damage multiplier applied after each pierce.")
+                    .defineInRange("pierceDamageMultiplier", 0.8, 0.0, 4.0);
+            maxSpirits = builder.comment("Maximum friendly Dusk Rose Spirits a player can maintain.")
+                    .defineInRange("maxSpirits", 3, 0, 16);
+            spiritSummonIntervalTicks = builder.comment("Ticks between spirit summons while holding the weapon.")
+                    .defineInRange("spiritSummonIntervalTicks", 150, 1, 6000);
+            unequippedGraceTicks = builder.comment("Ticks spirits persist after the player stops holding the weapon.")
+                    .defineInRange("unequippedGraceTicks", 100, 0, 6000);
+            damageBonusPerSpirit = builder.comment("Outgoing damage bonus per active spirit. 0.075 is 7.5%.")
+                    .defineInRange("damageBonusPerSpirit", 0.075, 0.0, 4.0);
+            damageReductionPerSpirit = builder.comment("Incoming damage reduction per active spirit. 0.05 is 5%.")
+                    .defineInRange("damageReductionPerSpirit", 0.05, 0.0, 0.95);
+            spiritAutoTargetRange = builder.comment("Range used by spirits to find targets.")
+                    .defineInRange("spiritAutoTargetRange", 18.0, 1.0, 128.0);
+            spiritAttackCooldownTicks = builder.comment("Ticks between spirit attacks.")
+                    .defineInRange("spiritAttackCooldownTicks", 40, 1, 6000);
+            spiritWarnTicks = builder.comment("Warning ticks before a spirit attack lands.")
+                    .defineInRange("spiritWarnTicks", 14, 0, 200);
+            spiritAttackDamage = builder.comment("Damage dealt by each spirit assist attack.")
+                    .defineInRange("spiritAttackDamage", 5.0, 0.0, 1000.0);
+            lastTargetMemoryTicks = builder.comment("Ticks spirits remember the last target hit by this weapon.")
+                    .defineInRange("lastTargetMemoryTicks", 200, 0, 6000);
+            builder.pop();
+        }
+    }
+
     // 狙击枪配置
     public static class SniperConfigs {
         public final GunConfig netherite;
@@ -162,10 +208,12 @@ public class GWREConfig {
     // 爆发枪配置
     public static class BurstgunConfigs {
         public final BurstgunConfig voidBurst;
+        public final DuskfallEclipseConfig duskfallEclipse;
 
         public BurstgunConfigs(ForgeConfigSpec.Builder builder) {
             builder.push("Burstgun");
             voidBurst = new BurstgunConfig(builder, "Void", 2, 1.0, 1.0, 25, 0.0, 3, 5);
+            duskfallEclipse = new DuskfallEclipseConfig(builder);
             builder.pop();
         }
     }
@@ -176,6 +224,7 @@ public class GWREConfig {
         public final GunConfig NetheriteMonster;
         public final GunConfig DragonSteel;
         public final GunConfig Supershotgun;
+        public final GunConfig Mirecaller;
 
         public ShotgunConfigs(ForgeConfigSpec.Builder builder) {
             builder.push("Shotgun");
@@ -183,6 +232,7 @@ public class GWREConfig {
             NetheriteMonster = new GunConfig(builder, "NetheriteMonster", 0, 0.8, 1.0, 20, 4.0);
             DragonSteel = new GunConfig(builder, "DragonSteel", 0, 0.75, 1.0, 20, 4);
             Supershotgun = new GunConfig(builder, "Supershotgun", 0, 1.5, 1.0, 40, 4);
+            Mirecaller = new GunConfig(builder, "Mirecaller", 0, 0.55, 1.0, 24, 4.5);
             builder.pop();
         }
     }

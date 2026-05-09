@@ -9,6 +9,7 @@ import juitar.gwrexpansions.entity.cataclysm.TidalBulletEntity;
 import juitar.gwrexpansions.entity.iceandfire.FireDragonSteelBulletEntity;
 import juitar.gwrexpansions.entity.iceandfire.IceDragonSteelBulletEntity;
 import juitar.gwrexpansions.entity.iceandfire.LightningDragonSteelBulletEntity;
+import juitar.gwrexpansions.entity.meetyourfight.DuskRoseSpiritEntity;
 import juitar.gwrexpansions.entity.vanilla.SlimeBulletEntity;
 import juitar.gwrexpansions.entity.vanilla.MeatHookEntity;
 import juitar.gwrexpansions.entity.BOMD.BudBulletEntity;
@@ -42,6 +43,7 @@ public class GWREEntities {
     public static RegistryObject<EntityType<SporeEntity>> SPORE;
     public static RegistryObject<EntityType<MagneticPinEntity>> MAGNETIC_PIN;
     public static RegistryObject<EntityType<MagneticBulletEntity>> MAGNETIC_BULLET;
+    public static RegistryObject<EntityType<DuskRoseSpiritEntity>> DUSK_ROSE_SPIRIT;
 
     public static final DeferredRegister<EntityType<?>> REG = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, GWRexpansions.MODID);
     static {
@@ -117,6 +119,15 @@ public class GWREEntities {
                     .setTrackingRange(32)
                     .setShouldReceiveVelocityUpdates(true)
                     .build(GWRexpansions.MODID + ":spore"));
+        }
+        if(ModList.get().isLoaded(CompatModids.MEETYOURFIGHT)) {
+            DUSK_ROSE_SPIRIT = REG.register("dusk_rose_spirit", () -> EntityType.Builder
+                    .<DuskRoseSpiritEntity>of(DuskRoseSpiritEntity::new, MobCategory.MISC)
+                    .sized(0.45f, 0.45f)
+                    .setUpdateInterval(2)
+                    .setTrackingRange(64)
+                    .setShouldReceiveVelocityUpdates(true)
+                    .build(GWRexpansions.MODID + ":dusk_rose_spirit"));
         }
         if(ModList.get().isLoaded(CompatModids.ALEXSCAVES)) {
             MAGNETIC_PIN = REG.register("magnetic_pin", () -> EntityType.Builder

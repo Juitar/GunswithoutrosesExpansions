@@ -1,0 +1,34 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "AVA",
+    "RDR",
+    "APA"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:amethyst_shard"
+    },
+    "V": {
+      "item": "meetyourfight:violet_bloom"
+    },
+    "R": {
+      "item": "minecraft:rose_bush"
+    },
+    "D": {
+      "item": "gunswithoutroses:diamond_sniper"
+    },
+    "P": {
+      "item": "meetyourfight:phantasmal_rifle"
+    }
+  },
+  "result": {
+    "item": "gwrexpansions:duskfall_eclipse_blaster"
+  },
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "meetyourfight"
+    }
+  ]
+}

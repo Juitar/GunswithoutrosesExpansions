@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    {"id":"gwrexpansions:voidspike","required":false}
+    {"id":"gwrexpansions:voidspike","required":false},
+    {"id":"gwrexpansions:duskfall_eclipse_blaster","required":false}
   ]
 }

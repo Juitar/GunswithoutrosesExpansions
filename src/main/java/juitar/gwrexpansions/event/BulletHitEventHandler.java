@@ -1,7 +1,10 @@
 package juitar.gwrexpansions.event;
 
+import juitar.gwrexpansions.config.GWREConfig;
 import juitar.gwrexpansions.entity.BOMD.CoinEntity;
+import juitar.gwrexpansions.entity.meetyourfight.DuskRoseSpiritEntity;
 import juitar.gwrexpansions.item.BOMD.Hellforge;
+import juitar.gwrexpansions.item.meetyourfight.DuskfallEclipseBlasterItem;
 import juitar.gwrexpansions.registry.GWREEffects;
 import juitar.gwrexpansions.util.CoinTargetUtils;
 import lykrast.gunswithoutroses.entity.BulletEntity;
@@ -9,6 +12,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
@@ -64,6 +68,8 @@ public class BulletHitEventHandler {
                 return;
             }
 
+            applyDuskfallSpiritModifiers(event);
+
             // 检查伤害来源是否是子弹
             if (event.getSource().getDirectEntity() instanceof BulletEntity bullet) {
                 LivingEntity target = event.getEntity();
@@ -77,6 +83,11 @@ public class BulletHitEventHandler {
                 CompoundTag bulletData = bullet.getPersistentData();
                 if (bulletData == null) {
                     return;
+                }
+
+                if (bulletData.getBoolean(DuskfallEclipseBlasterItem.SHOT_TAG) && shooter instanceof Player player) {
+                    player.getPersistentData().putUUID(DuskfallEclipseBlasterItem.LAST_TARGET_TAG, target.getUUID());
+                    player.getPersistentData().putLong(DuskfallEclipseBlasterItem.LAST_TARGET_TIME_TAG, target.level().getGameTime());
                 }
 
                 boolean isHellforgeShot = bulletData.getBoolean("HellforgeShot");
@@ -98,6 +109,27 @@ public class BulletHitEventHandler {
         } finally {
             // 确保标记被重置
             PROCESSING.set(false);
+        }
+    }
+
+    private static void applyDuskfallSpiritModifiers(LivingHurtEvent event) {
+        Entity sourceEntity = event.getSource().getEntity();
+        Entity directEntity = event.getSource().getDirectEntity();
+
+        if (sourceEntity instanceof Player attacker && !(directEntity instanceof DuskRoseSpiritEntity)) {
+            int spirits = DuskRoseSpiritEntity.countActiveFor(attacker);
+            if (spirits > 0) {
+                float multiplier = (float) (1.0D + spirits * GWREConfig.BURSTGUN.duskfallEclipse.damageBonusPerSpirit.get());
+                event.setAmount(event.getAmount() * multiplier);
+            }
+        }
+
+        if (event.getEntity() instanceof Player defender) {
+            int spirits = DuskRoseSpiritEntity.countActiveFor(defender);
+            if (spirits > 0) {
+                double reduction = Math.min(0.95D, spirits * GWREConfig.BURSTGUN.duskfallEclipse.damageReductionPerSpirit.get());
+                event.setAmount((float) (event.getAmount() * (1.0D - reduction)));
+            }
         }
     }
 
