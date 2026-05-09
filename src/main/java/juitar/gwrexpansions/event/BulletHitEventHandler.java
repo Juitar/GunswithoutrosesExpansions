@@ -9,8 +9,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -24,6 +26,25 @@ public class BulletHitEventHandler {
 
     // 防止递归调用的标记
     private static final ThreadLocal<Boolean> PROCESSING = ThreadLocal.withInitial(() -> false);
+    public static final String ALLOW_SHOOTER_HIT = "AllowShooterHit";
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onProjectileImpact(ProjectileImpactEvent event) {
+        if (!(event.getProjectile() instanceof BulletEntity bullet)
+                || !(event.getRayTraceResult() instanceof EntityHitResult entityHit)) {
+            return;
+        }
+
+        Entity owner = bullet.getOwner();
+        Entity target = entityHit.getEntity();
+        if (owner == null || target == null || bullet.getPersistentData().getBoolean(ALLOW_SHOOTER_HIT)) {
+            return;
+        }
+
+        if (target == owner || target.isPassengerOfSameVehicle(owner)) {
+            event.setImpactResult(ProjectileImpactEvent.ImpactResult.SKIP_ENTITY);
+        }
+    }
 
     /**
      * 使用高优先级确保我们的处理先于其他模组

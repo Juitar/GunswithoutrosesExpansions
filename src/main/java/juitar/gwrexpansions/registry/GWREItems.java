@@ -16,41 +16,51 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
 
-
 import java.util.List;
 import java.util.ArrayList;
 import java.util.function.Supplier;
 
 public class GWREItems {
-    public static final DeferredRegister<Item> REG = DeferredRegister.create(ForgeRegistries.ITEMS, GWRexpansions.MODID);
+    public static final DeferredRegister<Item> REG = DeferredRegister.create(ForgeRegistries.ITEMS,
+            GWRexpansions.MODID);
     private static List<RegistryObject<? extends Item>> orderedItemsCreative = new ArrayList<>();
 
     public static void makeCreativeTab(RegisterEvent event) {
         event.register(Registries.CREATIVE_MODE_TAB, helper -> {
             helper.register(ResourceKey.create(Registries.CREATIVE_MODE_TAB, GWRexpansions.resource("gwrexpansions")),
-                    CreativeModeTab.builder().title(Component.translatable("itemGroup.gwrexpansions")).icon(() -> new ItemStack(VanillaItem.netherite_shotgun.get()))
-                            .displayItems((parameters, output) -> orderedItemsCreative.forEach(i -> output.accept(i.get()))).build());
+                    CreativeModeTab.builder().title(Component.translatable("itemGroup.gwrexpansions"))
+                            .icon(() -> new ItemStack(VanillaItem.netherite_shotgun.get()))
+                            .displayItems(
+                                    (parameters, output) -> orderedItemsCreative.forEach(i -> output.accept(i.get())))
+                            .build());
         });
     }
-    
-    static{
+
+    static {
         VanillaItem.registerItems();
-        if(ModList.get().isLoaded(CompatModids.CATACLYSM)) CompatCataclysm.registerItems();
-        if(ModList.get().isLoaded(CompatModids.ICEANDFIRE)) CompatIceandfire.registerItems();
-//      if(ModList.get().isLoaded(CompatModids.MEETYOURFIGHT)) CompatMYF.registerItems();
-        if(ModList.get().isLoaded(CompatModids.BOMD)) CompatBOMD.registerItems();
-        if(ModList.get().isLoaded(CompatModids.ALEXSCAVES)) CompatAlexsCaves.registerItems();
+        if (ModList.get().isLoaded(CompatModids.CATACLYSM))
+            CompatCataclysm.registerItems();
+        if (ModList.get().isLoaded(CompatModids.ICEANDFIRE))
+            CompatIceandfire.registerItems();
+        if (ModList.get().isLoaded(CompatModids.MEETYOURFIGHT))
+            CompatMYF.registerItems();
+        if (ModList.get().isLoaded(CompatModids.BOMD))
+            CompatBOMD.registerItems();
+        // if(ModList.get().isLoaded(CompatModids.ALEXSCAVES))
+        // CompatAlexsCaves.registerItems();
     }
 
-    public static Item.Properties defP(){
+    public static Item.Properties defP() {
         return new Item.Properties();
     }
-    public static Item.Properties noStack(){
+
+    public static Item.Properties noStack() {
         return new Item.Properties().stacksTo(1);
     }
-    public static <I extends Item> RegistryObject<I>  initItem(Supplier<I> item, String itemName){
+
+    public static <I extends Item> RegistryObject<I> initItem(Supplier<I> item, String itemName) {
         REG.register(itemName, item);
-        RegistryObject<I> regItem = RegistryObject.create(GWRexpansions.resource(itemName),ForgeRegistries.ITEMS);
+        RegistryObject<I> regItem = RegistryObject.create(GWRexpansions.resource(itemName), ForgeRegistries.ITEMS);
         orderedItemsCreative.add(regItem);
         return regItem;
     }

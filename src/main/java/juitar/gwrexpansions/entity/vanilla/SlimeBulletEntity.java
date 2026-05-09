@@ -1,5 +1,6 @@
 package juitar.gwrexpansions.entity.vanilla;
 
+import juitar.gwrexpansions.event.BulletHitEventHandler;
 import juitar.gwrexpansions.registry.GWREEntities;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.registry.GWRDamage;
@@ -67,6 +68,7 @@ public class SlimeBulletEntity extends BulletEntity {
             setDeltaMovement(randomBounce);
             
             bounceCount++;
+            getPersistentData().putBoolean(BulletHitEventHandler.ALLOW_SHOOTER_HIT, true);
             
         }
         
@@ -150,6 +152,7 @@ public class SlimeBulletEntity extends BulletEntity {
             }
             
             bounceCount++;
+            getPersistentData().putBoolean(BulletHitEventHandler.ALLOW_SHOOTER_HIT, true);
         }
         // 播放史莱姆跳跃音效
         level().playSound(null, getX(), getY(), getZ(),

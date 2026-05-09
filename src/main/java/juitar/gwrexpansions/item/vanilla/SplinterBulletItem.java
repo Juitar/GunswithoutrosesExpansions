@@ -1,6 +1,7 @@
 package juitar.gwrexpansions.item.vanilla;
 
 import juitar.gwrexpansions.registry.VanillaItem;
+import juitar.gwrexpansions.event.BulletHitEventHandler;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.entity.PiercingBulletEntity;
 import lykrast.gunswithoutroses.item.BulletItem;
@@ -62,6 +63,7 @@ public class SplinterBulletItem extends BulletItem {
         bulletPiece.setDamage(3);
         bulletPiece.setItem(new ItemStack(VanillaItem.diamond_bullet_shrapnel.get()));
         bulletPiece.setOwner(shooter);
+        bulletPiece.getPersistentData().putBoolean(BulletHitEventHandler.ALLOW_SHOOTER_HIT, true);
         bulletPiece.setPierce(2);
         // 设置位置
         bulletPiece.setPos(x, y, z);
