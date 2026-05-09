@@ -181,6 +181,7 @@ public class GWREConfig {
         public final GunConfig Ignitium;
         public final GunConfig DragonSteel;
         public final GunConfig skull;
+        public final GunConfig Magnetic;
 
         public GatlingConfigs(ForgeConfigSpec.Builder builder) {
             builder.push("Gatling");
@@ -188,6 +189,7 @@ public class GWREConfig {
             Ignitium = new GunConfig(builder, "Ignitium", 4, 1.0, 1.0, 4, 3.0);
             DragonSteel = new GunConfig(builder, "DragonSteel", 3, 1.0, 1.0, 4, 3.0);
             skull = new GunConfig(builder, "Skull", 0, 1.0, 1.0, 6, 6.0);
+            Magnetic = new GunConfig(builder, "Magnetic", 0, 0.9, 1.0, 4, 4.0);
             builder.pop();
         }
     }

@@ -15,6 +15,8 @@ import juitar.gwrexpansions.entity.BOMD.BudBulletEntity;
 import juitar.gwrexpansions.entity.BOMD.CoinEntity;
 import juitar.gwrexpansions.entity.BOMD.ObsidianCoreEntity;
 import juitar.gwrexpansions.entity.BOMD.SporeEntity;
+import juitar.gwrexpansions.entity.alexscaves.MagneticBulletEntity;
+import juitar.gwrexpansions.entity.alexscaves.MagneticPinEntity;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
@@ -38,6 +40,8 @@ public class GWREEntities {
     public static RegistryObject<EntityType<CoinEntity>> COIN;
     public static RegistryObject<EntityType<BudBulletEntity>> BUD;
     public static RegistryObject<EntityType<SporeEntity>> SPORE;
+    public static RegistryObject<EntityType<MagneticPinEntity>> MAGNETIC_PIN;
+    public static RegistryObject<EntityType<MagneticBulletEntity>> MAGNETIC_BULLET;
 
     public static final DeferredRegister<EntityType<?>> REG = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, GWRexpansions.MODID);
     static {
@@ -113,6 +117,22 @@ public class GWREEntities {
                     .setTrackingRange(32)
                     .setShouldReceiveVelocityUpdates(true)
                     .build(GWRexpansions.MODID + ":spore"));
+        }
+        if(ModList.get().isLoaded(CompatModids.ALEXSCAVES)) {
+            MAGNETIC_PIN = REG.register("magnetic_pin", () -> EntityType.Builder
+                    .<MagneticPinEntity>of(MagneticPinEntity::new, MobCategory.MISC)
+                    .sized(0.25f, 0.25f)
+                    .setUpdateInterval(2)
+                    .setTrackingRange(64)
+                    .setShouldReceiveVelocityUpdates(true)
+                    .build(GWRexpansions.MODID + ":magnetic_pin"));
+            MAGNETIC_BULLET = REG.register("magnetic_bullet", () -> EntityType.Builder
+                    .<MagneticBulletEntity>of(MagneticBulletEntity::new, MobCategory.MISC)
+                    .sized(0.3125f, 0.3125f)
+                    .setUpdateInterval(2)
+                    .setTrackingRange(64)
+                    .setShouldReceiveVelocityUpdates(true)
+                    .build(GWRexpansions.MODID + ":magnetic_bullet"));
         }
     }
 }

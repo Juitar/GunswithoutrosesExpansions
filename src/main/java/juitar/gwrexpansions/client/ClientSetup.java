@@ -5,6 +5,7 @@ import juitar.gwrexpansions.GWRexpansions;
 import juitar.gwrexpansions.client.model.coin;
 import juitar.gwrexpansions.client.render.CoinEntityRenderer;
 import juitar.gwrexpansions.client.render.HudRenderHandler;
+import juitar.gwrexpansions.client.render.MagneticPinRenderer;
 import juitar.gwrexpansions.client.render.MeatHookRenderer;
 import juitar.gwrexpansions.client.render.ObsidianCoreRenderer;
 import juitar.gwrexpansions.client.render.ObsidianLauncherHudRenderer;
@@ -67,6 +68,10 @@ public class ClientSetup {
             event.registerEntityRenderer(GWREEntities.COIN.get(), CoinEntityRenderer::new);
             event.registerEntityRenderer(GWREEntities.SPORE.get(), context -> new net.minecraft.client.renderer.entity.ThrownItemRenderer<>(context, 0.5F, true));
 
+        }
+        if(ModList.get().isLoaded(CompatModids.ALEXSCAVES)) {
+            event.registerEntityRenderer(GWREEntities.MAGNETIC_PIN.get(), MagneticPinRenderer::new);
+            event.registerEntityRenderer(GWREEntities.MAGNETIC_BULLET.get(), ThrownItemRenderer::new);
         }
     }
 

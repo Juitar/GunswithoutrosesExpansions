@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "INI",
+    "AGB",
+    "ISI"
+  ],
+  "key": {
+    "I": {
+      "tag": "forge:ingots/iron"
+    },
+    "N": {
+      "item": "alexscaves:azure_neodymium_ingot"
+    },
+    "A": {
+      "item": "alexscaves:azure_magnet"
+    },
+    "G": {
+      "item": "gunswithoutroses:diamond_gatling"
+    },
+    "B": {
+      "item": "alexscaves:scarlet_magnet"
+    },
+    "S": {
+      "item": "alexscaves:scarlet_neodymium_ingot"
+    }
+  },
+  "result": {
+    "item": "gwrexpansions:magnetic_gatling"
+  },
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "alexscaves"
+    }
+  ]
+}
