@@ -1,0 +1,36 @@
+{
+  "display": {
+    "icon": {
+      "item": "gwrexpansions:mirecaller_shotgun"
+    },
+    "title": {
+      "translate": "advancement.gwrexpansions.mirecaller_shotgun.title"
+    },
+    "description": {
+      "translate": "advancement.gwrexpansions.mirecaller_shotgun.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "gwrexpansions:root",
+  "criteria": {
+    "has_mirecaller_shotgun": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["gwrexpansions:mirecaller_shotgun"]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_mirecaller_shotgun"
+    ]
+  ],
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "meetyourfight" }]
+}

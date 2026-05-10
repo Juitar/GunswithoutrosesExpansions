@@ -69,6 +69,16 @@ public class AdvancementManager {
             if (!hasCompletedAdvancement(player, "gwrexpansions:brust_void")) return false;
         }
         
+        // 检查Meet Your Fight模组成就（如果模组加载）
+        if (isModLoaded(CompatModids.MEETYOURFIGHT)) {
+            if (!hasCompletedAdvancement(player, "gwrexpansions:mirecaller_shotgun")) return false;
+            if (!hasCompletedAdvancement(player, "gwrexpansions:mirecaller_mine_burst")) return false;
+            if (!hasCompletedAdvancement(player, "gwrexpansions:duskfall_eclipse_blaster")) return false;
+            if (!hasCompletedAdvancement(player, "gwrexpansions:dusk_rose_stand_attack")) return false;
+            if (!hasCompletedAdvancement(player, "gwrexpansions:destiny_seven")) return false;
+            if (!hasCompletedAdvancement(player, "gwrexpansions:destiny_all_in")) return false;
+        }
+        
         return true;
     }
     

@@ -20,7 +20,7 @@ public class CompatMYF {
                 GWREItems.defP().durability(5000).rarity(Rarity.RARE),
                 0, 0.55, 24, 4.5, 15,
                 () -> GWREConfig.SHOTGUN.Mirecaller)
-                .projectiles(3)
+                .projectiles(4)
                 .fireSound(MYFSounds.dredgedCannonadeShoot)
                 .repair(() -> Ingredient.of(ForgeRegistries.ITEMS.getValue(new ResourceLocation("meetyourfight", "mossy_tooth")))),
                 "mirecaller_shotgun");
@@ -28,7 +28,6 @@ public class CompatMYF {
                 GWREItems.defP().durability(5000).rarity(Rarity.EPIC),
                 0, 0.65, 28, 1.5, 20, 6, 3,
                 () -> GWREConfig.BURSTGUN.duskfallEclipse)
-                .fireSound(MYFSounds.roseSpiritShoot)
                 .repair(() -> Ingredient.of(ForgeRegistries.ITEMS.getValue(new ResourceLocation("meetyourfight", "violet_bloom")))),
                 "duskfall_eclipse_blaster");
         destiny_seven = GWREItems.initItem(()->new DestinyGunItem(GWREItems.defP().durability(5000).fireResistant().rarity(Rarity.EPIC),

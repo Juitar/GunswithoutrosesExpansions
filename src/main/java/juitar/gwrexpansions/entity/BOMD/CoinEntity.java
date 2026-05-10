@@ -176,19 +176,14 @@ public class CoinEntity extends ThrowableItemProjectile {
             // 检查是否是Hellforge子弹
             CompoundTag bulletData = bullet.getPersistentData();
             if (!bulletData.getBoolean("HellforgeShot")) {
-                System.out.println("DEBUG: 非Hellforge子弹击中硬币，忽略");
                 return;
             }
-
-            System.out.println("DEBUG: Hellforge子弹击中硬币！");
 
             Entity owner = getOwnerEntity();
 
             if (owner instanceof LivingEntity livingOwner) {
                 // 检查是否已经反弹过（防止无限反弹）
                 int bounceCount = bulletData.getInt("CoinBounceCount");
-
-                System.out.println("DEBUG: 硬币处理 - 当前反弹次数=" + bounceCount);
 
                 // 限制最大反弹次数
                 if (bounceCount >= 5) {
@@ -200,7 +195,6 @@ public class CoinEntity extends ThrowableItemProjectile {
 
                 // 增加反弹计数
                 bulletData.putInt("CoinBounceCount", bounceCount + 1);
-                System.out.println("DEBUG: 硬币处理 - 设置新反弹次数=" + (bounceCount + 1));
 
                 // 记录硬币反弹子弹用于成就追踪
                 BOMDGameplayEventHandler.recordCoinBounceBullet(bullet);
@@ -236,14 +230,10 @@ public class CoinEntity extends ThrowableItemProjectile {
                 }
 
                 if (target != null) {
-                    System.out.println("DEBUG: 硬币找到目标 - " + target.getClass().getSimpleName() + " ID=" + target.getId());
-
                     // 计算朝向目标的方向
                     Vec3 targetPos = target.position().add(0, target.getBbHeight() * 0.5, 0);
                     Vec3 currentPos = this.position();
                     Vec3 direction = targetPos.subtract(currentPos).normalize();
-
-                    System.out.println("DEBUG: 设置子弹方向 - 从" + currentPos + "到" + targetPos);
 
                     // 设置子弹的新运动方向和速度
                     double speed = 3.0; // 反弹后的速度
@@ -253,7 +243,6 @@ public class CoinEntity extends ThrowableItemProjectile {
                     if (target instanceof LivingEntity livingTarget) {
                         bulletData.putBoolean("RemoveAimedOnHit", true);
                         bulletData.putInt("AimedTargetId", livingTarget.getId());
-                        System.out.println("DEBUG: 标记aimed目标移除 - 目标ID=" + livingTarget.getId());
                     }
 
                     // 播放硬币击中音效（连锁反弹音效更响亮）

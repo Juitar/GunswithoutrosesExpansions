@@ -1,0 +1,29 @@
+{
+  "display": {
+    "icon": {
+      "item": "gwrexpansions:destiny_seven"
+    },
+    "title": {
+      "translate": "advancement.gwrexpansions.destiny_all_in.title"
+    },
+    "description": {
+      "translate": "advancement.gwrexpansions.destiny_all_in.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "gwrexpansions:destiny_seven",
+  "criteria": {
+    "all_in": {
+      "trigger": "gwrexpansions:destiny_all_in"
+    }
+  },
+  "requirements": [
+    [
+      "all_in"
+    ]
+  ],
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "meetyourfight" }]
+}

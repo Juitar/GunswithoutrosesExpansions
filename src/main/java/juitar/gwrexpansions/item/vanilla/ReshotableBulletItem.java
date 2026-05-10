@@ -25,6 +25,7 @@ import javax.annotation.Nullable;
 public class ReshotableBulletItem extends BulletItem {
     private final Random random = new Random();
     private static final float DROP_CHANCE = 0.70f; // 70%的掉落概率
+    private static final String DROP_ROLLED_TAG = "GWRE_ReshotableDropRolled";
 
     public ReshotableBulletItem(Properties properties, int damage) {
         super(properties, damage);
@@ -60,6 +61,12 @@ public class ReshotableBulletItem extends BulletItem {
         if (isShotgunShot(bullet, shooter)) {
             return;
         }
+
+        CompoundTag tag = bullet.getPersistentData();
+        if (tag.getBoolean(DROP_ROLLED_TAG)) {
+            return;
+        }
+        tag.putBoolean(DROP_ROLLED_TAG, true);
 
         if (!world.isClientSide && random.nextFloat() < DROP_CHANCE) {
             // 创建物品实体

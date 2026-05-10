@@ -67,7 +67,7 @@ public class DuskRoseSpiritEntity extends RoseSpiritEntity {
 
     public static AttributeSupplier.Builder createDuskAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 40.0D)
+                .add(Attributes.MAX_HEALTH, 20.0D)
                 .add(Attributes.ARMOR, 5.0D)
                 .add(Attributes.FOLLOW_RANGE, 64.0D);
     }
@@ -81,6 +81,9 @@ public class DuskRoseSpiritEntity extends RoseSpiritEntity {
     private void applyConfiguredAttributes() {
         if (getAttribute(Attributes.MAX_HEALTH) != null) {
             getAttribute(Attributes.MAX_HEALTH).setBaseValue(GWREConfig.BURSTGUN.duskfallEclipse.spiritMaxHealth.get());
+            if (getHealth() > getMaxHealth()) {
+                setHealth(getMaxHealth());
+            }
         }
         if (getAttribute(Attributes.ARMOR) != null) {
             getAttribute(Attributes.ARMOR).setBaseValue(GWREConfig.BURSTGUN.duskfallEclipse.spiritArmor.get());
@@ -103,6 +106,8 @@ public class DuskRoseSpiritEntity extends RoseSpiritEntity {
 
     @Override
     public void customServerAiStep() {
+        applyConfiguredAttributes();
+
         Player owner = getOwnerPlayer();
         if (owner == null || !owner.isAlive()) {
             discard();
@@ -225,7 +230,7 @@ public class DuskRoseSpiritEntity extends RoseSpiritEntity {
     }
 
     private ProjectileLineEntity readyAttack() {
-        ProjectileLineEntity attack = new ProjectileLineEntity(level(), this);
+        ProjectileLineEntity attack = new DuskRoseProjectileLineEntity(level(), this);
         attack.setOwner(this);
         attack.setPos(getX(), getY() + 0.625D, getZ());
         attack.setVariant(ProjectileLineEntity.VAR_ROSALYNE);
@@ -341,7 +346,7 @@ public class DuskRoseSpiritEntity extends RoseSpiritEntity {
         @Override
         public void start() {
             attackCooldown = 2;
-            attackDelay = 10;
+            attackDelay = Math.max(1, GWREConfig.BURSTGUN.duskfallEclipse.spiritWarnTicks.get());
             attackRemaining = 2 + getRandom().nextInt(5);
             target = getTarget();
             phase = 0;
@@ -365,11 +370,11 @@ public class DuskRoseSpiritEntity extends RoseSpiritEntity {
                 case 1 -> {
                     setStatus(ATTACKING);
                     phase = 2;
-                    attackDelay = 25;
+                    attackDelay = Math.max(1, GWREConfig.BURSTGUN.duskfallEclipse.spiritWarnTicks.get());
                     playSound(MYFSounds.roseSpiritWarn.get(), 1.0F, 1.0F);
                 }
                 case 2 -> {
-                    attackDelay = 25;
+                    attackDelay = Math.max(1, GWREConfig.BURSTGUN.duskfallEclipse.spiritAttackCooldownTicks.get());
                     attackRemaining--;
                     if (target != null && target.isAlive()) {
                         performAttack(target);
@@ -396,7 +401,7 @@ public class DuskRoseSpiritEntity extends RoseSpiritEntity {
 
         @Override
         public void stop() {
-            attackCooldown = 60 + getRandom().nextInt(41);
+            attackCooldown = Math.max(1, GWREConfig.BURSTGUN.duskfallEclipse.spiritAttackCooldownTicks.get());
         }
 
         @Override

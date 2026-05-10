@@ -1,10 +1,10 @@
 package juitar.gwrexpansions.item.meetyourfight;
 
 import juitar.gwrexpansions.config.GWREConfig;
+import juitar.gwrexpansions.entity.meetyourfight.MirecallerSwampMineEntity;
 import juitar.gwrexpansions.item.ConfigurableGunItem;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.item.IBullet;
-import lykrast.meetyourfight.entity.SwampMineEntity;
 import lykrast.meetyourfight.registry.MYFSounds;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -143,7 +143,7 @@ public class MirecallerShotgunItem extends ConfigurableGunItem {
     }
 
     private static void launchMine(Level world, Player player, Vec3 spawnPos, Vec3 velocity) {
-        SwampMineEntity mine = new SwampMineEntity(world, spawnPos.x, spawnPos.y, spawnPos.z, player);
+        MirecallerSwampMineEntity mine = new MirecallerSwampMineEntity(world, spawnPos.x, spawnPos.y, spawnPos.z, player);
         mine.setDeltaMovement(velocity);
         world.addFreshEntity(mine);
     }

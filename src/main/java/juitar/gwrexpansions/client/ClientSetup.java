@@ -4,7 +4,6 @@ import juitar.gwrexpansions.CompatModids;
 import juitar.gwrexpansions.GWRexpansions;
 import juitar.gwrexpansions.client.model.coin;
 import juitar.gwrexpansions.client.render.CoinEntityRenderer;
-import juitar.gwrexpansions.client.render.DuskRoseSpiritRenderer;
 import juitar.gwrexpansions.client.render.HudRenderHandler;
 import juitar.gwrexpansions.client.render.MagneticPinRenderer;
 import juitar.gwrexpansions.client.render.MeatHookRenderer;
@@ -71,8 +70,7 @@ public class ClientSetup {
 
         }
         if(ModList.get().isLoaded(CompatModids.MEETYOURFIGHT)) {
-            event.registerEntityRenderer(GWREEntities.DUSKFALL_PIERCING_BULLET.get(), ThrownItemRenderer::new);
-            event.registerEntityRenderer(GWREEntities.DUSK_ROSE_SPIRIT.get(), DuskRoseSpiritRenderer::new);
+            ClientSetupMYF.registerEntityRenderers(event);
         }
         if(ModList.get().isLoaded(CompatModids.ALEXSCAVES)) {
             event.registerEntityRenderer(GWREEntities.MAGNETIC_PIN.get(), MagneticPinRenderer::new);

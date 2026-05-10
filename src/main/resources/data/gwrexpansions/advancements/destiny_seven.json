@@ -1,0 +1,36 @@
+{
+  "display": {
+    "icon": {
+      "item": "gwrexpansions:destiny_seven"
+    },
+    "title": {
+      "translate": "advancement.gwrexpansions.destiny_seven.title"
+    },
+    "description": {
+      "translate": "advancement.gwrexpansions.destiny_seven.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "gwrexpansions:root",
+  "criteria": {
+    "has_destiny_seven": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["gwrexpansions:destiny_seven"]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_destiny_seven"
+    ]
+  ],
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "meetyourfight" }]
+}

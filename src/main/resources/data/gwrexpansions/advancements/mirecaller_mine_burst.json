@@ -1,0 +1,29 @@
+{
+  "display": {
+    "icon": {
+      "item": "gwrexpansions:mirecaller_shotgun"
+    },
+    "title": {
+      "translate": "advancement.gwrexpansions.mirecaller_mine_burst.title"
+    },
+    "description": {
+      "translate": "advancement.gwrexpansions.mirecaller_mine_burst.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "gwrexpansions:mirecaller_shotgun",
+  "criteria": {
+    "mine_burst": {
+      "trigger": "gwrexpansions:mirecaller_mine_burst"
+    }
+  },
+  "requirements": [
+    [
+      "mine_burst"
+    ]
+  ],
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "meetyourfight" }]
+}

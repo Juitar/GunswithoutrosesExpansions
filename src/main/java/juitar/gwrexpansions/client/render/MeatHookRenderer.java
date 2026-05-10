@@ -35,7 +35,7 @@ public class MeatHookRenderer extends EntityRenderer<MeatHookEntity> {
     // 备用纯色渲染类型，不依赖纹理
     private static final RenderType FALLBACK_LAYER = RenderType.lines();
     // 调试模式
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     
     // 肉钩模型
     private final MeatHookModel model;

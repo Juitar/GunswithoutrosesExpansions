@@ -11,6 +11,7 @@ import juitar.gwrexpansions.entity.iceandfire.IceDragonSteelBulletEntity;
 import juitar.gwrexpansions.entity.iceandfire.LightningDragonSteelBulletEntity;
 import juitar.gwrexpansions.entity.meetyourfight.DuskfallPiercingBulletEntity;
 import juitar.gwrexpansions.entity.meetyourfight.DuskRoseSpiritEntity;
+import juitar.gwrexpansions.entity.meetyourfight.MirecallerSwampMineEntity;
 import juitar.gwrexpansions.entity.vanilla.SlimeBulletEntity;
 import juitar.gwrexpansions.entity.vanilla.MeatHookEntity;
 import juitar.gwrexpansions.entity.BOMD.BudBulletEntity;
@@ -46,6 +47,7 @@ public class GWREEntities {
     public static RegistryObject<EntityType<MagneticBulletEntity>> MAGNETIC_BULLET;
     public static RegistryObject<EntityType<DuskfallPiercingBulletEntity>> DUSKFALL_PIERCING_BULLET;
     public static RegistryObject<EntityType<DuskRoseSpiritEntity>> DUSK_ROSE_SPIRIT;
+    public static RegistryObject<EntityType<MirecallerSwampMineEntity>> MIRECALLER_SWAMP_MINE;
 
     public static final DeferredRegister<EntityType<?>> REG = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, GWRexpansions.MODID);
     static {
@@ -137,6 +139,13 @@ public class GWREEntities {
                     .setTrackingRange(64)
                     .setShouldReceiveVelocityUpdates(true)
                     .build(GWRexpansions.MODID + ":dusk_rose_spirit"));
+            MIRECALLER_SWAMP_MINE = REG.register("mirecaller_swamp_mine", () -> EntityType.Builder
+                    .<MirecallerSwampMineEntity>of(MirecallerSwampMineEntity::new, MobCategory.MISC)
+                    .sized(0.98F, 0.98F)
+                    .setUpdateInterval(2)
+                    .setTrackingRange(64)
+                    .setShouldReceiveVelocityUpdates(true)
+                    .build(GWRexpansions.MODID + ":mirecaller_swamp_mine"));
         }
         if(ModList.get().isLoaded(CompatModids.ALEXSCAVES)) {
             MAGNETIC_PIN = REG.register("magnetic_pin", () -> EntityType.Builder

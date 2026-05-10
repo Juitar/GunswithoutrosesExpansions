@@ -1,0 +1,29 @@
+{
+  "display": {
+    "icon": {
+      "item": "gwrexpansions:duskfall_eclipse_blaster"
+    },
+    "title": {
+      "translate": "advancement.gwrexpansions.dusk_rose_stand_attack.title"
+    },
+    "description": {
+      "translate": "advancement.gwrexpansions.dusk_rose_stand_attack.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "gwrexpansions:duskfall_eclipse_blaster",
+  "criteria": {
+    "stand_attack": {
+      "trigger": "gwrexpansions:dusk_rose_stand_attack"
+    }
+  },
+  "requirements": [
+    [
+      "stand_attack"
+    ]
+  ],
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "meetyourfight" }]
+}

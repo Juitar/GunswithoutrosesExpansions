@@ -1,5 +1,6 @@
 package juitar.gwrexpansions.advancement;
 
+import juitar.gwrexpansions.CompatModids;
 import juitar.gwrexpansions.advancement.BOMD.AvadaKedavraTrigger;
 import juitar.gwrexpansions.advancement.BOMD.BadToTheBoneTrigger;
 import juitar.gwrexpansions.advancement.BOMD.BrustVoidTrigger;
@@ -7,7 +8,9 @@ import juitar.gwrexpansions.advancement.BOMD.HellIsFullTrigger;
 import juitar.gwrexpansions.advancement.BOMD.MankindIsDeadTrigger;
 import juitar.gwrexpansions.advancement.BOMD.ObsidianCakeTrigger;
 import juitar.gwrexpansions.advancement.BOMD.ObsidianWandTrigger;
+import juitar.gwrexpansions.advancement.MYF.MYFCriteria;
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraftforge.fml.ModList;
 
 /**
  * 自定义进度触发器注册处
@@ -30,7 +33,6 @@ public final class GWRECriteria {
 	public static final BloodIsFuelTrigger BLOOD_IS_FUEL = CriteriaTriggers.register(new BloodIsFuelTrigger());
 	public static final HellIsFullTrigger HELL_IS_FULL = CriteriaTriggers.register(new HellIsFullTrigger());
 	public static final BrustVoidTrigger BRUST_VOID = CriteriaTriggers.register(new BrustVoidTrigger());
-
 	private GWRECriteria() {
 	}
 
@@ -54,5 +56,8 @@ public final class GWRECriteria {
 		BLOOD_IS_FUEL.getId();
 		HELL_IS_FULL.getId();
 		BRUST_VOID.getId();
+		if (ModList.get().isLoaded(CompatModids.MEETYOURFIGHT)) {
+			MYFCriteria.register();
+		}
 	}
 } 

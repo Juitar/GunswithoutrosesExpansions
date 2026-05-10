@@ -1,6 +1,7 @@
 package juitar.gwrexpansions.item.meetyourfight;
 
 import juitar.gwrexpansions.config.GWREConfig;
+import juitar.gwrexpansions.advancement.MYF.DestinyAllInTrigger;
 import juitar.gwrexpansions.entity.BOMD.ObsidianCoreEntity;
 import juitar.gwrexpansions.item.ConfigurableGunItem;
 import juitar.gwrexpansions.registry.GWREEntities;
@@ -10,6 +11,7 @@ import lykrast.gunswithoutroses.item.IBullet;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
@@ -22,6 +24,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 public class DestinyGunItem extends ConfigurableGunItem {
@@ -48,12 +51,16 @@ public class DestinyGunItem extends ConfigurableGunItem {
         Outcome outcome = rollOutcome(world.getRandom(), ticket, pityShots);
         List<? extends String> bulletPool = outcome == Outcome.BUST ? GWREConfig.DESTINY.bustBulletPool.get() : GWREConfig.DESTINY.rewardBulletPool.get();
         int shots = outcome.getShots();
+        UUID jackpotGroup = null;
 
         player.displayClientMessage(Component.translatable(outcome.messageKey), true);
         world.playSound(null, player.getX(), player.getY(), player.getZ(), outcome.getSound(), SoundSource.PLAYERS, 1.0F, 1.0F);
 
         if (outcome == Outcome.JACKPOT) {
             gun.getOrCreateTag().putInt(PITY_TAG, 0);
+            if (player instanceof ServerPlayer serverPlayer) {
+                jackpotGroup = DestinyAllInTrigger.onJackpot(serverPlayer);
+            }
         } else {
             gun.getOrCreateTag().putInt(PITY_TAG, pityShots + 1);
         }
@@ -62,12 +69,12 @@ public class DestinyGunItem extends ConfigurableGunItem {
         for (int i = 0; i < shots; ++i) {
             WeightedProjectile projectile = rollProjectile(world.getRandom(), bulletPool, ammo);
             if (projectile.kind == ProjectileKind.OBSIDIAN_CORE) {
-                if (shootObsidianCore(world, player, gun)) {
+                if (shootObsidianCore(world, player, gun, jackpotGroup)) {
                     continue;
                 }
                 projectile = fallbackBullet(ammo);
             }
-            shootBullet(world, player, gun, projectile.asAmmoStack(), bulletItem, bulletFree, extraInaccuracy);
+            shootBullet(world, player, gun, projectile.asAmmoStack(), bulletItem, bulletFree, extraInaccuracy, jackpotGroup);
         }
     }
 
@@ -101,7 +108,7 @@ public class DestinyGunItem extends ConfigurableGunItem {
         return Outcome.JACKPOT;
     }
 
-    private void shootBullet(Level world, Player player, ItemStack gun, ItemStack firedAmmo, IBullet fallbackBullet, boolean bulletFree, float extraInaccuracy) {
+    private void shootBullet(Level world, Player player, ItemStack gun, ItemStack firedAmmo, IBullet fallbackBullet, boolean bulletFree, float extraInaccuracy, @Nullable UUID jackpotGroup) {
         IBullet firedBullet = firedAmmo.getItem() instanceof IBullet ? (IBullet) firedAmmo.getItem() : fallbackBullet;
         BulletEntity shot = firedBullet.createProjectile(world, firedAmmo, player);
         shot.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, (float)this.getProjectileSpeed(gun, player), (float)this.getInaccuracy(gun, player) + extraInaccuracy);
@@ -109,10 +116,13 @@ public class DestinyGunItem extends ConfigurableGunItem {
         shot.setKnockbackStrength(shot.getKnockbackStrength() + this.getKnockbackBonus(gun, player));
         shot.setHeadshotMultiplier(this.getHeadshotMultiplier(gun, player));
         this.affectBulletEntity(player, gun, shot, bulletFree);
+        if (jackpotGroup != null) {
+            shot.getPersistentData().putUUID(DestinyAllInTrigger.JACKPOT_GROUP_TAG, jackpotGroup);
+        }
         world.addFreshEntity(shot);
     }
 
-    private boolean shootObsidianCore(Level world, Player player, ItemStack gun) {
+    private boolean shootObsidianCore(Level world, Player player, ItemStack gun, @Nullable UUID jackpotGroup) {
         if (GWREEntities.OBSIDIAN_CORE == null || !GWREEntities.OBSIDIAN_CORE.isPresent()) {
             return false;
         }
@@ -132,6 +142,9 @@ public class DestinyGunItem extends ConfigurableGunItem {
             player.getZ() + look.z * 0.5D
         );
         core.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, (float)this.getProjectileSpeed(gun, player), (float)this.getInaccuracy(gun, player));
+        if (jackpotGroup != null) {
+            core.getPersistentData().putUUID(DestinyAllInTrigger.JACKPOT_GROUP_TAG, jackpotGroup);
+        }
         world.addFreshEntity(core);
         return true;
     }

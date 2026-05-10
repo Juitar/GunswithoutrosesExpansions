@@ -1,14 +1,11 @@
 package juitar.gwrexpansions.event;
 
-import juitar.gwrexpansions.config.GWREConfig;
+import juitar.gwrexpansions.GWRexpansions;
 import juitar.gwrexpansions.entity.BOMD.CoinEntity;
-import juitar.gwrexpansions.entity.meetyourfight.DuskRoseSpiritEntity;
 import juitar.gwrexpansions.item.BOMD.Hellforge;
-import juitar.gwrexpansions.item.meetyourfight.DuskfallEclipseBlasterItem;
 import juitar.gwrexpansions.registry.GWREEffects;
 import juitar.gwrexpansions.util.CoinTargetUtils;
 import lykrast.gunswithoutroses.entity.BulletEntity;
-import lykrast.meetyourfight.entity.ProjectileLineEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -35,13 +32,6 @@ public class BulletHitEventHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onProjectileImpact(ProjectileImpactEvent event) {
-        if (event.getProjectile() instanceof ProjectileLineEntity projectile
-                && event.getRayTraceResult() instanceof EntityHitResult entityHit
-                && isFriendlyDuskfallSpiritProjectileHit(projectile, entityHit.getEntity())) {
-            event.setImpactResult(ProjectileImpactEvent.ImpactResult.SKIP_ENTITY);
-            return;
-        }
-
         if (!(event.getProjectile() instanceof BulletEntity bullet)
                 || !(event.getRayTraceResult() instanceof EntityHitResult entityHit)) {
             return;
@@ -76,16 +66,6 @@ public class BulletHitEventHandler {
                 return;
             }
 
-            if (cancelFriendlyDuskfallSpiritDamage(event)) {
-                return;
-            }
-
-            if (redirectDuskfallSpiritDamageToOwner(event)) {
-                return;
-            }
-
-            applyDuskfallSpiritModifiers(event);
-
             // 检查伤害来源是否是子弹
             if (event.getSource().getDirectEntity() instanceof BulletEntity bullet) {
                 LivingEntity target = event.getEntity();
@@ -101,11 +81,6 @@ public class BulletHitEventHandler {
                     return;
                 }
 
-                if (bulletData.getBoolean(DuskfallEclipseBlasterItem.SHOT_TAG) && shooter instanceof Player player) {
-                    player.getPersistentData().putUUID(DuskfallEclipseBlasterItem.LAST_TARGET_TAG, target.getUUID());
-                    player.getPersistentData().putLong(DuskfallEclipseBlasterItem.LAST_TARGET_TIME_TAG, target.level().getGameTime());
-                }
-
                 boolean isHellforgeShot = bulletData.getBoolean("HellforgeShot");
 
                 // 检查子弹是否有HellforgeShot标记
@@ -119,84 +94,12 @@ public class BulletHitEventHandler {
             }
         } catch (Exception e) {
             // 记录错误但不崩溃游戏
-            System.err.println("Error in BulletHitEventHandler.onLivingHurt: " + e.getMessage());
-            e.printStackTrace();
+            GWRexpansions.LOG.error("Error in BulletHitEventHandler.onLivingHurt", e);
             // 不重新抛出异常，避免崩溃
         } finally {
             // 确保标记被重置
             PROCESSING.set(false);
         }
-    }
-
-    private static void applyDuskfallSpiritModifiers(LivingHurtEvent event) {
-        Entity sourceEntity = event.getSource().getEntity();
-        Entity directEntity = event.getSource().getDirectEntity();
-
-        if (sourceEntity instanceof Player attacker && !(directEntity instanceof DuskRoseSpiritEntity)) {
-            int spirits = DuskRoseSpiritEntity.countActiveFor(attacker);
-            if (spirits > 0) {
-                float multiplier = (float) (1.0D + spirits * GWREConfig.BURSTGUN.duskfallEclipse.damageBonusPerSpirit.get());
-                event.setAmount(event.getAmount() * multiplier);
-            }
-        }
-
-        if (event.getEntity() instanceof Player defender) {
-            int spirits = DuskRoseSpiritEntity.countActiveFor(defender);
-            if (spirits > 0) {
-                double reduction = Math.min(0.95D, spirits * GWREConfig.BURSTGUN.duskfallEclipse.damageReductionPerSpirit.get());
-                event.setAmount((float) (event.getAmount() * (1.0D - reduction)));
-            }
-        }
-    }
-
-    private static boolean cancelFriendlyDuskfallSpiritDamage(LivingHurtEvent event) {
-        if (!(event.getSource().getDirectEntity() instanceof ProjectileLineEntity projectile)
-                || !(projectile.getOwner() instanceof DuskRoseSpiritEntity spirit)) {
-            return false;
-        }
-
-        if (isFriendlyDuskfallSpiritProjectileHit(projectile, event.getEntity())) {
-            event.setCanceled(true);
-            return true;
-        }
-
-        return false;
-    }
-
-    private static boolean redirectDuskfallSpiritDamageToOwner(LivingHurtEvent event) {
-        if (!(event.getSource().getDirectEntity() instanceof ProjectileLineEntity projectile)
-                || !(projectile.getOwner() instanceof DuskRoseSpiritEntity spirit)) {
-            return false;
-        }
-
-        Player owner = spirit.getOwnerPlayer();
-        if (owner == null || !owner.isAlive() || event.getSource().getEntity() == owner) {
-            return false;
-        }
-
-        LivingEntity target = event.getEntity();
-        int originalInvulnerableTime = target.invulnerableTime;
-        event.setCanceled(true);
-        target.invulnerableTime = 0;
-        target.hurt(target.damageSources().mobProjectile(projectile, owner), event.getAmount());
-        target.invulnerableTime = Math.max(target.invulnerableTime, originalInvulnerableTime);
-        return true;
-    }
-
-    private static boolean isFriendlyDuskfallSpiritProjectileHit(ProjectileLineEntity projectile, Entity target) {
-        if (!(projectile.getOwner() instanceof DuskRoseSpiritEntity spirit)) {
-            return false;
-        }
-
-        if (target instanceof Player player && spirit.isOwnedBy(player)) {
-            return true;
-        }
-
-        if (target instanceof DuskRoseSpiritEntity otherSpirit && spirit.hasSameOwner(otherSpirit)) {
-            return true;
-        }
-
-        return false;
     }
 
     /**
@@ -219,8 +122,6 @@ public class BulletHitEventHandler {
                     // 每等级1.5%最大生命值的额外伤害
                     float percentageDamage = aimedLevel * 0.015f; // 1.5% per level
                     float maxHealthDamage = target.getMaxHealth() * percentageDamage;
-
-                    System.out.println("DEBUG: 反弹子弹额外伤害=" + maxHealthDamage + " (aimed等级=" + aimedLevel + ")");
 
                     // 应用额外伤害
                     if (maxHealthDamage > 0) {
@@ -261,8 +162,7 @@ public class BulletHitEventHandler {
                                 }
                             }
                         } catch (Exception damageEx) {
-                            System.err.println("Error applying extra damage: " + damageEx.getMessage());
-                            damageEx.printStackTrace();
+                            GWRexpansions.LOG.error("Error applying Hellforge aimed extra damage", damageEx);
                         }
                     }
                 }
@@ -295,8 +195,7 @@ public class BulletHitEventHandler {
             Hellforge.onBulletHitLivingEntity(bullet, target, shooter);
 
         } catch (Exception e) {
-            System.err.println("Error in handleAimedEffect: " + e.getMessage());
-            e.printStackTrace();
+            GWRexpansions.LOG.error("Error in handleAimedEffect", e);
         }
     }
 
@@ -329,8 +228,7 @@ public class BulletHitEventHandler {
                 }
             }
         } catch (Exception e) {
-            System.err.println("Error in checkCoinChaining: " + e.getMessage());
-            e.printStackTrace();
+            GWRexpansions.LOG.error("Error in checkCoinChaining", e);
         }
     }
 

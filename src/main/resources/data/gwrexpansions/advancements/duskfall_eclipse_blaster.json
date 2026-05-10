@@ -1,0 +1,36 @@
+{
+  "display": {
+    "icon": {
+      "item": "gwrexpansions:duskfall_eclipse_blaster"
+    },
+    "title": {
+      "translate": "advancement.gwrexpansions.duskfall_eclipse_blaster.title"
+    },
+    "description": {
+      "translate": "advancement.gwrexpansions.duskfall_eclipse_blaster.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "gwrexpansions:root",
+  "criteria": {
+    "has_duskfall_eclipse_blaster": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["gwrexpansions:duskfall_eclipse_blaster"]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_duskfall_eclipse_blaster"
+    ]
+  ],
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "meetyourfight" }]
+}

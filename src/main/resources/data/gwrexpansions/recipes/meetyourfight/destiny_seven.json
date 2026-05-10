@@ -1,0 +1,34 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "FFF",
+    "GCG",
+    "ANA"
+  ],
+  "key": {
+    "F": {
+      "item": "meetyourfight:fortunes_favor"
+    },
+    "G": {
+      "item": "gwrexpansions:golden_bullet"
+    },
+    "C": {
+      "item": "meetyourfight:cocktail_shotgun"
+    },
+    "A": {
+      "item": "gwrexpansions:diamond_bullet"
+    },
+    "N": {
+      "item": "gwrexpansions:netherite_sniper"
+    }
+  },
+  "result": {
+    "item": "gwrexpansions:destiny_seven"
+  },
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "meetyourfight"
+    }
+  ]
+}
