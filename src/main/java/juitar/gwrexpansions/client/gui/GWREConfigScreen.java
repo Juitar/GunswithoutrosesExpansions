@@ -30,6 +30,7 @@ public class GWREConfigScreen {
             .setTitle(text("title"));
         ConfigEntryBuilder entries = builder.entryBuilder();
 
+        addGeneralCategory(builder, entries);
         addBulletCategory(builder, entries);
         addSniperCategory(builder, entries);
         addShotgunCategory(builder, entries);
@@ -45,6 +46,16 @@ public class GWREConfigScreen {
             ClientConfig.save();
         });
         return builder.build();
+    }
+
+    private static void addGeneralCategory(ConfigBuilder builder, ConfigEntryBuilder entries) {
+        ConfigCategory category = builder.getOrCreateCategory(text("category.general"));
+        category.addEntry(entries.startBooleanToggle(text("enable_all_achievements_super_shotgun_reward"),
+                GWREConfig.GENERAL.enableAllAchievementsSuperShotgunReward.get())
+            .setDefaultValue(true)
+            .setSaveConsumer(GWREConfig.GENERAL.enableAllAchievementsSuperShotgunReward::set)
+            .setTooltip(text("enable_all_achievements_super_shotgun_reward.tooltip"))
+            .build());
     }
 
     private static void addBulletCategory(ConfigBuilder builder, ConfigEntryBuilder entries) {

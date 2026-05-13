@@ -1,6 +1,5 @@
 package juitar.gwrexpansions.config;
 
-import juitar.gwrexpansions.item.vanilla.Supershotgun;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
@@ -113,6 +112,18 @@ public class GWREConfig {
                         inaccuracy = builder
                                         .comment("inaccuracy")
                                         .defineInRange("inaccuracy", defaultInaccuracy, 0.0, 10.0);
+                        builder.pop();
+                }
+        }
+
+        public static class GeneralConfig {
+                public final ForgeConfigSpec.BooleanValue enableAllAchievementsSuperShotgunReward;
+
+                public GeneralConfig(ForgeConfigSpec.Builder builder) {
+                        builder.push("General");
+                        enableAllAchievementsSuperShotgunReward = builder
+                                        .comment("Whether completing the RIP AND TEAR all-achievements challenge grants the Super Shotgun reward.")
+                                        .define("enableAllAchievementsSuperShotgunReward", true);
                         builder.pop();
                 }
         }
@@ -401,6 +412,7 @@ public class GWREConfig {
         }
 
         public static final LauncherConfigs LAUNCHER;
+        public static final GeneralConfig GENERAL;
         public static final BurstgunConfigs BURSTGUN;
         public static final SniperConfigs SNIPER;
         public static final ShotgunConfigs SHOTGUN;
@@ -411,6 +423,7 @@ public class GWREConfig {
 
         static {
                 BUILDER.push("Guns Without Roses Expansions Config");
+                GENERAL = new GeneralConfig(BUILDER);
                 SNIPER = new SniperConfigs(BUILDER);
                 SHOTGUN = new ShotgunConfigs(BUILDER);
                 GATLING = new GatlingConfigs(BUILDER);

@@ -2,10 +2,18 @@ package juitar.gwrexpansions.advancement;
 
 import juitar.gwrexpansions.CompatModids;
 import juitar.gwrexpansions.GWRexpansions;
+import juitar.gwrexpansions.config.GWREConfig;
+import juitar.gwrexpansions.registry.VanillaItem;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
+import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
@@ -22,6 +30,7 @@ import java.util.Map;
 public class AdvancementManager {
     
     private static final Map<String, Boolean> modLoadedCache = new HashMap<>();
+    private static final ResourceLocation RIP_AND_TEAR = new ResourceLocation(GWRexpansions.MODID, "rip_and_tear");
     
     /**
      * 检查模组是否加载
@@ -92,6 +101,26 @@ public class AdvancementManager {
         AdvancementProgress progress = player.getAdvancements().getOrStartProgress(advancement);
         return progress.isDone();
     }
+
+    public static void grantAllAchievementsReward(ServerPlayer player) {
+        if (!GWREConfig.GENERAL.enableAllAchievementsSuperShotgunReward.get()) {
+            return;
+        }
+
+        ItemStack stack = new ItemStack(VanillaItem.super_shotgun.get());
+        stack.setHoverName(Component.literal("SUPER SHOTGUN").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
+        CompoundTag display = stack.getOrCreateTagElement("display");
+        ListTag lore = new ListTag();
+        lore.add(StringTag.valueOf(Component.Serializer.toJson(
+                Component.literal("Reward Weapon").withStyle(ChatFormatting.YELLOW).withStyle(style -> style.withItalic(false)))));
+        lore.add(StringTag.valueOf(Component.Serializer.toJson(
+                Component.literal("Proof of completing every achievement").withStyle(ChatFormatting.GRAY).withStyle(style -> style.withItalic(false)))));
+        display.put("Lore", lore);
+
+        if (!player.getInventory().add(stack)) {
+            player.drop(stack, false);
+        }
+    }
     
     /**
      * 玩家登录时检查成就完成情况
@@ -104,6 +133,13 @@ public class AdvancementManager {
                 // 触发RIP AND TEAR成就
                 GWRECriteria.ALL_ACHIEVEMENTS_COMPLETED.trigger(player);
             }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onAdvancementEarned(net.minecraftforge.event.entity.player.AdvancementEvent.AdvancementEarnEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player && RIP_AND_TEAR.equals(event.getAdvancement().getId())) {
+            grantAllAchievementsReward(player);
         }
     }
 } 

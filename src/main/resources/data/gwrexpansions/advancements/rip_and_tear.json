@@ -24,8 +24,5 @@
     [
       "all_achievements_completed"
     ]
-  ],
-  "rewards": {
-    "function": "gwrexpansions:give_super_shotgun"
-  }
+  ]
 } 
