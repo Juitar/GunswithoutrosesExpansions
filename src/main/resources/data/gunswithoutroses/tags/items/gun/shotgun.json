@@ -5,6 +5,7 @@
     { "id": "gwrexpansions:netherite_shotgun", "required": false },
     { "id": "gwrexpansions:mirecaller_shotgun", "required": false },
     { "id": "gwrexpansions:netherite_monster_shotgun", "required": false },
+    { "id": "gwrexpansions:remnant_fangshot", "required": false },
     { "id": "gwrexpansions:dragonsteel_fire_shotgun", "required": false },
     { "id": "gwrexpansions:dragonsteel_ice_shotgun", "required": false },
     { "id": "gwrexpansions:dragonsteel_lightning_shotgun", "required": false }

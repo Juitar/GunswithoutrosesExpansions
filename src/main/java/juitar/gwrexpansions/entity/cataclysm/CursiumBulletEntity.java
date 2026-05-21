@@ -3,6 +3,7 @@ package juitar.gwrexpansions.entity.cataclysm;
 import com.github.L_Ender.cataclysm.entity.projectile.Phantom_Halberd_Entity;
 import com.github.L_Ender.cataclysm.init.ModParticle;
 import juitar.gwrexpansions.config.GWREConfig;
+import juitar.gwrexpansions.entity.meetyourfight.DuskfallBulletDelegate;
 import juitar.gwrexpansions.registry.GWREEntities;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.registry.GWRDamage;
@@ -17,7 +18,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
-public class CursiumBulletEntity extends BulletEntity {
+public class CursiumBulletEntity extends BulletEntity implements DuskfallBulletDelegate {
     private LivingEntity finalTarget;
     private boolean stopSeeking = false;
     private boolean SHOT_FROM_CURSIUM = false;
@@ -99,8 +100,19 @@ public class CursiumBulletEntity extends BulletEntity {
     }
 
     @Override
+    public boolean gwrexpansions$onDuskfallHitEntity(EntityHitResult result) {
+        onHitEntity(result);
+        return true;
+    }
+
+    @Override
     protected ParticleOptions getTrailParticle() {
         return ModParticle.PHANTOM_WING_FLAME.get();
+    }
+
+    @Override
+    public ParticleOptions gwrexpansions$getDuskfallTrailParticle() {
+        return getTrailParticle();
     }
 
     @Override

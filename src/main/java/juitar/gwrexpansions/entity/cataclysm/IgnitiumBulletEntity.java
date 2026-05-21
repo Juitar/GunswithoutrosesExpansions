@@ -2,6 +2,7 @@ package juitar.gwrexpansions.entity.cataclysm;
 
 
 import com.github.L_Ender.cataclysm.init.ModEffect;
+import juitar.gwrexpansions.entity.meetyourfight.DuskfallBulletDelegate;
 import juitar.gwrexpansions.registry.GWREEntities;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.registry.GWRDamage;
@@ -15,7 +16,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.nbt.CompoundTag;
 
-public class IgnitiumBulletEntity extends BulletEntity {
+public class IgnitiumBulletEntity extends BulletEntity implements DuskfallBulletDelegate {
     private boolean Healing = false;
 
     public IgnitiumBulletEntity(EntityType<? extends BulletEntity> type, Level world) {
@@ -68,8 +69,19 @@ public class IgnitiumBulletEntity extends BulletEntity {
     }
 
     @Override
+    public boolean gwrexpansions$onDuskfallHitEntity(EntityHitResult result) {
+        onHitEntity(result);
+        return true;
+    }
+
+    @Override
     protected ParticleOptions getTrailParticle() {
         return ParticleTypes.FLAME;
+    }
+
+    @Override
+    public ParticleOptions gwrexpansions$getDuskfallTrailParticle() {
+        return getTrailParticle();
     }
 
     @Override

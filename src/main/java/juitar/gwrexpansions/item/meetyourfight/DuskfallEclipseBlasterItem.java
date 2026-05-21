@@ -37,10 +37,11 @@ public class DuskfallEclipseBlasterItem extends ConfigurableBurstGunItem {
 
     @Override
     protected void shoot(Level level, Player player, ItemStack gun, ItemStack ammo, IBullet bulletItem, boolean bulletFree) {
-        ItemStack firedAmmo = snapshotAmmo(ammo, bulletItem);
+        ResolvedAmmo resolvedAmmo = resolveDelegateAmmo(ammo, bulletItem, player);
+        ItemStack firedAmmo = snapshotAmmo(resolvedAmmo.stack(), resolvedAmmo.bullet());
         int shots = getProjectilesPerShot(gun, player);
         for (int i = 0; i < shots; ++i) {
-            BulletEntity shot = createPiercingShot(level, player, firedAmmo, bulletItem);
+            BulletEntity shot = createPiercingShot(level, player, firedAmmo, resolvedAmmo.bullet());
             shot.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F,
                     (float) getProjectileSpeed(gun, player), (float) getInaccuracy(gun, player));
             shot.setDamage(Math.max(0.0D, shot.getDamage() + getBonusDamage(gun, player)) * getDamageMultiplier(gun, player));
@@ -51,6 +52,16 @@ public class DuskfallEclipseBlasterItem extends ConfigurableBurstGunItem {
             affectBulletEntity(player, gun, shot, bulletFree);
             level.addFreshEntity(shot);
         }
+    }
+
+    private ResolvedAmmo resolveDelegateAmmo(ItemStack ammo, IBullet bulletItem, Player player) {
+        if (!ammo.isEmpty() && bulletItem.hasDelegate(ammo, player)) {
+            ItemStack delegate = bulletItem.getDelegate(ammo, player);
+            if (!delegate.isEmpty() && delegate.getItem() instanceof IBullet delegateBullet) {
+                return new ResolvedAmmo(delegate, delegateBullet);
+            }
+        }
+        return new ResolvedAmmo(ammo, bulletItem);
     }
 
     private BulletEntity createPiercingShot(Level level, LivingEntity shooter, ItemStack ammo, IBullet bulletItem) {
@@ -74,6 +85,9 @@ public class DuskfallEclipseBlasterItem extends ConfigurableBurstGunItem {
             return ammo.copyWithCount(1);
         }
         return bulletItem instanceof Item item ? new ItemStack(item) : ammo;
+    }
+
+    private record ResolvedAmmo(ItemStack stack, IBullet bullet) {
     }
 
     @Override

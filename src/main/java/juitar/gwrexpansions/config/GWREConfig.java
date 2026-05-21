@@ -141,6 +141,70 @@ public class GWREConfig {
                 }
         }
 
+        public static class RemnantFangshotConfig extends GunConfig {
+                public final ForgeConfigSpec.IntValue rageRequired;
+                public final ForgeConfigSpec.IntValue awakenedTicks;
+                public final ForgeConfigSpec.IntValue bladeAmpTicks;
+                public final ForgeConfigSpec.IntValue comboWindowTicks;
+                public final ForgeConfigSpec.DoubleValue baseMeleeDamage;
+                public final ForgeConfigSpec.DoubleValue bladeDamageBonus;
+                public final ForgeConfigSpec.DoubleValue baseAttackSpeedModifier;
+                public final ForgeConfigSpec.DoubleValue ampedAttackSpeedModifier;
+                public final ForgeConfigSpec.DoubleValue minFullAttackScale;
+                public final ForgeConfigSpec.DoubleValue cooldownRemainingMultiplier;
+                public final ForgeConfigSpec.DoubleValue powerProjectileDamageMultiplier;
+                public final ForgeConfigSpec.DoubleValue powerStompDamageMultiplier;
+                public final ForgeConfigSpec.DoubleValue powerStompRange;
+                public final ForgeConfigSpec.IntValue dashTicks;
+                public final ForgeConfigSpec.DoubleValue dashDamageMultiplier;
+                public final ForgeConfigSpec.DoubleValue dashSpeed;
+                public final ForgeConfigSpec.DoubleValue dashHitRange;
+                public final ForgeConfigSpec.DoubleValue dashDamageReduction;
+
+                public RemnantFangshotConfig(ForgeConfigSpec.Builder builder) {
+                        super(builder, "RemnantFangshot", 0, 0.65, 1.0, 24, 4.0);
+
+                        builder.push("RemnantFangshot_Mechanics");
+                        rageRequired = builder.comment("Gunblade cycles required to awaken Remnant Fangshot.")
+                                        .defineInRange("rageRequired", 3, 1, 20);
+                        awakenedTicks = builder.comment("Awakened duration in ticks. 200 ticks = 10 seconds.")
+                                        .defineInRange("awakenedTicks", 200, 1, 6000);
+                        bladeAmpTicks = builder.comment("Ticks the blade remains empowered after a projectile hit.")
+                                        .defineInRange("bladeAmpTicks", 80, 1, 6000);
+                        comboWindowTicks = builder.comment("Ticks allowed between the shot hit and the charged melee hit.")
+                                        .defineInRange("comboWindowTicks", 100, 1, 6000);
+                        baseMeleeDamage = builder.comment("Base melee damage shown by the gunblade.")
+                                        .defineInRange("baseMeleeDamage", 9.0, 0.0, 1000.0);
+                        bladeDamageBonus = builder.comment("Melee damage added while the blade is empowered.")
+                                        .defineInRange("bladeDamageBonus", 3.0, 0.0, 1000.0);
+                        baseAttackSpeedModifier = builder.comment("Attack speed attribute modifier when the blade is not empowered.")
+                                        .defineInRange("baseAttackSpeedModifier", -2.6, -10.0, 10.0);
+                        ampedAttackSpeedModifier = builder.comment("Attack speed attribute modifier while the blade is empowered.")
+                                        .defineInRange("ampedAttackSpeedModifier", -2.4, -10.0, 10.0);
+                        minFullAttackScale = builder.comment("Minimum attack strength scale required for gunblade combo hits.")
+                                        .defineInRange("minFullAttackScale", 0.9, 0.0, 1.0);
+                        cooldownRemainingMultiplier = builder.comment("Remaining firing cooldown multiplier after a correct charged melee hit. 0.5 cuts remaining cooldown in half.")
+                                        .defineInRange("cooldownRemainingMultiplier", 0.5, 0.0, 1.0);
+                        powerProjectileDamageMultiplier = builder.comment("Projectile damage multiplier while awakened. 1.2 is +20%.")
+                                        .defineInRange("powerProjectileDamageMultiplier", 1.2, 0.0, 10.0);
+                        powerStompDamageMultiplier = builder.comment("Awakened stomp damage as a multiplier of current melee damage.")
+                                        .defineInRange("powerStompDamageMultiplier", 0.6, 0.0, 10.0);
+                        powerStompRange = builder.comment("Awakened stomp radius.")
+                                        .defineInRange("powerStompRange", 2.75, 0.0, 64.0);
+                        dashTicks = builder.comment("Remnant Charge duration in ticks.")
+                                        .defineInRange("dashTicks", 10, 1, 200);
+                        dashDamageMultiplier = builder.comment("Remnant Charge damage as a multiplier of current melee damage.")
+                                        .defineInRange("dashDamageMultiplier", 2.5, 0.0, 20.0);
+                        dashSpeed = builder.comment("Forward speed applied during Remnant Charge.")
+                                        .defineInRange("dashSpeed", 1.25, 0.0, 10.0);
+                        dashHitRange = builder.comment("Hit radius around the charging sandstorm.")
+                                        .defineInRange("dashHitRange", 1.15, 0.0, 16.0);
+                        dashDamageReduction = builder.comment("Incoming damage reduction during Remnant Charge. 0.2 is 20%.")
+                                        .defineInRange("dashDamageReduction", 0.2, 0.0, 0.95);
+                        builder.pop();
+                }
+        }
+
         public static class BurstgunConfig {
                 // 包含基础枪支配置
                 public final GunConfig gunConfig;
@@ -225,6 +289,36 @@ public class GWREConfig {
                 }
         }
 
+        public static class CeraunusBurstConfig extends BurstgunConfig {
+                public final ForgeConfigSpec.DoubleValue baseElementDamageMultiplier;
+                public final ForgeConfigSpec.DoubleValue comboDamageMultiplier;
+                public final ForgeConfigSpec.DoubleValue comboRadius;
+                public final ForgeConfigSpec.IntValue anchorDelay;
+                public final ForgeConfigSpec.IntValue stormSerpentMax;
+
+                public CeraunusBurstConfig(ForgeConfigSpec.Builder builder) {
+                        super(builder, "CeraunusBurst", 0, 0.85, 1.0, 30, 1.5, 3, 5);
+
+                        builder.push("CeraunusBurst_Mechanics");
+                        baseElementDamageMultiplier = builder
+                                        .comment("Damage multiplier for iron/water, golden/storm, and diamond/lightning element shots.")
+                                        .defineInRange("baseElementDamageMultiplier", 1.0, 0.0, 10.0);
+                        comboDamageMultiplier = builder
+                                        .comment("Damage multiplier used by the three-shot Ceraunus anchor combo.")
+                                        .defineInRange("comboDamageMultiplier", 1.25, 0.0, 20.0);
+                        comboRadius = builder
+                                        .comment("Radius used by Ceraunus anchor combos.")
+                                        .defineInRange("comboRadius", 6.0, 1.0, 32.0);
+                        anchorDelay = builder
+                                        .comment("Ticks before the four Ceraunus anchors smash down.")
+                                        .defineInRange("anchorDelay", 12, 1, 100);
+                        stormSerpentMax = builder
+                                        .comment("Maximum Storm Serpents a single Ceraunus combo may summon.")
+                                        .defineInRange("stormSerpentMax", 4, 0, 16);
+                        builder.pop();
+                }
+        }
+
         // 狙击枪配置
         public static class SniperConfigs {
                 public final GunConfig netherite;
@@ -246,11 +340,13 @@ public class GWREConfig {
         public static class BurstgunConfigs {
                 public final BurstgunConfig voidBurst;
                 public final DuskfallEclipseConfig duskfallEclipse;
+                public final CeraunusBurstConfig ceraunusBurst;
 
                 public BurstgunConfigs(ForgeConfigSpec.Builder builder) {
                         builder.push("Burstgun");
                         voidBurst = new BurstgunConfig(builder, "Void", 2, 1.0, 1.0, 25, 0.0, 3, 5);
                         duskfallEclipse = new DuskfallEclipseConfig(builder);
+                        ceraunusBurst = new CeraunusBurstConfig(builder);
                         builder.pop();
                 }
         }
@@ -261,6 +357,7 @@ public class GWREConfig {
                 public final GunConfig NetheriteMonster;
                 public final GunConfig DragonSteel;
                 public final GunConfig Supershotgun;
+                public final RemnantFangshotConfig RemnantFangshot;
                 public final MirecallerConfig Mirecaller;
 
                 public ShotgunConfigs(ForgeConfigSpec.Builder builder) {
@@ -269,6 +366,7 @@ public class GWREConfig {
                         NetheriteMonster = new GunConfig(builder, "NetheriteMonster", 0, 0.8, 1.0, 20, 4.0);
                         DragonSteel = new GunConfig(builder, "DragonSteel", 0, 0.75, 1.0, 20, 4);
                         Supershotgun = new GunConfig(builder, "Supershotgun", 0, 1.5, 1.0, 40, 4);
+                        RemnantFangshot = new RemnantFangshotConfig(builder);
                         Mirecaller = new MirecallerConfig(builder);
                         builder.pop();
                 }

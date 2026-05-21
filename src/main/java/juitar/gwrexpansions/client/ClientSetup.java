@@ -9,6 +9,7 @@ import juitar.gwrexpansions.client.render.MagneticPinRenderer;
 import juitar.gwrexpansions.client.render.MeatHookRenderer;
 import juitar.gwrexpansions.client.render.ObsidianCoreRenderer;
 import juitar.gwrexpansions.client.render.ObsidianLauncherHudRenderer;
+import juitar.gwrexpansions.client.render.RemnantFangshotHudRenderer;
 import juitar.gwrexpansions.client.render.SupershotgunHudRenderer;
 import juitar.gwrexpansions.client.gui.CoinCounterOverlay;
 import juitar.gwrexpansions.config.ClientConfig;
@@ -35,6 +36,9 @@ public class ClientSetup {
             MinecraftForge.EVENT_BUS.register(new HudRenderHandler());
             // 注册超级霰弹枪HUD渲染器
             MinecraftForge.EVENT_BUS.register(new SupershotgunHudRenderer());
+            if (ModList.get().isLoaded(CompatModids.CATACLYSM)) {
+                MinecraftForge.EVENT_BUS.register(new RemnantFangshotHudRenderer());
+            }
             // 注册黑曜石发射器HUD渲染器
             if(ModList.get().isLoaded(CompatModids.BOMD)) {
                 MinecraftForge.EVENT_BUS.register(new ObsidianLauncherHudRenderer());

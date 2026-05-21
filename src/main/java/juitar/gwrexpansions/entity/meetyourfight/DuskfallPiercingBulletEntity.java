@@ -1,20 +1,24 @@
 package juitar.gwrexpansions.entity.meetyourfight;
 
+import com.github.L_Ender.cataclysm.init.ModParticle;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import juitar.gwrexpansions.registry.CompatCataclysm;
+import juitar.gwrexpansions.registry.CompatIceandfire;
 import juitar.gwrexpansions.registry.GWREEntities;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.entity.PiercingBulletEntity;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 public class DuskfallPiercingBulletEntity extends PiercingBulletEntity {
     @Nullable
@@ -44,7 +48,7 @@ public class DuskfallPiercingBulletEntity extends PiercingBulletEntity {
 
     @Override
     protected void onHitEntity(EntityHitResult result) {
-        boolean handled = invokeDelegateHit("onHitEntity", EntityHitResult.class, result);
+        boolean handled = invokeDelegateHitEntity(result);
         if (!handled) {
             super.onHitEntity(result);
             return;
@@ -62,9 +66,61 @@ public class DuskfallPiercingBulletEntity extends PiercingBulletEntity {
 
     @Override
     protected void onHitBlock(BlockHitResult hit) {
-        if (!invokeDelegateHit("onHitBlock", BlockHitResult.class, hit)) {
+        if (!invokeDelegateHitBlock(hit)) {
             super.onHitBlock(hit);
         }
+    }
+
+    @Override
+    protected ParticleOptions getTrailParticle() {
+        ParticleOptions particle = getTrailParticleFromSyncedItem();
+        if (particle != null) {
+            return particle;
+        }
+        if (effectDelegate instanceof DuskfallBulletDelegate delegate) {
+            particle = delegate.gwrexpansions$getDuskfallTrailParticle();
+            if (particle != null) {
+                return particle;
+            }
+        }
+        return super.getTrailParticle();
+    }
+
+    @Nullable
+    private ParticleOptions getTrailParticleFromSyncedItem() {
+        ItemStack ammo = getItem();
+        if (ammo.isEmpty()) {
+            return null;
+        }
+        if (CompatCataclysm.lavapower_bullet != null && CompatCataclysm.lavapower_bullet.isPresent()
+                && ammo.is(CompatCataclysm.lavapower_bullet.get())) {
+            return ParticleTypes.LAVA;
+        }
+        if (CompatCataclysm.ignitium_bullet != null && CompatCataclysm.ignitium_bullet.isPresent()
+                && ammo.is(CompatCataclysm.ignitium_bullet.get())) {
+            return ParticleTypes.FLAME;
+        }
+        if (CompatCataclysm.tidal_bullet != null && CompatCataclysm.tidal_bullet.isPresent()
+                && ammo.is(CompatCataclysm.tidal_bullet.get())) {
+            return ParticleTypes.REVERSE_PORTAL;
+        }
+        if (CompatCataclysm.cursium_bullet != null && CompatCataclysm.cursium_bullet.isPresent()
+                && ammo.is(CompatCataclysm.cursium_bullet.get())) {
+            return ModParticle.PHANTOM_WING_FLAME.get();
+        }
+        if (CompatIceandfire.dragonsteel_fire_bullet != null && CompatIceandfire.dragonsteel_fire_bullet.isPresent()
+                && ammo.is(CompatIceandfire.dragonsteel_fire_bullet.get())) {
+            return ParticleTypes.FLAME;
+        }
+        if (CompatIceandfire.dragonsteel_ice_bullet != null && CompatIceandfire.dragonsteel_ice_bullet.isPresent()
+                && ammo.is(CompatIceandfire.dragonsteel_ice_bullet.get())) {
+            return ParticleTypes.SNOWFLAKE;
+        }
+        if (CompatIceandfire.dragonsteel_lightning_bullet != null && CompatIceandfire.dragonsteel_lightning_bullet.isPresent()
+                && ammo.is(CompatIceandfire.dragonsteel_lightning_bullet.get())) {
+            return ParticleTypes.ELECTRIC_SPARK;
+        }
+        return null;
     }
 
     @Override
@@ -75,19 +131,28 @@ public class DuskfallPiercingBulletEntity extends PiercingBulletEntity {
         return true;
     }
 
-    private boolean invokeDelegateHit(String methodName, Class<?> parameterType, Object hit) {
-        if (effectDelegate == null) {
+    private boolean invokeDelegateHitEntity(EntityHitResult result) {
+        if (!(effectDelegate instanceof DuskfallBulletDelegate delegate)) {
             return false;
         }
         syncEffectDelegate();
-        try {
-            Method method = findHitMethod(effectDelegate.getClass(), methodName, parameterType);
-            method.invoke(effectDelegate, hit);
+        boolean handled = delegate.gwrexpansions$onDuskfallHitEntity(result);
+        if (handled) {
             setRemainingFireTicks(effectDelegate.getRemainingFireTicks());
-            return true;
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | LinkageError ignored) {
+        }
+        return handled;
+    }
+
+    private boolean invokeDelegateHitBlock(BlockHitResult result) {
+        if (!(effectDelegate instanceof DuskfallBulletDelegate delegate)) {
             return false;
         }
+        syncEffectDelegate();
+        boolean handled = delegate.gwrexpansions$onDuskfallHitBlock(result);
+        if (handled) {
+            setRemainingFireTicks(effectDelegate.getRemainingFireTicks());
+        }
+        return handled;
     }
 
     private void syncEffectDelegate() {
@@ -104,19 +169,5 @@ public class DuskfallPiercingBulletEntity extends PiercingBulletEntity {
         effectDelegate.setRemainingFireTicks(getRemainingFireTicks());
         effectDelegate.getPersistentData().merge(getPersistentData());
         effectDelegate.moveTo(getX(), getY(), getZ(), getYRot(), getXRot());
-    }
-
-    private static Method findHitMethod(Class<?> clazz, String methodName, Class<?> parameterType) throws NoSuchMethodException {
-        Class<?> current = clazz;
-        while (current != null) {
-            try {
-                Method method = current.getDeclaredMethod(methodName, parameterType);
-                method.setAccessible(true);
-                return method;
-            } catch (NoSuchMethodException ignored) {
-                current = current.getSuperclass();
-            }
-        }
-        throw new NoSuchMethodException(methodName);
     }
 }

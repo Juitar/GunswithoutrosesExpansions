@@ -3,6 +3,7 @@ package juitar.gwrexpansions.registry;
 import juitar.gwrexpansions.CompatModids;
 import juitar.gwrexpansions.GWRexpansions;
 import juitar.gwrexpansions.config.GWREConfig;
+import juitar.gwrexpansions.item.alexscaves.MechanicPlaceholderItem;
 import juitar.gwrexpansions.item.cataclysm.*;
 import lykrast.gunswithoutroses.item.BulletItem;
 import lykrast.gunswithoutroses.item.GunItem;
@@ -19,9 +20,9 @@ import net.minecraft.world.item.Item;
 import java.util.function.Supplier;
 
 public class CompatCataclysm {
-    public static RegistryObject<GunItem> ignitium_gatling,cursium_sniper,netherite_monster_shotgun,tidal_pistol;
+    public static RegistryObject<GunItem> ignitium_gatling,cursium_sniper,netherite_monster_shotgun,tidal_pistol,remnant_fangshot,ceraunus_burst;
     public static RegistryObject<BulletItem> ignitium_bullet,cursium_bullet,lavapower_bullet;
-    public static RegistryObject<Item> tidal_bullet;
+    public static RegistryObject<Item> tidal_bullet,voidfall_launcher,harbinger_raycaster;
     public static TagKey<Item> tagBaseBullets = ItemTags.create(GWRexpansions.resource("lavapowerbullet_base"));
 
     public static Supplier<Item> CURSIUM_INGOT = () -> ForgeRegistries.ITEMS.getValue(
@@ -30,6 +31,8 @@ public class CompatCataclysm {
             new ResourceLocation(CompatModids.CATACLYSM,"ignitium_ingot"));
     public static Supplier<Item> MONSTROUS_HORN = () -> ForgeRegistries.ITEMS.getValue(
             new ResourceLocation(CompatModids.CATACLYSM,"monstrous_horn"));
+    public static Supplier<Item> ANCIENT_METAL_INGOT = () -> ForgeRegistries.ITEMS.getValue(
+            new ResourceLocation(CompatModids.CATACLYSM,"ancient_metal_ingot"));
 
     public static void registerItems() {
 
@@ -55,5 +58,24 @@ public class CompatCataclysm {
         lavapower_bullet = GWREItems.initItem( () -> new LavapowerBulletItem(GWREItems.defP().fireResistant(),9),"lavapower_bullet");
         cursium_bullet = GWREItems.initItem( () -> new CursiumBulletItem(GWREItems.defP().fireResistant(), 14),"cursium_bullet");
         tidal_bullet = GWREItems.REG.register("tidal_bullet",()-> new TidalBulletItem(GWREItems.defP().fireResistant(), 12));
+
+        voidfall_launcher = GWREItems.initItem(() -> new MechanicPlaceholderItem(
+                GWREItems.noStack().fireResistant().rarity(Rarity.EPIC),
+                "tooltip.gwrexpansions.voidfall_launcher.desc"), "voidfall_launcher");
+        harbinger_raycaster = GWREItems.initItem(() -> new MechanicPlaceholderItem(
+                GWREItems.noStack().fireResistant().rarity(Rarity.EPIC),
+                "tooltip.gwrexpansions.harbinger_raycaster.desc"), "harbinger_raycaster");
+        remnant_fangshot = GWREItems.initItem(() -> new RemnantFangshotItem(
+                GWREItems.defP().durability(10000).fireResistant().rarity(Rarity.EPIC),
+                0, 0.65, 24, 4.0, 20,
+                () -> GWREConfig.SHOTGUN.RemnantFangshot)
+                .projectiles(4).fireSound(GWRSounds.shotgun).repair(() -> Ingredient.of(ANCIENT_METAL_INGOT.get())),
+                "remnant_fangshot");
+        ceraunus_burst = GWREItems.initItem(() -> new CeraunusBurstItem(
+                GWREItems.defP().durability(10000).fireResistant().rarity(Rarity.EPIC),
+                0, 0.85, 30, 1.5, 20, 3, 5,
+                () -> GWREConfig.BURSTGUN.ceraunusBurst)
+                .fireSound(GWRSounds.gun).repair(() -> Ingredient.of(ANCIENT_METAL_INGOT.get())),
+                "ceraunus_burst");
     }
 }

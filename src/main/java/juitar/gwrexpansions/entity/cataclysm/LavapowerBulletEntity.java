@@ -1,6 +1,7 @@
 package juitar.gwrexpansions.entity.cataclysm;
 
 import juitar.gwrexpansions.config.GWREConfig;
+import juitar.gwrexpansions.entity.meetyourfight.DuskfallBulletDelegate;
 import juitar.gwrexpansions.registry.GWREEntities;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.registry.GWRDamage;
@@ -21,7 +22,7 @@ import net.minecraft.world.entity.Entity;
 import javax.annotation.Nullable;
 
 import com.github.L_Ender.cataclysm.entity.projectile.Flame_Jet_Entity;
-public class LavapowerBulletEntity extends BulletEntity {
+public class LavapowerBulletEntity extends BulletEntity implements DuskfallBulletDelegate {
     private int jetCount = GWREConfig.BulletConfig.flamejetCount.get();
 
     public LavapowerBulletEntity(EntityType<? extends BulletEntity> type, Level level) {
@@ -61,6 +62,13 @@ public class LavapowerBulletEntity extends BulletEntity {
                 }
             }
     }
+
+    @Override
+    public boolean gwrexpansions$onDuskfallHitEntity(EntityHitResult result) {
+        onHitEntity(result);
+        return true;
+    }
+
     @Override
     protected void onHitBlock(BlockHitResult hit) {
             if (level().isClientSide) {
@@ -73,6 +81,13 @@ public class LavapowerBulletEntity extends BulletEntity {
                 createPlusStrikeJet(level(), hit.getLocation().x, hit.getLocation().y, hit.getLocation().z, getOwner(), jetCount, 2);
             }
     }
+
+    @Override
+    public boolean gwrexpansions$onDuskfallHitBlock(BlockHitResult hit) {
+        onHitBlock(hit);
+        return true;
+    }
+
     public void setJetCount(int count) {
         this.jetCount = count;
     }
@@ -83,6 +98,11 @@ public class LavapowerBulletEntity extends BulletEntity {
     @Override
     protected ParticleOptions getTrailParticle() {
         return ParticleTypes.LAVA;
+    }
+
+    @Override
+    public ParticleOptions gwrexpansions$getDuskfallTrailParticle() {
+        return getTrailParticle();
     }
 
     @Override

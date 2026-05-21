@@ -4,6 +4,7 @@ import com.github.L_Ender.cataclysm.entity.AnimationMonster.BossMonsters.The_Lev
 import com.github.L_Ender.cataclysm.init.ModEffect;
 import juitar.gwrexpansions.advancement.FirstTidalPortalCreatedTrigger;
 import juitar.gwrexpansions.config.GWREConfig;
+import juitar.gwrexpansions.entity.meetyourfight.DuskfallBulletDelegate;
 import juitar.gwrexpansions.registry.GWREEntities;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.item.IBullet;
@@ -28,7 +29,7 @@ import net.minecraftforge.fml.ModList;
 import java.util.Objects;
 
 
-public class TidalBulletEntity extends BulletEntity {
+public class TidalBulletEntity extends BulletEntity implements DuskfallBulletDelegate {
     private double BURN_MULTI = 1.0;
     private  double AQUATIC_MULTI = 1.5;
     private static final double PORTAL_DAMAGE = GWREConfig.BulletConfig.portal_damage.get();
@@ -43,6 +44,11 @@ public class TidalBulletEntity extends BulletEntity {
     @Override
     protected ParticleOptions getTrailParticle() {
         return ParticleTypes.REVERSE_PORTAL;
+    }
+
+    @Override
+    public ParticleOptions gwrexpansions$getDuskfallTrailParticle() {
+        return getTrailParticle();
     }
 
     @Override
@@ -95,6 +101,12 @@ public class TidalBulletEntity extends BulletEntity {
                 }
             }
         }
+    }
+
+    @Override
+    public boolean gwrexpansions$onDuskfallHitEntity(EntityHitResult result) {
+        onHitEntity(result);
+        return true;
     }
 
     private void spawnPortal(LivingEntity shooter, Level world, LivingEntity target) {

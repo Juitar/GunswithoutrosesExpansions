@@ -1,6 +1,7 @@
 package juitar.gwrexpansions.entity.iceandfire;
 
 import com.github.alexthe666.iceandfire.entity.*;
+import juitar.gwrexpansions.entity.meetyourfight.DuskfallBulletDelegate;
 import juitar.gwrexpansions.registry.GWREEntities;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 
@@ -11,7 +12,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.level.Level;
 
-public class FireDragonSteelBulletEntity extends BulletEntity {
+public class FireDragonSteelBulletEntity extends BulletEntity implements DuskfallBulletDelegate {
     public FireDragonSteelBulletEntity(EntityType<? extends BulletEntity> type, Level level) {
         super(type, level);
     }
@@ -58,5 +59,11 @@ public class FireDragonSteelBulletEntity extends BulletEntity {
                 target.invulnerableTime = lastHurtResistant;
             }
         }
+    }
+
+    @Override
+    public boolean gwrexpansions$onDuskfallHitEntity(EntityHitResult result) {
+        onHitEntity(result);
+        return true;
     }
 } 

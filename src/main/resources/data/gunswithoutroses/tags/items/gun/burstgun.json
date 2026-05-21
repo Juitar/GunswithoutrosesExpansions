@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     {"id":"gwrexpansions:voidspike","required":false},
-    {"id":"gwrexpansions:duskfall_eclipse_blaster","required":false}
+    {"id":"gwrexpansions:duskfall_eclipse_blaster","required":false},
+    {"id":"gwrexpansions:ceraunus_burst","required":false}
   ]
 }

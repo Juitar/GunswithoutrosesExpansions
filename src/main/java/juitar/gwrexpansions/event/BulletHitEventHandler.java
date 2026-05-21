@@ -1,16 +1,22 @@
 package juitar.gwrexpansions.event;
 
+import com.github.L_Ender.cataclysm.entity.effect.Sandstorm_Entity;
+import com.github.L_Ender.cataclysm.entity.projectile.Sandstorm_Projectile;
 import juitar.gwrexpansions.GWRexpansions;
 import juitar.gwrexpansions.entity.BOMD.CoinEntity;
 import juitar.gwrexpansions.item.BOMD.Hellforge;
+import juitar.gwrexpansions.item.cataclysm.CeraunusBurstItem;
+import juitar.gwrexpansions.item.cataclysm.RemnantFangshotItem;
 import juitar.gwrexpansions.registry.GWREEffects;
 import juitar.gwrexpansions.util.CoinTargetUtils;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
@@ -31,7 +37,30 @@ public class BulletHitEventHandler {
     public static final String ALLOW_SHOOTER_HIT = "AllowShooterHit";
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onRemnantFangshotStormNativeDamage(LivingHurtEvent event) {
+        if (!event.getSource().is(DamageTypes.MAGIC)
+                || event.getSource().getDirectEntity() != null
+                || event.getSource().getEntity() != null) {
+            return;
+        }
+
+        LivingEntity target = event.getEntity();
+        boolean fromFangshotStorm = !target.level().getEntitiesOfClass(Sandstorm_Entity.class,
+                target.getBoundingBox().inflate(0.4D),
+                storm -> storm.getPersistentData().getBoolean(RemnantFangshotItem.DASH_STORM_TAG)).isEmpty();
+        if (fromFangshotStorm) {
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onProjectileImpact(ProjectileImpactEvent event) {
+        if (event.getProjectile() instanceof Sandstorm_Projectile sandstorm
+                && sandstorm.getPersistentData().getBoolean(RemnantFangshotItem.SANDSTORM_SHOT_TAG)) {
+            handleRemnantFangshotSandstormImpact(event, sandstorm);
+            return;
+        }
+
         if (!(event.getProjectile() instanceof BulletEntity bullet)
                 || !(event.getRayTraceResult() instanceof EntityHitResult entityHit)) {
             return;
@@ -46,6 +75,43 @@ public class BulletHitEventHandler {
         if (target == owner || target.isPassengerOfSameVehicle(owner)) {
             event.setImpactResult(ProjectileImpactEvent.ImpactResult.SKIP_ENTITY);
         }
+    }
+
+    private static void handleRemnantFangshotSandstormImpact(ProjectileImpactEvent event, Sandstorm_Projectile sandstorm) {
+        if (!(event.getRayTraceResult() instanceof EntityHitResult entityHit)) {
+            sandstorm.discard();
+            event.setImpactResult(ProjectileImpactEvent.ImpactResult.STOP_AT_CURRENT_NO_DAMAGE);
+            return;
+        }
+
+        Entity owner = sandstorm.getOwner();
+        Entity target = entityHit.getEntity();
+        if (owner == null || target == owner || target.isPassengerOfSameVehicle(owner)) {
+            event.setImpactResult(ProjectileImpactEvent.ImpactResult.SKIP_ENTITY);
+            return;
+        }
+
+        if (target instanceof LivingEntity livingTarget) {
+            CompoundTag data = sandstorm.getPersistentData();
+            int invulnerableTime = target.invulnerableTime;
+            target.invulnerableTime = 0;
+            boolean damaged = target.hurt(sandstorm.level().damageSources().indirectMagic(sandstorm, owner),
+                    (float) data.getDouble(RemnantFangshotItem.SANDSTORM_DAMAGE_TAG));
+            if (!damaged) {
+                target.invulnerableTime = invulnerableTime;
+            }
+
+            if (owner instanceof Player player) {
+                ItemStack fangshot = RemnantFangshotItem.findHeldFangshot(player);
+                if (!fangshot.isEmpty()) {
+                    RemnantFangshotItem.onBulletHit(fangshot, player, livingTarget,
+                            data.getInt(RemnantFangshotItem.SANDSTORM_SHOT_ID_TAG));
+                }
+            }
+        }
+
+        sandstorm.discard();
+        event.setImpactResult(ProjectileImpactEvent.ImpactResult.STOP_AT_CURRENT_NO_DAMAGE);
     }
 
     /**
@@ -82,6 +148,21 @@ public class BulletHitEventHandler {
                 }
 
                 boolean isHellforgeShot = bulletData.getBoolean("HellforgeShot");
+                boolean isRemnantFangshotShot = bulletData.getBoolean(RemnantFangshotItem.BULLET_TAG);
+                boolean isCeraunusStormShot = bulletData.getBoolean(CeraunusBurstItem.STORM_SHOT_TAG);
+
+                if (isRemnantFangshotShot && shooter instanceof Player player) {
+                    ItemStack fangshot = RemnantFangshotItem.findHeldFangshot(player);
+                    if (!fangshot.isEmpty()) {
+                        RemnantFangshotItem.onBulletHit(fangshot, player, target,
+                                bulletData.getInt(RemnantFangshotItem.BULLET_SHOT_ID_TAG));
+                    }
+                }
+
+                if (isCeraunusStormShot) {
+                    CeraunusBurstItem.onStormShotHit(bullet, target, shooter);
+                    bulletData.putBoolean(CeraunusBurstItem.STORM_SHOT_TAG, false);
+                }
 
                 // 检查子弹是否有HellforgeShot标记
                 if (isHellforgeShot) {
@@ -99,6 +180,13 @@ public class BulletHitEventHandler {
         } finally {
             // 确保标记被重置
             PROCESSING.set(false);
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public static void onRemnantFangshotDashHurt(LivingHurtEvent event) {
+        if (event.getEntity() instanceof Player player && RemnantFangshotItem.isDashing(player)) {
+            event.setAmount(event.getAmount() * RemnantFangshotItem.getDashIncomingDamageMultiplier());
         }
     }
 
@@ -240,6 +328,8 @@ public class BulletHitEventHandler {
         if (event.phase == TickEvent.Phase.END) {
             // 在服务器tick结束时处理所有寻找硬币连锁的子弹
             event.getServer().getAllLevels().forEach(level -> {
+                CeraunusBurstItem.tickScheduledCombos(level);
+
                 // 获取所有子弹实体
                 level.getAllEntities().forEach(entity -> {
                     if (entity instanceof BulletEntity bullet) {
