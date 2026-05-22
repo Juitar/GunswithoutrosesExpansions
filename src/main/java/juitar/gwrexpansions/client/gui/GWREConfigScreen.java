@@ -104,6 +104,7 @@ public class GWREConfigScreen {
             GWREConfig.SHOTGUN.DragonSteel, 0, 0.75D, 1.0D, 20, 4.0D);
         addGunSubCategory(category, entries, "item.gwrexpansions.super_shotgun",
             GWREConfig.SHOTGUN.Supershotgun, 0, 1.5D, 1.0D, 40, 4.0D);
+        addRemnantFangshotSubCategory(category, entries);
         addMirecallerSubCategory(category, entries);
     }
 
@@ -140,6 +141,7 @@ public class GWREConfigScreen {
         addBurstGunSubCategory(category, entries, "item.gwrexpansions.voidspike",
             GWREConfig.BURSTGUN.voidBurst, 2, 1.0D, 1.0D, 25, 0.0D, 3, 5);
         addDuskfallSubCategory(category, entries);
+        addCeraunusSubCategory(category, entries);
     }
 
     private static void addGunSubCategory(ConfigCategory category, ConfigEntryBuilder entries, String titleKey,
@@ -190,6 +192,31 @@ public class GWREConfigScreen {
         category.addEntry(subCategory.build());
     }
 
+    private static void addCeraunusSubCategory(ConfigCategory category, ConfigEntryBuilder entries) {
+        GWREConfig.CeraunusBurstConfig config = GWREConfig.BURSTGUN.ceraunusBurst;
+        SubCategoryBuilder subCategory = entries.startSubCategory(
+            Component.translatable("item.gwrexpansions.ceraunus_burst")).setExpanded(false);
+
+        addGunEntries(subCategory::add, entries, config.gunConfig, 0, 0.72D, 1.0D, 26, 1.35D);
+        addInt(subCategory::add, entries, "burst_size", config.burstSize, 3, 1, 10);
+        addInt(subCategory::add, entries, "burst_delay", config.burstDelay, 3, 1, 100);
+        addDouble(subCategory::add, entries, "ceraunus_base_element_damage_multiplier", config.baseElementDamageMultiplier, 0.75D, 0.0D, 10.0D);
+        addDouble(subCategory::add, entries, "ceraunus_combo_damage_multiplier", config.comboDamageMultiplier, 1.45D, 0.0D, 20.0D);
+        addDouble(subCategory::add, entries, "ceraunus_combo_radius", config.comboRadius, 6.5D, 1.0D, 32.0D);
+        addInt(subCategory::add, entries, "ceraunus_combo_window_ticks", config.comboWindowTicks, 80, 1, 6000);
+        addInt(subCategory::add, entries, "ceraunus_combo_display_ticks", config.comboDisplayTicks, 24, 1, 6000);
+        addInt(subCategory::add, entries, "ceraunus_combo_delay_ticks", config.comboDelayTicks, 8, 0, 100);
+        addInt(subCategory::add, entries, "ceraunus_storm_serpent_max", config.stormSerpentMax, 4, 0, 16);
+        addDouble(subCategory::add, entries, "ceraunus_storm_serpent_bite_damage", config.stormSerpentBiteDamage, 12.0D, 0.0D, 1000.0D);
+        addDouble(subCategory::add, entries, "ceraunus_mixed_serpent_bite_damage", config.mixedSerpentBiteDamage, 8.0D, 0.0D, 1000.0D);
+        addDouble(subCategory::add, entries, "ceraunus_storm_serpent_secondary_damage_multiplier", config.stormSerpentSecondaryDamageMultiplier, 0.5D, 0.0D, 10.0D);
+        addInt(subCategory::add, entries, "ceraunus_lightning_spear_max", config.lightningSpearMax, 4, 0, 32);
+        addInt(subCategory::add, entries, "ceraunus_normal_wave_ticks", config.normalWaveTicks, 20, 1, 200);
+        addInt(subCategory::add, entries, "ceraunus_pure_water_wave_ticks", config.pureWaterWaveTicks, 30, 1, 200);
+        addDouble(subCategory::add, entries, "ceraunus_lightning_bullet_water_damage_multiplier", config.lightningBulletWaterDamageMultiplier, 1.3D, 0.0D, 10.0D);
+        category.addEntry(subCategory.build());
+    }
+
     private static void addMirecallerSubCategory(ConfigCategory category, ConfigEntryBuilder entries) {
         GWREConfig.MirecallerConfig config = GWREConfig.SHOTGUN.Mirecaller;
         SubCategoryBuilder subCategory = entries.startSubCategory(
@@ -197,6 +224,33 @@ public class GWREConfigScreen {
 
         addGunEntries(subCategory::add, entries, config, 0, 0.7D, 1.0D, 24, 4.5D);
         addDouble(subCategory::add, entries, "mirecaller_mine_explosion_power", config.mineExplosionPower, 2.5D, 0.0D, 16.0D);
+        category.addEntry(subCategory.build());
+    }
+
+    private static void addRemnantFangshotSubCategory(ConfigCategory category, ConfigEntryBuilder entries) {
+        GWREConfig.RemnantFangshotConfig config = GWREConfig.SHOTGUN.RemnantFangshot;
+        SubCategoryBuilder subCategory = entries.startSubCategory(
+            Component.translatable("item.gwrexpansions.remnant_fangshot")).setExpanded(false);
+
+        addGunEntries(subCategory::add, entries, config, 0, 0.65D, 1.0D, 24, 4.0D);
+        addInt(subCategory::add, entries, "remnant_rage_required", config.rageRequired, 3, 1, 20);
+        addInt(subCategory::add, entries, "remnant_awakened_ticks", config.awakenedTicks, 200, 1, 6000);
+        addInt(subCategory::add, entries, "remnant_blade_amp_ticks", config.bladeAmpTicks, 80, 1, 6000);
+        addInt(subCategory::add, entries, "remnant_combo_window_ticks", config.comboWindowTicks, 100, 1, 6000);
+        addDouble(subCategory::add, entries, "remnant_base_melee_damage", config.baseMeleeDamage, 9.0D, 0.0D, 1000.0D);
+        addDouble(subCategory::add, entries, "remnant_blade_damage_bonus", config.bladeDamageBonus, 3.0D, 0.0D, 1000.0D);
+        addDouble(subCategory::add, entries, "remnant_base_attack_speed_modifier", config.baseAttackSpeedModifier, -2.6D, -10.0D, 10.0D);
+        addDouble(subCategory::add, entries, "remnant_amped_attack_speed_modifier", config.ampedAttackSpeedModifier, -2.4D, -10.0D, 10.0D);
+        addDouble(subCategory::add, entries, "remnant_min_full_attack_scale", config.minFullAttackScale, 0.9D, 0.0D, 1.0D);
+        addDouble(subCategory::add, entries, "remnant_cooldown_remaining_multiplier", config.cooldownRemainingMultiplier, 0.5D, 0.0D, 1.0D);
+        addDouble(subCategory::add, entries, "remnant_power_projectile_damage_multiplier", config.powerProjectileDamageMultiplier, 1.2D, 0.0D, 10.0D);
+        addDouble(subCategory::add, entries, "remnant_power_stomp_damage_multiplier", config.powerStompDamageMultiplier, 0.6D, 0.0D, 10.0D);
+        addDouble(subCategory::add, entries, "remnant_power_stomp_range", config.powerStompRange, 2.75D, 0.0D, 64.0D);
+        addInt(subCategory::add, entries, "remnant_dash_ticks", config.dashTicks, 10, 1, 200);
+        addDouble(subCategory::add, entries, "remnant_dash_damage_multiplier", config.dashDamageMultiplier, 2.5D, 0.0D, 20.0D);
+        addDouble(subCategory::add, entries, "remnant_dash_speed", config.dashSpeed, 1.25D, 0.0D, 10.0D);
+        addDouble(subCategory::add, entries, "remnant_dash_hit_range", config.dashHitRange, 1.15D, 0.0D, 16.0D);
+        addDouble(subCategory::add, entries, "remnant_dash_damage_reduction", config.dashDamageReduction, 0.2D, 0.0D, 0.95D);
         category.addEntry(subCategory.build());
     }
 

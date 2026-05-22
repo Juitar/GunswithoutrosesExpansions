@@ -141,11 +141,13 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
     //Cataclysm
-    implementation fg.deobf("curse.maven:curios-309927:6238756")
+    implementation fg.deobf("curse.maven:curios-309927:6418456")
     implementation fg.deobf("curse.maven:lionfish-api-1001614:5911889")
     implementation fg.deobf("curse.maven:lendercataclysm-551586:6849032")
     //Guns without roses
     implementation fg.deobf("curse.maven:guns-without-roses-405077:7695723")
+    //sweet charm o mine
+    implementation fg.deobf("curse.maven:sweet-charm-o-mine-1336564:8126004")
     //ice and fire
     implementation fg.deobf("curse.maven:citadel-331936:6002521")
     implementation fg.deobf("curse.maven:ice-and-fire-dragons-264231:5633453")

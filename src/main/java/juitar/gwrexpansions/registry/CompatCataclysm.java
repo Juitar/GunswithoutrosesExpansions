@@ -73,7 +73,7 @@ public class CompatCataclysm {
                 "remnant_fangshot");
         ceraunus_burst = GWREItems.initItem(() -> new CeraunusBurstItem(
                 GWREItems.defP().durability(10000).fireResistant().rarity(Rarity.EPIC),
-                0, 0.85, 30, 1.5, 20, 3, 5,
+                0, 0.72, 26, 1.35, 20, 3, 3,
                 () -> GWREConfig.BURSTGUN.ceraunusBurst)
                 .fireSound(GWRSounds.gun).repair(() -> Ingredient.of(ANCIENT_METAL_INGOT.get())),
                 "ceraunus_burst");

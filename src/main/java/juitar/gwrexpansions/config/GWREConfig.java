@@ -293,28 +293,64 @@ public class GWREConfig {
                 public final ForgeConfigSpec.DoubleValue baseElementDamageMultiplier;
                 public final ForgeConfigSpec.DoubleValue comboDamageMultiplier;
                 public final ForgeConfigSpec.DoubleValue comboRadius;
-                public final ForgeConfigSpec.IntValue anchorDelay;
+                public final ForgeConfigSpec.IntValue comboWindowTicks;
+                public final ForgeConfigSpec.IntValue comboDisplayTicks;
+                public final ForgeConfigSpec.IntValue comboDelayTicks;
                 public final ForgeConfigSpec.IntValue stormSerpentMax;
+                public final ForgeConfigSpec.DoubleValue stormSerpentBiteDamage;
+                public final ForgeConfigSpec.DoubleValue mixedSerpentBiteDamage;
+                public final ForgeConfigSpec.DoubleValue stormSerpentSecondaryDamageMultiplier;
+                public final ForgeConfigSpec.IntValue lightningSpearMax;
+                public final ForgeConfigSpec.IntValue normalWaveTicks;
+                public final ForgeConfigSpec.IntValue pureWaterWaveTicks;
+                public final ForgeConfigSpec.DoubleValue lightningBulletWaterDamageMultiplier;
 
                 public CeraunusBurstConfig(ForgeConfigSpec.Builder builder) {
-                        super(builder, "CeraunusBurst", 0, 0.85, 1.0, 30, 1.5, 3, 5);
+                        super(builder, "CeraunusBurst", 0, 0.72, 1.0, 26, 1.35, 3, 3);
 
                         builder.push("CeraunusBurst_Mechanics");
                         baseElementDamageMultiplier = builder
                                         .comment("Damage multiplier for iron/water, golden/storm, and diamond/lightning element shots.")
-                                        .defineInRange("baseElementDamageMultiplier", 1.0, 0.0, 10.0);
+                                        .defineInRange("baseElementDamageMultiplier", 0.75, 0.0, 10.0);
                         comboDamageMultiplier = builder
-                                        .comment("Damage multiplier used by the three-shot Ceraunus anchor combo.")
-                                        .defineInRange("comboDamageMultiplier", 1.25, 0.0, 20.0);
+                                        .comment("Damage multiplier used by the three-shot Ceraunus combo.")
+                                        .defineInRange("comboDamageMultiplier", 1.45, 0.0, 20.0);
                         comboRadius = builder
-                                        .comment("Radius used by Ceraunus anchor combos.")
-                                        .defineInRange("comboRadius", 6.0, 1.0, 32.0);
-                        anchorDelay = builder
-                                        .comment("Ticks before the four Ceraunus anchors smash down.")
-                                        .defineInRange("anchorDelay", 12, 1, 100);
+                                        .comment("Radius used by Ceraunus combos.")
+                                        .defineInRange("comboRadius", 6.5, 1.0, 32.0);
+                        comboWindowTicks = builder
+                                        .comment("Ticks allowed between Ceraunus element shots before the current combo resets.")
+                                        .defineInRange("comboWindowTicks", 80, 1, 6000);
+                        comboDisplayTicks = builder
+                                        .comment("Ticks the completed combo remains visible on the Ceraunus HUD.")
+                                        .defineInRange("comboDisplayTicks", 24, 1, 6000);
+                        comboDelayTicks = builder
+                                        .comment("Ticks before a completed Ceraunus combo triggers.")
+                                        .defineInRange("comboDelayTicks", 8, 0, 100);
                         stormSerpentMax = builder
                                         .comment("Maximum Storm Serpents a single Ceraunus combo may summon.")
                                         .defineInRange("stormSerpentMax", 4, 0, 16);
+                        stormSerpentBiteDamage = builder
+                                        .comment("Bite damage for full storm Ceraunus serpents.")
+                                        .defineInRange("stormSerpentBiteDamage", 12.0, 0.0, 1000.0);
+                        mixedSerpentBiteDamage = builder
+                                        .comment("Bite damage for mixed-element Ceraunus serpents.")
+                                        .defineInRange("mixedSerpentBiteDamage", 8.0, 0.0, 1000.0);
+                        stormSerpentSecondaryDamageMultiplier = builder
+                                        .comment("Secondary water/lightning damage multiplier based on serpent bite damage.")
+                                        .defineInRange("stormSerpentSecondaryDamageMultiplier", 0.5, 0.0, 10.0);
+                        lightningSpearMax = builder
+                                        .comment("Maximum lightning spears for the full lightning Ceraunus combo.")
+                                        .defineInRange("lightningSpearMax", 4, 0, 32);
+                        normalWaveTicks = builder
+                                        .comment("Lifetime in ticks for normal Ceraunus wave attacks.")
+                                        .defineInRange("normalWaveTicks", 20, 1, 200);
+                        pureWaterWaveTicks = builder
+                                        .comment("Lifetime in ticks for the full water Ceraunus wave attack.")
+                                        .defineInRange("pureWaterWaveTicks", 30, 1, 200);
+                        lightningBulletWaterDamageMultiplier = builder
+                                        .comment("Damage multiplier for Ceraunus lightning bullets when the bullet or target is in water.")
+                                        .defineInRange("lightningBulletWaterDamageMultiplier", 1.3, 0.0, 10.0);
                         builder.pop();
                 }
         }

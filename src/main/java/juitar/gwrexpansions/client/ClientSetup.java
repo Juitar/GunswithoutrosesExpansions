@@ -4,6 +4,7 @@ import juitar.gwrexpansions.CompatModids;
 import juitar.gwrexpansions.GWRexpansions;
 import juitar.gwrexpansions.client.model.coin;
 import juitar.gwrexpansions.client.render.CoinEntityRenderer;
+import juitar.gwrexpansions.client.render.CeraunusBurstHudRenderer;
 import juitar.gwrexpansions.client.render.HudRenderHandler;
 import juitar.gwrexpansions.client.render.MagneticPinRenderer;
 import juitar.gwrexpansions.client.render.MeatHookRenderer;
@@ -38,6 +39,7 @@ public class ClientSetup {
             MinecraftForge.EVENT_BUS.register(new SupershotgunHudRenderer());
             if (ModList.get().isLoaded(CompatModids.CATACLYSM)) {
                 MinecraftForge.EVENT_BUS.register(new RemnantFangshotHudRenderer());
+                MinecraftForge.EVENT_BUS.register(new CeraunusBurstHudRenderer());
             }
             // 注册黑曜石发射器HUD渲染器
             if(ModList.get().isLoaded(CompatModids.BOMD)) {
@@ -60,6 +62,9 @@ public class ClientSetup {
             event.registerEntityRenderer(GWREEntities.CURSIUM_BULLET.get(), ThrownItemRenderer::new);
             event.registerEntityRenderer(GWREEntities.IGNITIUM_BULLET.get(), ThrownItemRenderer::new);
             event.registerEntityRenderer(GWREEntities.TIDAL_BULLET.get(), ThrownItemRenderer::new);
+            event.registerEntityRenderer(GWREEntities.CERAUNUS_WATER_BULLET.get(), ThrownItemRenderer::new);
+            event.registerEntityRenderer(GWREEntities.CERAUNUS_STORM_BULLET.get(), ThrownItemRenderer::new);
+            event.registerEntityRenderer(GWREEntities.CERAUNUS_LIGHTNING_BULLET.get(), ThrownItemRenderer::new);
         }
         if(ModList.get().isLoaded(CompatModids.ICEANDFIRE)) {
             event.registerEntityRenderer(GWREEntities.DRAGONSTEEL_ICE_BULLET.get(), ThrownItemRenderer::new);

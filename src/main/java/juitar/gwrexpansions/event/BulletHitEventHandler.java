@@ -2,6 +2,8 @@ package juitar.gwrexpansions.event;
 
 import com.github.L_Ender.cataclysm.entity.effect.Sandstorm_Entity;
 import com.github.L_Ender.cataclysm.entity.projectile.Sandstorm_Projectile;
+import com.github.L_Ender.cataclysm.entity.projectile.Storm_Serpent_Entity;
+import com.github.L_Ender.cataclysm.init.ModEffect;
 import juitar.gwrexpansions.GWRexpansions;
 import juitar.gwrexpansions.entity.BOMD.CoinEntity;
 import juitar.gwrexpansions.item.BOMD.Hellforge;
@@ -22,7 +24,9 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.living.MobEffectEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -38,9 +42,10 @@ public class BulletHitEventHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onRemnantFangshotStormNativeDamage(LivingHurtEvent event) {
-        if (!event.getSource().is(DamageTypes.MAGIC)
-                || event.getSource().getDirectEntity() != null
-                || event.getSource().getEntity() != null) {
+        Entity direct = event.getSource().getDirectEntity();
+        boolean directDashStorm = direct instanceof Sandstorm_Entity storm
+                && storm.getPersistentData().getBoolean(RemnantFangshotItem.DASH_STORM_TAG);
+        if (!directDashStorm && !event.getSource().is(DamageTypes.MAGIC)) {
             return;
         }
 
@@ -48,8 +53,20 @@ public class BulletHitEventHandler {
         boolean fromFangshotStorm = !target.level().getEntitiesOfClass(Sandstorm_Entity.class,
                 target.getBoundingBox().inflate(0.4D),
                 storm -> storm.getPersistentData().getBoolean(RemnantFangshotItem.DASH_STORM_TAG)).isEmpty();
-        if (fromFangshotStorm) {
+        if (directDashStorm || fromFangshotStorm) {
             event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onRemnantFangshotDashCurse(MobEffectEvent.Applicable event) {
+        MobEffectInstance effect = event.getEffectInstance();
+        if (effect.getEffect() != ModEffect.EFFECTCURSE_OF_DESERT.get()) {
+            return;
+        }
+
+        if (event.getEntity() instanceof Player player && RemnantFangshotItem.isDashing(player)) {
+            event.setResult(Event.Result.DENY);
         }
     }
 
@@ -132,6 +149,10 @@ public class BulletHitEventHandler {
                 return;
             }
 
+            if (event.getSource().getDirectEntity() instanceof Storm_Serpent_Entity serpent) {
+                CeraunusBurstItem.onStormSerpentHit(serpent, event.getEntity());
+            }
+
             // 检查伤害来源是否是子弹
             if (event.getSource().getDirectEntity() instanceof BulletEntity bullet) {
                 LivingEntity target = event.getEntity();
@@ -149,7 +170,6 @@ public class BulletHitEventHandler {
 
                 boolean isHellforgeShot = bulletData.getBoolean("HellforgeShot");
                 boolean isRemnantFangshotShot = bulletData.getBoolean(RemnantFangshotItem.BULLET_TAG);
-                boolean isCeraunusStormShot = bulletData.getBoolean(CeraunusBurstItem.STORM_SHOT_TAG);
 
                 if (isRemnantFangshotShot && shooter instanceof Player player) {
                     ItemStack fangshot = RemnantFangshotItem.findHeldFangshot(player);
@@ -157,11 +177,6 @@ public class BulletHitEventHandler {
                         RemnantFangshotItem.onBulletHit(fangshot, player, target,
                                 bulletData.getInt(RemnantFangshotItem.BULLET_SHOT_ID_TAG));
                     }
-                }
-
-                if (isCeraunusStormShot) {
-                    CeraunusBurstItem.onStormShotHit(bullet, target, shooter);
-                    bulletData.putBoolean(CeraunusBurstItem.STORM_SHOT_TAG, false);
                 }
 
                 // 检查子弹是否有HellforgeShot标记

@@ -3,6 +3,9 @@ package juitar.gwrexpansions.registry;
 import juitar.gwrexpansions.CompatModids;
 import juitar.gwrexpansions.GWRexpansions;
 import juitar.gwrexpansions.entity.cataclysm.CursiumBulletEntity;
+import juitar.gwrexpansions.entity.cataclysm.CeraunusLightningBulletEntity;
+import juitar.gwrexpansions.entity.cataclysm.CeraunusStormBulletEntity;
+import juitar.gwrexpansions.entity.cataclysm.CeraunusWaterBulletEntity;
 import juitar.gwrexpansions.entity.cataclysm.IgnitiumBulletEntity;
 import juitar.gwrexpansions.entity.cataclysm.LavapowerBulletEntity;
 import juitar.gwrexpansions.entity.cataclysm.TidalBulletEntity;
@@ -38,6 +41,9 @@ public class GWREEntities {
     public static RegistryObject<EntityType<LightningDragonSteelBulletEntity>> DRAGONSTEEL_LIGHTNING_BULLET;
     public static RegistryObject<EntityType<IgnitiumBulletEntity>> IGNITIUM_BULLET;
     public static RegistryObject<EntityType<TidalBulletEntity>> TIDAL_BULLET;
+    public static RegistryObject<EntityType<CeraunusWaterBulletEntity>> CERAUNUS_WATER_BULLET;
+    public static RegistryObject<EntityType<CeraunusStormBulletEntity>> CERAUNUS_STORM_BULLET;
+    public static RegistryObject<EntityType<CeraunusLightningBulletEntity>> CERAUNUS_LIGHTNING_BULLET;
     public static RegistryObject<EntityType<ObsidianCoreEntity>> OBSIDIAN_CORE;
     public static RegistryObject<EntityType<MeatHookEntity>> MEAT_HOOK;
     public static RegistryObject<EntityType<CoinEntity>> COIN;
@@ -81,6 +87,18 @@ public class GWREEntities {
                     .<TidalBulletEntity>of(TidalBulletEntity::new, MobCategory.MISC)
                     .sized(0.3125f, 0.3125f).setUpdateInterval(2).setTrackingRange(64).setShouldReceiveVelocityUpdates(true)
                     .build(GWRexpansions.MODID + ":tidal_bullet"));
+            CERAUNUS_WATER_BULLET = REG.register("ceraunus_water_bullet", () -> EntityType.Builder
+                    .<CeraunusWaterBulletEntity>of(CeraunusWaterBulletEntity::new, MobCategory.MISC)
+                    .sized(0.3125f, 0.3125f).setUpdateInterval(2).setTrackingRange(64).setShouldReceiveVelocityUpdates(true)
+                    .build(GWRexpansions.MODID + ":ceraunus_water_bullet"));
+            CERAUNUS_STORM_BULLET = REG.register("ceraunus_storm_bullet", () -> EntityType.Builder
+                    .<CeraunusStormBulletEntity>of(CeraunusStormBulletEntity::new, MobCategory.MISC)
+                    .sized(0.3125f, 0.3125f).setUpdateInterval(2).setTrackingRange(64).setShouldReceiveVelocityUpdates(true)
+                    .build(GWRexpansions.MODID + ":ceraunus_storm_bullet"));
+            CERAUNUS_LIGHTNING_BULLET = REG.register("ceraunus_lightning_bullet", () -> EntityType.Builder
+                    .<CeraunusLightningBulletEntity>of(CeraunusLightningBulletEntity::new, MobCategory.MISC)
+                    .sized(0.3125f, 0.3125f).setUpdateInterval(2).setTrackingRange(64).setShouldReceiveVelocityUpdates(true)
+                    .build(GWRexpansions.MODID + ":ceraunus_lightning_bullet"));
         }
         if(ModList.get().isLoaded(CompatModids.ICEANDFIRE)) {
             DRAGONSTEEL_ICE_BULLET =REG.register("dragonsteel_ice_bullet", () -> EntityType.Builder
