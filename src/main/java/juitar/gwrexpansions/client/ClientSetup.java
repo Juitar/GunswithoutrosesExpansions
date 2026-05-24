@@ -5,6 +5,7 @@ import juitar.gwrexpansions.GWRexpansions;
 import juitar.gwrexpansions.client.model.coin;
 import juitar.gwrexpansions.client.render.CoinEntityRenderer;
 import juitar.gwrexpansions.client.render.CeraunusBurstHudRenderer;
+import juitar.gwrexpansions.client.render.HarbingerRaycasterHudRenderer;
 import juitar.gwrexpansions.client.render.HudRenderHandler;
 import juitar.gwrexpansions.client.render.MagneticPinRenderer;
 import juitar.gwrexpansions.client.render.MeatHookRenderer;
@@ -40,6 +41,7 @@ public class ClientSetup {
             if (ModList.get().isLoaded(CompatModids.CATACLYSM)) {
                 MinecraftForge.EVENT_BUS.register(new RemnantFangshotHudRenderer());
                 MinecraftForge.EVENT_BUS.register(new CeraunusBurstHudRenderer());
+                MinecraftForge.EVENT_BUS.register(new HarbingerRaycasterHudRenderer());
             }
             // 注册黑曜石发射器HUD渲染器
             if(ModList.get().isLoaded(CompatModids.BOMD)) {
@@ -54,6 +56,8 @@ public class ClientSetup {
     @SubscribeEvent
     public static void registerEntityRenders(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(GWREEntities.SLIME_BULLET.get(), ThrownItemRenderer::new);
+        event.registerEntityRenderer(GWREEntities.REDSTONE_BULLET.get(), ThrownItemRenderer::new);
+        event.registerEntityRenderer(GWREEntities.REDSTONE_PIERCING_BULLET.get(), ThrownItemRenderer::new);
         // 注册肉钩渲染器
         event.registerEntityRenderer(GWREEntities.MEAT_HOOK.get(), MeatHookRenderer::new);
         // 注册其他实体渲染器

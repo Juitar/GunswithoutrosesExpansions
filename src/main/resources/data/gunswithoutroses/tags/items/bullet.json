@@ -4,6 +4,8 @@
         { "id": "gwrexpansions:slime_bullet", "required": false },
         { "id": "gwrexpansions:silver_bullet", "required": false },
         { "id": "gwrexpansions:golden_bullet", "required": false },
+        { "id": "gwrexpansions:copper_bullet", "required": false },
+        { "id": "gwrexpansions:redstone_bullet", "required": false },
         { "id": "gwrexpansions:diamond_bullet", "required": false },
         { "id": "gwrexpansions:netherite_bullet", "required": false },
         { "id": "gwrexpansions:lavapower_bullet", "required": false },

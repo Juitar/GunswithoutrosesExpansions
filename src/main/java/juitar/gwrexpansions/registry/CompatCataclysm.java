@@ -5,6 +5,7 @@ import juitar.gwrexpansions.GWRexpansions;
 import juitar.gwrexpansions.config.GWREConfig;
 import juitar.gwrexpansions.item.alexscaves.MechanicPlaceholderItem;
 import juitar.gwrexpansions.item.cataclysm.*;
+import com.github.L_Ender.cataclysm.init.ModSounds;
 import lykrast.gunswithoutroses.item.BulletItem;
 import lykrast.gunswithoutroses.item.GunItem;
 import lykrast.gunswithoutroses.registry.GWRSounds;
@@ -20,9 +21,9 @@ import net.minecraft.world.item.Item;
 import java.util.function.Supplier;
 
 public class CompatCataclysm {
-    public static RegistryObject<GunItem> ignitium_gatling,cursium_sniper,netherite_monster_shotgun,tidal_pistol,remnant_fangshot,ceraunus_burst;
+    public static RegistryObject<GunItem> ignitium_gatling,cursium_sniper,netherite_monster_shotgun,tidal_pistol,harbinger_raycaster,remnant_fangshot,ceraunus_burst;
     public static RegistryObject<BulletItem> ignitium_bullet,cursium_bullet,lavapower_bullet;
-    public static RegistryObject<Item> tidal_bullet,voidfall_launcher,harbinger_raycaster;
+    public static RegistryObject<Item> tidal_bullet,voidfall_launcher;
     public static TagKey<Item> tagBaseBullets = ItemTags.create(GWRexpansions.resource("lavapowerbullet_base"));
 
     public static Supplier<Item> CURSIUM_INGOT = () -> ForgeRegistries.ITEMS.getValue(
@@ -33,6 +34,8 @@ public class CompatCataclysm {
             new ResourceLocation(CompatModids.CATACLYSM,"monstrous_horn"));
     public static Supplier<Item> ANCIENT_METAL_INGOT = () -> ForgeRegistries.ITEMS.getValue(
             new ResourceLocation(CompatModids.CATACLYSM,"ancient_metal_ingot"));
+    public static Supplier<Item> WITHERITE_INGOT = () -> ForgeRegistries.ITEMS.getValue(
+            new ResourceLocation(CompatModids.CATACLYSM,"witherite_ingot"));
 
     public static void registerItems() {
 
@@ -62,9 +65,13 @@ public class CompatCataclysm {
         voidfall_launcher = GWREItems.initItem(() -> new MechanicPlaceholderItem(
                 GWREItems.noStack().fireResistant().rarity(Rarity.EPIC),
                 "tooltip.gwrexpansions.voidfall_launcher.desc"), "voidfall_launcher");
-        harbinger_raycaster = GWREItems.initItem(() -> new MechanicPlaceholderItem(
-                GWREItems.noStack().fireResistant().rarity(Rarity.EPIC),
-                "tooltip.gwrexpansions.harbinger_raycaster.desc"), "harbinger_raycaster");
+        harbinger_raycaster = GWREItems.initItem(() -> new HarbingerRaycasterItem(
+                GWREItems.defP().durability(10000).fireResistant().rarity(Rarity.EPIC),
+                0, 1.6, 26, 0.0, 20,
+                () -> GWREConfig.SNIPER.harbingerRaycaster)
+                .projectileSpeed(4.0).headshotMult(1.75).fireSound(ModSounds.HARBINGER_LASER)
+                .repair(() -> Ingredient.of(WITHERITE_INGOT.get())),
+                "harbinger_raycaster");
         remnant_fangshot = GWREItems.initItem(() -> new RemnantFangshotItem(
                 GWREItems.defP().durability(10000).fireResistant().rarity(Rarity.EPIC),
                 0, 0.65, 24, 4.0, 20,

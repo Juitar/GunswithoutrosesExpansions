@@ -46,10 +46,10 @@ public class ClientConfig {
             return TOP_CENTER; // 默认值
         }
     }
-    
+
     public static final ForgeConfigSpec CLIENT_SPEC;
     public static final ClientConfig INSTANCE;
-    
+
     // 硬币计数器UI配置
     public final ForgeConfigSpec.BooleanValue coinCounterEnabled;
     public final ForgeConfigSpec.EnumValue<CoinCounterPosition> coinCounterPosition;
@@ -58,56 +58,76 @@ public class ClientConfig {
     public final ForgeConfigSpec.IntValue coinCounterBackgroundAlpha;
     public final ForgeConfigSpec.IntValue coinCounterScale;
     public final ForgeConfigSpec.BooleanValue coinCounterShowProgress;
-    
+    public final ForgeConfigSpec.BooleanValue harbingerOverloadHudEnabled;
+    public final ForgeConfigSpec.IntValue harbingerOverloadHudOffsetX;
+    public final ForgeConfigSpec.IntValue harbingerOverloadHudOffsetY;
+
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
         INSTANCE = new ClientConfig(builder);
         CLIENT_SPEC = builder.build();
     }
-    
+
     public ClientConfig(ForgeConfigSpec.Builder builder) {
         builder.comment("硬币计数器UI设置 / Coin Counter UI Settings")
-               .push("coin_counter");
-        
+                .push("coin_counter");
+
         coinCounterEnabled = builder
-            .comment("是否启用硬币计数器UI / Enable coin counter UI")
-            .define("enabled", true);
+                .comment("是否启用硬币计数器UI / Enable coin counter UI")
+                .define("enabled", true);
 
         coinCounterPosition = builder
-            .comment("硬币计数器位置 / Coin counter position",
-                    "选项 / Options:",
-                    "- TOP_CENTER: 屏幕上方居中",
-                    "- TOP_LEFT: 屏幕左上角",
-                    "- TOP_RIGHT: 屏幕右上角",
-                    "- BOTTOM_CENTER: 屏幕下方居中",
-                    "- BOTTOM_LEFT: 屏幕左下角",
-                    "- BOTTOM_RIGHT: 屏幕右下角",
-                    "- CUSTOM: 自定义位置（使用offset_x和offset_y）")
-            .defineEnum("position", CoinCounterPosition.TOP_CENTER);
-        
+                .comment("硬币计数器位置 / Coin counter position",
+                        "选项 / Options:",
+                        "- TOP_CENTER: 屏幕上方居中",
+                        "- TOP_LEFT: 屏幕左上角",
+                        "- TOP_RIGHT: 屏幕右上角",
+                        "- BOTTOM_CENTER: 屏幕下方居中",
+                        "- BOTTOM_LEFT: 屏幕左下角",
+                        "- BOTTOM_RIGHT: 屏幕右下角",
+                        "- CUSTOM: 自定义位置（使用offset_x和offset_y）")
+                .defineEnum("position", CoinCounterPosition.TOP_CENTER);
+
         coinCounterOffsetX = builder
-            .comment("硬币计数器X轴偏移 (仅在position为custom时生效) / X offset (only works when position is custom)")
-            .defineInRange("offset_x", 0, -2000, 2000);
-        
+                .comment("硬币计数器X轴偏移 (仅在position为custom时生效) / X offset (only works when position is custom)")
+                .defineInRange("offset_x", 0, -2000, 2000);
+
         coinCounterOffsetY = builder
-            .comment("硬币计数器Y轴偏移 (仅在position为custom时生效) / Y offset (only works when position is custom)")
-            .defineInRange("offset_y", 8, -2000, 2000);
-        
+                .comment("硬币计数器Y轴偏移 (仅在position为custom时生效) / Y offset (only works when position is custom)")
+                .defineInRange("offset_y", 8, -2000, 2000);
+
         coinCounterBackgroundAlpha = builder
-            .comment("硬币计数器背景透明度 (0-255, 0为完全透明) / Background alpha (0-255, 0 is fully transparent)")
-            .defineInRange("background_alpha", 0, 0, 255);
-        
+                .comment("硬币计数器背景透明度 (0-255, 0为完全透明) / Background alpha (0-255, 0 is fully transparent)")
+                .defineInRange("background_alpha", 0, 0, 255);
+
         coinCounterScale = builder
-            .comment("硬币计数器缩放百分比 / Scale percentage")
-            .defineInRange("scale", 100, 50, 200);
-        
+                .comment("硬币计数器缩放百分比 / Scale percentage")
+                .defineInRange("scale", 100, 50, 200);
+
         coinCounterShowProgress = builder
-            .comment("是否显示连击进度 / Show combo progress")
-            .define("show_progress", true);
-        
+                .comment("是否显示连击进度 / Show combo progress")
+                .define("show_progress", true);
+
+        builder.pop();
+
+        builder.comment("先兆裁光过载HUD设置 / Harbinger Raycaster Overload HUD Settings")
+                .push("harbinger_overload_hud");
+
+        harbingerOverloadHudEnabled = builder
+                .comment("是否启用先兆裁光过载电池HUD / Enable Harbinger Raycaster overload battery HUD")
+                .define("enabled", true);
+
+        harbingerOverloadHudOffsetX = builder
+                .comment("先兆裁光过载HUD X轴偏移 / X offset for Harbinger overload HUD")
+                .defineInRange("offset_x", 0, -2000, 2000);
+
+        harbingerOverloadHudOffsetY = builder
+                .comment("先兆裁光过载HUD Y轴偏移 / Y offset for Harbinger overload HUD")
+                .defineInRange("offset_y", 16, -2000, 2000);
+
         builder.pop();
     }
-    
+
     /**
      * 注册客户端配置
      */
@@ -118,7 +138,7 @@ public class ClientConfig {
     public static void save() {
         CLIENT_SPEC.save();
     }
-    
+
     /**
      * 获取硬币计数器位置
      */
@@ -134,13 +154,13 @@ public class ClientConfig {
             position = CoinCounterPosition.TOP_CENTER;
             scale = 100;
         }
-        
+
         // 计算缩放后的硬币大小
         int iconSize = (12 * scale) / 100;
         int spacing = (16 * scale) / 100;
         int maxCoins = 4;
         int totalWidth = (maxCoins - 1) * spacing + iconSize;
-        
+
         int x, y;
 
         switch (position) {
@@ -184,17 +204,17 @@ public class ClientConfig {
                 y = 10;
                 break;
         }
-        
+
         return new Position(x, y);
     }
-    
+
     /**
      * 位置类
      */
     public static class Position {
         public final int x;
         public final int y;
-        
+
         public Position(int x, int y) {
             this.x = x;
             this.y = y;

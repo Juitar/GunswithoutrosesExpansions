@@ -355,12 +355,71 @@ public class GWREConfig {
                 }
         }
 
+        public static class HarbingerRaycasterConfig extends GunConfig {
+                public final ForgeConfigSpec.IntValue maxOverload;
+                public final ForgeConfigSpec.IntValue overloadModeDurationTicks;
+                public final ForgeConfigSpec.BooleanValue overloadFlightEnabled;
+                public final ForgeConfigSpec.DoubleValue redstoneDamageBonus;
+                public final ForgeConfigSpec.IntValue redstonePierce;
+                public final ForgeConfigSpec.DoubleValue redstonePierceDamageMultiplier;
+                public final ForgeConfigSpec.DoubleValue deathLaserDamageMultiplier;
+                public final ForgeConfigSpec.DoubleValue deathLaserHpDamage;
+                public final ForgeConfigSpec.IntValue deathLaserSegments;
+                public final ForgeConfigSpec.DoubleValue deathLaserSegmentLength;
+                public final ForgeConfigSpec.IntValue missilesPerWave;
+                public final ForgeConfigSpec.IntValue normalHeadshotMissiles;
+                public final ForgeConfigSpec.IntValue missileStartDelay;
+                public final ForgeConfigSpec.IntValue missileIntervalTicks;
+                public final ForgeConfigSpec.DoubleValue missileDamage;
+                public final ForgeConfigSpec.DoubleValue missileTargetRange;
+
+                public HarbingerRaycasterConfig(ForgeConfigSpec.Builder builder) {
+                        super(builder, "HarbingerRaycaster", 0, 1.6, 1.75, 26, 0.0);
+
+                        builder.push("HarbingerRaycaster_Mechanics");
+                        maxOverload = builder.comment("Redstone shots required to fully overload Harbinger Raycaster.")
+                                        .defineInRange("maxOverload", 6, 1, 100);
+                        overloadModeDurationTicks = builder.comment("Overload mode duration in ticks. 120 ticks = 6 seconds.")
+                                        .defineInRange("overloadModeDurationTicks", 120, 1, 6000);
+                        overloadFlightEnabled = builder.comment("Whether overload mode temporarily allows the player to fly.")
+                                        .define("overloadFlightEnabled", true);
+                        redstoneDamageBonus = builder.comment("Flat damage added to redstone bullets fired by Harbinger Raycaster.")
+                                        .defineInRange("redstoneDamageBonus", 1.0, 0.0, 1000.0);
+                        redstonePierce = builder.comment("Additional entities a redstone bullet can pierce when fired by Harbinger Raycaster.")
+                                        .defineInRange("redstonePierce", 2, 0, 64);
+                        redstonePierceDamageMultiplier = builder.comment("Damage multiplier applied after each redstone bullet pierce.")
+                                        .defineInRange("redstonePierceDamageMultiplier", 1.0, 0.0, 10.0);
+                        deathLaserDamageMultiplier = builder.comment("Damage multiplier applied to the empowered redstone shot damage for the death laser.")
+                                        .defineInRange("deathLaserDamageMultiplier", 0.45, 0.0, 100.0);
+                        deathLaserHpDamage = builder.comment("Death laser bonus damage as percent of target max health.")
+                                        .defineInRange("deathLaserHpDamage", 5.0, 0.0, 100.0);
+                        deathLaserSegments = builder.comment("Number of 30-block Cataclysm death laser segments to chain. Total range is segments * segment length.")
+                                        .defineInRange("deathLaserSegments", 2, 1, 16);
+                        deathLaserSegmentLength = builder.comment("Length of each chained death laser segment.")
+                                        .defineInRange("deathLaserSegmentLength", 30.0, 1.0, 128.0);
+                        missilesPerWave = builder.comment("Homing missiles fired per overload wave.")
+                                        .defineInRange("missilesPerWave", 3, 0, 32);
+                        normalHeadshotMissiles = builder.comment("Extra homing missiles fired near the player when a non-overload Harbinger redstone bullet headshots.")
+                                        .defineInRange("normalHeadshotMissiles", 1, 0, 32);
+                        missileStartDelay = builder.comment("Delay in ticks before the first overload missile wave.")
+                                        .defineInRange("missileStartDelay", 8, 0, 6000);
+                        missileIntervalTicks = builder.comment("Ticks between homing missile waves while overload mode is active.")
+                                        .defineInRange("missileIntervalTicks", 24, 1, 6000);
+                        missileDamage = builder.comment("Damage dealt by each overload homing missile.")
+                                        .defineInRange("missileDamage", 5.0, 0.0, 1000.0);
+                        missileTargetRange = builder.comment("Range used by overload homing missiles to find nearby enemies.")
+                                        .defineInRange("missileTargetRange", 18.0, 1.0, 128.0);
+                        builder.pop();
+                }
+        }
+
         // 狙击枪配置
         public static class SniperConfigs {
                 public final GunConfig netherite;
                 public final GunConfig cursium;
                 public final GunConfig DragonSteel;
                 public final GunConfig destiny_seven;
+                public final HarbingerRaycasterConfig harbingerRaycaster;
 
                 public SniperConfigs(ForgeConfigSpec.Builder builder) {
                         builder.push("Sniper");
@@ -368,6 +427,7 @@ public class GWREConfig {
                         cursium = new GunConfig(builder, "Cursium", 0, 2.0, 2.0, 24, 0.0);
                         DragonSteel = new GunConfig(builder, "DragonSteel", 0, 1.9, 1.8, 24, 0.0);
                         destiny_seven = new GunConfig(builder, "DestinySeven", 0, 1.5, 1.5, 24, 0.0);
+                        harbingerRaycaster = new HarbingerRaycasterConfig(builder);
                         builder.pop();
                 }
         }

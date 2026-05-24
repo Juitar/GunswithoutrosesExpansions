@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "gwrexpansions:copper_bullet" },
+    { "item": "minecraft:redstone" }
+  ],
+  "result": { "item": "gwrexpansions:redstone_bullet", "count": 2 }
+}

@@ -15,7 +15,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class VanillaItem {
     public static RegistryObject<GunItem> netherite_sniper, netherite_gatling, netherite_shotgun,super_shotgun;
-    public static RegistryObject<BulletItem> slime_bullet,diamond_bullet,netherite_bullet,golden_bullet,maws_of_gluttony,hunger_bullet;
+    public static RegistryObject<BulletItem> slime_bullet,diamond_bullet,netherite_bullet,golden_bullet,copper_bullet,redstone_bullet,maws_of_gluttony,hunger_bullet;
     public static RegistryObject<BulletItem> diamond_bullet_shrapnel;
 
     public static void registerItems() {
@@ -52,6 +52,8 @@ public class VanillaItem {
         slime_bullet = GWREItems.initItem(()-> new SlimeBulletItem(GWREItems.defP(),6,3),"slime_bullet");
         diamond_bullet = GWREItems.initItem(()-> new SplinterBulletItem(GWREItems.defP(),7),"diamond_bullet");
         golden_bullet = GWREItems.initItem(()-> new GoldenBulletItem(GWREItems.defP(),5),"golden_bullet");
+        copper_bullet = GWREItems.initItem(()-> new BulletItem(GWREItems.defP(),5),"copper_bullet");
+        redstone_bullet = GWREItems.initItem(()-> new RedstoneBulletItem(GWREItems.defP(),4),"redstone_bullet");
         netherite_bullet = GWREItems.initItem(()-> new ReshotableBulletItem(GWREItems.defP().fireResistant(),8),"netherite_bullet");
         maws_of_gluttony = GWREItems.initItem(() -> new HungerBulletItem(GWREItems.defP().fireResistant(), 5), "maws_of_gluttony");
         diamond_bullet_shrapnel = GWREItems.REG.register("diamond_bullet_shrapnel", () -> new PiercingBulletItem(GWREItems.defP(), 3,2));

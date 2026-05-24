@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "juitar.gwrexpansions.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "SignalGetterMixin"
+  ],
+  "client": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

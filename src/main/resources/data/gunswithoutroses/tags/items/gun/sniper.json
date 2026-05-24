@@ -5,6 +5,7 @@
         { "id": "gwrexpansions:dragonsteel_fire_sniper", "required": false },
         { "id": "gwrexpansions:dragonsteel_ice_sniper", "required": false },
         { "id": "gwrexpansions:dragonsteel_lightning_sniper", "required": false },
-        { "id": "gwrexpansions:cursium_sniper", "required": false }
+        { "id": "gwrexpansions:cursium_sniper", "required": false },
+        { "id": "gwrexpansions:harbinger_raycaster", "required": false }
     ]
 }

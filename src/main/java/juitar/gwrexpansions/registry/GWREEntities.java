@@ -23,6 +23,8 @@ import juitar.gwrexpansions.entity.BOMD.ObsidianCoreEntity;
 import juitar.gwrexpansions.entity.BOMD.SporeEntity;
 import juitar.gwrexpansions.entity.alexscaves.MagneticBulletEntity;
 import juitar.gwrexpansions.entity.alexscaves.MagneticPinEntity;
+import juitar.gwrexpansions.entity.vanilla.RedstoneBulletEntity;
+import juitar.gwrexpansions.entity.vanilla.RedstonePiercingBulletEntity;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
@@ -34,6 +36,8 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class GWREEntities {
     public static RegistryObject<EntityType<SlimeBulletEntity>> SLIME_BULLET;
+    public static RegistryObject<EntityType<RedstoneBulletEntity>> REDSTONE_BULLET;
+    public static RegistryObject<EntityType<RedstonePiercingBulletEntity>> REDSTONE_PIERCING_BULLET;
     public static RegistryObject<EntityType<CursiumBulletEntity>> CURSIUM_BULLET;
     public static RegistryObject<EntityType<LavapowerBulletEntity>> LAVAPOWER_BULLET;
     public static RegistryObject<EntityType<IceDragonSteelBulletEntity>> DRAGONSTEEL_ICE_BULLET;
@@ -64,6 +68,20 @@ public class GWREEntities {
                 .setTrackingRange(64)
                 .setShouldReceiveVelocityUpdates(true)
                 .build(GWRexpansions.MODID + ":slime_bullet"));
+        REDSTONE_BULLET = REG.register("redstone_bullet", () -> EntityType.Builder
+                .<RedstoneBulletEntity>of(RedstoneBulletEntity::new, MobCategory.MISC)
+                .sized(0.3125f, 0.3125f)
+                .setUpdateInterval(2)
+                .setTrackingRange(64)
+                .setShouldReceiveVelocityUpdates(true)
+                .build(GWRexpansions.MODID + ":redstone_bullet"));
+        REDSTONE_PIERCING_BULLET = REG.register("redstone_piercing_bullet", () -> EntityType.Builder
+                .<RedstonePiercingBulletEntity>of(RedstonePiercingBulletEntity::new, MobCategory.MISC)
+                .sized(0.3125f, 0.3125f)
+                .setUpdateInterval(2)
+                .setTrackingRange(64)
+                .setShouldReceiveVelocityUpdates(true)
+                .build(GWRexpansions.MODID + ":redstone_piercing_bullet"));
         MEAT_HOOK = REG.register("meat_hook",
                 () -> EntityType.Builder.<MeatHookEntity>of(MeatHookEntity::new, MobCategory.MISC)
                         .sized(0.5F, 0.5F)

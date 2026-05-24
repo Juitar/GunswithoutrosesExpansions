@@ -8,7 +8,9 @@ import juitar.gwrexpansions.GWRexpansions;
 import juitar.gwrexpansions.entity.BOMD.CoinEntity;
 import juitar.gwrexpansions.item.BOMD.Hellforge;
 import juitar.gwrexpansions.item.cataclysm.CeraunusBurstItem;
+import juitar.gwrexpansions.item.cataclysm.HarbingerRaycasterItem;
 import juitar.gwrexpansions.item.cataclysm.RemnantFangshotItem;
+import juitar.gwrexpansions.item.vanilla.RedstoneBulletItem;
 import juitar.gwrexpansions.registry.GWREEffects;
 import juitar.gwrexpansions.util.CoinTargetUtils;
 import lykrast.gunswithoutroses.entity.BulletEntity;
@@ -344,6 +346,8 @@ public class BulletHitEventHandler {
             // 在服务器tick结束时处理所有寻找硬币连锁的子弹
             event.getServer().getAllLevels().forEach(level -> {
                 CeraunusBurstItem.tickScheduledCombos(level);
+                HarbingerRaycasterItem.tickScheduledMissiles(level);
+                RedstoneBulletItem.tickRedstonePulses(level);
 
                 // 获取所有子弹实体
                 level.getAllEntities().forEach(entity -> {
