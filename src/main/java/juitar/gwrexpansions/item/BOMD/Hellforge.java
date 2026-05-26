@@ -2,6 +2,7 @@ package juitar.gwrexpansions.item.BOMD;
 
 import juitar.gwrexpansions.config.GWREConfig;
 import juitar.gwrexpansions.entity.BOMD.CoinEntity;
+import juitar.gwrexpansions.event.BulletHitEventHandler;
 import juitar.gwrexpansions.item.ConfigurableGunItem;
 import juitar.gwrexpansions.registry.GWREEffects;
 import juitar.gwrexpansions.registry.GWRESounds;
@@ -299,6 +300,7 @@ public class Hellforge extends ConfigurableGunItem {
             if (target.getId() == aimedTargetId) {
                 // 移除aimed效果
                 target.removeEffect(GWREEffects.AIMED.get());
+                BulletHitEventHandler.clearAimedGlowing(target);
 
                 // 播放特殊音效表示aimed效果被移除
                 if (target.level() != null) {

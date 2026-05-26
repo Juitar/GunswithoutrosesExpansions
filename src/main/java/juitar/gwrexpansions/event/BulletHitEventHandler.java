@@ -41,6 +41,8 @@ public class BulletHitEventHandler {
     // 防止递归调用的标记
     private static final ThreadLocal<Boolean> PROCESSING = ThreadLocal.withInitial(() -> false);
     public static final String ALLOW_SHOOTER_HIT = "AllowShooterHit";
+    public static final String AIMED_GLOWING_TAG = "GWREAimedGlowing";
+    public static final String AIMED_PREVIOUS_GLOWING_TAG = "GWREAimedPreviousGlowing";
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onRemnantFangshotStormNativeDamage(LivingHurtEvent event) {
@@ -281,7 +283,7 @@ public class BulletHitEventHandler {
             int aimedTargetId = bulletData.getInt("AimedTargetId");
 
             if (shouldRemoveAimed && target.getId() == aimedTargetId) {
-                target.removeEffect(GWREEffects.AIMED.get());
+                removeAimedEffects(target);
                 bulletData.putBoolean("RemoveAimedOnHit", false);
                 // 不再提前返回，继续执行后续逻辑
             }
@@ -296,14 +298,52 @@ public class BulletHitEventHandler {
                 newLevel = Math.min(currentEffect.getAmplifier() + 1, 4); // 最高5级（0-4）
                 newDuration = currentEffect.getDuration() + 100; // 增加5秒
             }
-            // 应用新的效果
-            target.addEffect(new MobEffectInstance(GWREEffects.AIMED.get(), newDuration, newLevel));
+            // 应用新的效果，不显示药水粒子
+            applyAimedEffects(target, newDuration, newLevel);
 
             // 调用Hellforge的击中处理方法
             Hellforge.onBulletHitLivingEntity(bullet, target, shooter);
 
         } catch (Exception e) {
             GWRexpansions.LOG.error("Error in handleAimedEffect", e);
+        }
+    }
+
+    private static void applyAimedEffects(LivingEntity target, int duration, int amplifier) {
+        target.addEffect(new MobEffectInstance(GWREEffects.AIMED.get(), duration, amplifier, false, false, true));
+
+        CompoundTag targetData = target.getPersistentData();
+        if (!targetData.getBoolean(AIMED_GLOWING_TAG)) {
+            targetData.putBoolean(AIMED_PREVIOUS_GLOWING_TAG, target.hasGlowingTag());
+            targetData.putBoolean(AIMED_GLOWING_TAG, true);
+        }
+        target.setGlowingTag(true);
+    }
+
+    private static void removeAimedEffects(LivingEntity target) {
+        target.removeEffect(GWREEffects.AIMED.get());
+        clearAimedGlowing(target);
+    }
+
+    public static void clearAimedGlowing(LivingEntity target) {
+        CompoundTag targetData = target.getPersistentData();
+        if (targetData.getBoolean(AIMED_GLOWING_TAG)) {
+            target.setGlowingTag(targetData.getBoolean(AIMED_PREVIOUS_GLOWING_TAG));
+            targetData.remove(AIMED_GLOWING_TAG);
+            targetData.remove(AIMED_PREVIOUS_GLOWING_TAG);
+        }
+    }
+
+    private static void tickAimedGlowing(LivingEntity target) {
+        CompoundTag targetData = target.getPersistentData();
+        if (!targetData.getBoolean(AIMED_GLOWING_TAG)) {
+            return;
+        }
+
+        if (target.hasEffect(GWREEffects.AIMED.get())) {
+            target.setGlowingTag(true);
+        } else {
+            clearAimedGlowing(target);
         }
     }
 
@@ -354,6 +394,10 @@ public class BulletHitEventHandler {
 
                 // 获取所有子弹实体
                 level.getAllEntities().forEach(entity -> {
+                    if (entity instanceof LivingEntity living) {
+                        tickAimedGlowing(living);
+                    }
+
                     if (entity instanceof BulletEntity bullet) {
                         CompoundTag bulletData = bullet.getPersistentData();
 

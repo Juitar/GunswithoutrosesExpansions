@@ -105,19 +105,7 @@ public class CoinEntity extends ThrowableItemProjectile {
             List<BulletEntity> nearbyBullets = this.level().getEntitiesOfClass(
                 BulletEntity.class,
                 this.getBoundingBox().inflate(detectionRange),
-                bullet -> {
-                    // 确保子弹存活
-                    if (bullet == null || !bullet.isAlive()) return false;
-
-                    // 检查是否是Hellforge子弹
-                    if (!bullet.getPersistentData().getBoolean("HellforgeShot")) return false;
-
-                    // 计算子弹与硬币的距离
-                    double distance = bullet.distanceTo(this);
-
-                    // 更宽松的距离判断
-                    return distance < detectionRange;
-                }
+                bullet -> isValidHellforgeBullet(bullet) && bullet.distanceTo(this) < detectionRange
             );
 
             // 如果有子弹在附近，处理击中事件
@@ -126,8 +114,7 @@ public class CoinEntity extends ThrowableItemProjectile {
                 this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
                     SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.NEUTRAL, 0.5F, 2.0F);
 
-                // 处理第一个子弹
-                handleBulletHit(nearbyBullets.get(0));
+                handleBulletHits(nearbyBullets);
             }
         }
     }
@@ -160,7 +147,16 @@ public class CoinEntity extends ThrowableItemProjectile {
 
         // 如果被子弹击中
         if (hitEntity instanceof BulletEntity bullet) {
-            handleBulletHit(bullet);
+            double detectionRange = 1.5;
+            List<BulletEntity> nearbyBullets = this.level().getEntitiesOfClass(
+                BulletEntity.class,
+                this.getBoundingBox().inflate(detectionRange),
+                nearbyBullet -> isValidHellforgeBullet(nearbyBullet) && nearbyBullet.distanceTo(this) < detectionRange
+            );
+            if (!nearbyBullets.contains(bullet)) {
+                nearbyBullets.add(bullet);
+            }
+            handleBulletHits(nearbyBullets);
         }
 
         super.onHitEntity(result);
@@ -173,10 +169,71 @@ public class CoinEntity extends ThrowableItemProjectile {
      */
     public void handleBulletHit(BulletEntity bullet) {
         if (!this.level().isClientSide) {
+            double detectionRange = 1.5;
+            List<BulletEntity> nearbyBullets = this.level().getEntitiesOfClass(
+                BulletEntity.class,
+                this.getBoundingBox().inflate(detectionRange),
+                nearbyBullet -> isValidHellforgeBullet(nearbyBullet) && nearbyBullet.distanceTo(this) < detectionRange
+            );
+            if (!nearbyBullets.contains(bullet)) {
+                nearbyBullets.add(bullet);
+            }
+            handleBulletHits(nearbyBullets);
+        }
+    }
+
+    /**
+     * 同一枚硬币被多颗Hellforge子弹命中时，每颗子弹都执行一次弹射和复制。
+     */
+    private void handleBulletHits(List<BulletEntity> bullets) {
+        if (this.level().isClientSide) {
+            return;
+        }
+
+        addBulletsSeekingThisCoin(bullets);
+
+        boolean handledAny = false;
+        boolean spawnedExtra = false;
+        for (BulletEntity bullet : bullets) {
+            if (!isValidHellforgeBullet(bullet)) {
+                continue;
+            }
+
+            boolean shouldSpawnExtra = !spawnedExtra;
+            if (processBulletHit(bullet, shouldSpawnExtra)) {
+                handledAny = true;
+                spawnedExtra |= shouldSpawnExtra;
+            }
+        }
+
+        if (handledAny) {
+            this.discard();
+        }
+    }
+
+    private void addBulletsSeekingThisCoin(List<BulletEntity> bullets) {
+        double searchRange = 64.0;
+        List<BulletEntity> seekingBullets = this.level().getEntitiesOfClass(
+            BulletEntity.class,
+            this.getBoundingBox().inflate(searchRange),
+            bullet -> isValidHellforgeBullet(bullet)
+                && bullet.getPersistentData().getBoolean("SeekingCoinChain")
+                && bullet.getPersistentData().getInt("TargetCoinId") == this.getId()
+        );
+
+        for (BulletEntity bullet : seekingBullets) {
+            if (!bullets.contains(bullet)) {
+                bullets.add(bullet);
+            }
+        }
+    }
+
+    private boolean processBulletHit(BulletEntity bullet, boolean spawnExtra) {
+        if (!this.level().isClientSide) {
             // 检查是否是Hellforge子弹
             CompoundTag bulletData = bullet.getPersistentData();
             if (!bulletData.getBoolean("HellforgeShot")) {
-                return;
+                return false;
             }
 
             Entity owner = getOwnerEntity();
@@ -189,8 +246,7 @@ public class CoinEntity extends ThrowableItemProjectile {
                 if (bounceCount >= 5) {
                     // 超过最大反弹次数，子弹消失
                     bullet.discard();
-                    this.discard();
-                    return;
+                    return true;
                 }
 
                 // 增加反弹计数
@@ -239,10 +295,22 @@ public class CoinEntity extends ThrowableItemProjectile {
                     double speed = 3.0; // 反弹后的速度
                     bullet.setDeltaMovement(direction.scale(speed));
 
+                    if (target instanceof CoinEntity targetCoin) {
+                        bulletData.putBoolean("SeekingCoinChain", true);
+                        bulletData.putInt("TargetCoinId", targetCoin.getId());
+                    } else {
+                        bulletData.putBoolean("SeekingCoinChain", false);
+                        bulletData.remove("TargetCoinId");
+                    }
+
                     // 如果目标是生物，标记aimed效果移除（击中后移除）
                     if (target instanceof LivingEntity livingTarget) {
                         bulletData.putBoolean("RemoveAimedOnHit", true);
                         bulletData.putInt("AimedTargetId", livingTarget.getId());
+                    }
+
+                    if (spawnExtra) {
+                        spawnExtraBouncedBullet(bullet, livingOwner);
                     }
 
                     // 播放硬币击中音效（连锁反弹音效更响亮）
@@ -257,6 +325,12 @@ public class CoinEntity extends ThrowableItemProjectile {
                         (this.random.nextDouble() - 0.5) * 2.0
                     ).normalize();
                     bullet.setDeltaMovement(randomDirection.scale(2.0));
+                    bulletData.putBoolean("SeekingCoinChain", false);
+                    bulletData.remove("TargetCoinId");
+
+                    if (spawnExtra) {
+                        spawnExtraBouncedBullet(bullet, livingOwner);
+                    }
 
                     // 播放不同的音效表示没有目标
                     this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
@@ -286,9 +360,40 @@ public class CoinEntity extends ThrowableItemProjectile {
                 }
             }
 
-            // 移除硬币（但不移除子弹）
-            this.discard();
+            return true;
         }
+
+        return false;
+    }
+
+    private boolean isValidHellforgeBullet(BulletEntity bullet) {
+        return bullet != null && bullet.isAlive() && bullet.getPersistentData().getBoolean("HellforgeShot");
+    }
+
+    /**
+     * 硬币每次弹射都会额外复制一颗同数值子弹，复制弹保留Hellforge和连锁硬币逻辑。
+     */
+    private void spawnExtraBouncedBullet(BulletEntity source, LivingEntity owner) {
+        Entity entity = source.getType().create(this.level());
+        if (!(entity instanceof BulletEntity extraBullet)) {
+            return;
+        }
+
+        extraBullet.setOwner(owner);
+        extraBullet.setPos(source.getX(), source.getY(), source.getZ());
+        extraBullet.setDeltaMovement(source.getDeltaMovement());
+        extraBullet.setXRot(source.getXRot());
+        extraBullet.setYRot(source.getYRot());
+        extraBullet.setDamage(source.getDamage());
+        extraBullet.setKnockbackStrength(source.getKnockbackStrength());
+        extraBullet.setHeadshotMultiplier(source.getHeadshotMultiplier());
+        extraBullet.setWaterInertia(source.getWaterInertia());
+        extraBullet.setItem(source.getItem().copy());
+        extraBullet.getPersistentData().merge(source.getPersistentData().copy());
+        extraBullet.getPersistentData().putBoolean("HellforgeShot", true);
+
+        this.level().addFreshEntity(extraBullet);
+        BOMDGameplayEventHandler.recordCoinBounceBullet(extraBullet);
     }
 
     /**

@@ -11,7 +11,7 @@ import net.minecraft.world.entity.LivingEntity;
 public class AimedEffect extends MobEffect {
     
     public AimedEffect() {
-        super(MobEffectCategory.HARMFUL, 0xFF0000); // 红色效果
+        super(MobEffectCategory.BENEFICIAL, 0xFF0000); // 红色效果
     }
     
     @Override
