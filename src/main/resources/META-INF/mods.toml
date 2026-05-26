@@ -41,7 +41,7 @@ description='''${mod_description}'''
     modId = "cataclysm"
     versionRange = "[2.31,)"
     mandatory = false
-    ordering = "NONE"
+    ordering = "AFTER"
     side = "BOTH"
 [[dependencies.${mod_id}]]
     modId = "iceandfire"

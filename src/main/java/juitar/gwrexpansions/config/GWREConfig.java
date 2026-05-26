@@ -128,6 +128,121 @@ public class GWREConfig {
                 }
         }
 
+        public static class TidalPistolConfig extends GunConfig {
+                public final ForgeConfigSpec.IntValue maxEnergy;
+                public final ForgeConfigSpec.IntValue inventoryRegenPerSecond;
+                public final ForgeConfigSpec.IntValue heldLandRegenPerSecond;
+                public final ForgeConfigSpec.IntValue heldWaterRegenPerSecond;
+                public final ForgeConfigSpec.IntValue hitEnergy;
+                public final ForgeConfigSpec.IntValue orbCost;
+                public final ForgeConfigSpec.IntValue mineCost;
+                public final ForgeConfigSpec.IntValue landOrbCost;
+                public final ForgeConfigSpec.IntValue landMineCost;
+                public final ForgeConfigSpec.IntValue portalCost;
+                public final ForgeConfigSpec.IntValue riftCost;
+                public final ForgeConfigSpec.IntValue portalChargeTicks;
+                public final ForgeConfigSpec.IntValue riftChargeTicks;
+                public final ForgeConfigSpec.IntValue landOrbCooldownTicks;
+                public final ForgeConfigSpec.IntValue landMineCooldownTicks;
+                public final ForgeConfigSpec.IntValue fullFormOrbCooldownTicks;
+                public final ForgeConfigSpec.IntValue fullFormMineCooldownTicks;
+                public final ForgeConfigSpec.DoubleValue fullFormOrbChance;
+                public final ForgeConfigSpec.DoubleValue fullFormMineChance;
+                public final ForgeConfigSpec.DoubleValue landOrbChance;
+                public final ForgeConfigSpec.DoubleValue landMineChance;
+                public final ForgeConfigSpec.DoubleValue tentacleChance;
+                public final ForgeConfigSpec.IntValue tentacleCooldownTicks;
+                public final ForgeConfigSpec.DoubleValue orbSpeedMultiplier;
+                public final ForgeConfigSpec.DoubleValue landOrbSpeedMultiplier;
+                public final ForgeConfigSpec.DoubleValue landSkillDamageMultiplier;
+                public final ForgeConfigSpec.DoubleValue waterSkillDamageMultiplier;
+                public final ForgeConfigSpec.DoubleValue portalDamage;
+                public final ForgeConfigSpec.DoubleValue portalHpDamage;
+                public final ForgeConfigSpec.IntValue portalWarmupTicks;
+                public final ForgeConfigSpec.IntValue riftDurationTicks;
+                public final ForgeConfigSpec.DoubleValue riftRadius;
+                public final ForgeConfigSpec.DoubleValue riftDamage;
+                public final ForgeConfigSpec.DoubleValue riftPullStrength;
+                public final ForgeConfigSpec.IntValue riftDamageIntervalTicks;
+
+                public TidalPistolConfig(ForgeConfigSpec.Builder builder) {
+                        super(builder, "Tidal", 0, 1.0, 1.0, 18, 2.0);
+
+                        builder.push("Tidal_Mechanics");
+                        maxEnergy = builder.comment("Maximum tidal energy stored on the Tidal Pistol.")
+                                        .defineInRange("maxEnergy", 100, 1, 1000);
+                        inventoryRegenPerSecond = builder.comment("Tidal energy regenerated per second while the Tidal Pistol is in a player's inventory.")
+                                        .defineInRange("inventoryRegenPerSecond", 2, 0, 100);
+                        heldLandRegenPerSecond = builder.comment("Tidal energy regenerated per second while the Tidal Pistol is held outside water.")
+                                        .defineInRange("heldLandRegenPerSecond", 5, 0, 100);
+                        heldWaterRegenPerSecond = builder.comment("Tidal energy regenerated per second while the Tidal Pistol is held in water.")
+                                        .defineInRange("heldWaterRegenPerSecond", 8, 0, 100);
+                        hitEnergy = builder.comment("Tidal energy gained when a Tidal Bullet damages an entity.")
+                                        .defineInRange("hitEnergy", 5, 0, 1000);
+                        orbCost = builder.comment("Tidal energy cost for the entity-hit Abyss Orb follow-up.")
+                                        .defineInRange("orbCost", 20, 0, 1000);
+                        mineCost = builder.comment("Tidal energy cost for the block-hit Abyss Mine follow-up.")
+                                        .defineInRange("mineCost", 12, 0, 1000);
+                        landOrbCost = builder.comment("Tidal energy cost for the weakened land Abyss Orb echo.")
+                                        .defineInRange("landOrbCost", 20, 0, 1000);
+                        landMineCost = builder.comment("Tidal energy cost for the weakened land Abyss Mine echo.")
+                                        .defineInRange("landMineCost", 6, 0, 1000);
+                        portalCost = builder.comment("Tidal energy cost for the charged Abyss Blast Portal.")
+                                        .defineInRange("portalCost", 50, 0, 1000);
+                        riftCost = builder.comment("Tidal energy cost for the full-charge safe tidal rift.")
+                                        .defineInRange("riftCost", 100, 0, 1000);
+                        portalChargeTicks = builder.comment("Minimum held ticks for the charged portal release.")
+                                        .defineInRange("portalChargeTicks", 12, 1, 72000);
+                        riftChargeTicks = builder.comment("Minimum held ticks for the full rift release.")
+                                        .defineInRange("riftChargeTicks", 35, 1, 72000);
+                        landOrbCooldownTicks = builder.comment("Cooldown in ticks for the weakened land orb follow-up.")
+                                        .defineInRange("landOrbCooldownTicks", 100, 0, 72000);
+                        landMineCooldownTicks = builder.comment("Cooldown in ticks for the weakened land mine follow-up.")
+                                        .defineInRange("landMineCooldownTicks", 140, 0, 72000);
+                        fullFormOrbCooldownTicks = builder.comment("Cooldown in ticks for the water/rain orb echo.")
+                                        .defineInRange("fullFormOrbCooldownTicks", 8, 0, 72000);
+                        fullFormMineCooldownTicks = builder.comment("Cooldown in ticks for the water/rain mine echo.")
+                                        .defineInRange("fullFormMineCooldownTicks", 12, 0, 72000);
+                        fullFormOrbChance = builder.comment("Chance for an entity hit to trigger a water/rain tracking Abyss Orb echo.")
+                                        .defineInRange("fullFormOrbChance", 0.45, 0.0, 1.0);
+                        fullFormMineChance = builder.comment("Chance for a block hit to trigger a water/rain Abyss Mine echo.")
+                                        .defineInRange("fullFormMineChance", 0.30, 0.0, 1.0);
+                        landOrbChance = builder.comment("Chance for an entity hit to trigger a weakened land tracking Abyss Orb echo.")
+                                        .defineInRange("landOrbChance", 0.20, 0.0, 1.0);
+                        landMineChance = builder.comment("Chance for a block hit to trigger a weakened land Abyss Mine echo.")
+                                        .defineInRange("landMineChance", 0.12, 0.0, 1.0);
+                        tentacleChance = builder.comment("Chance for the Tidal Pistol to launch Tidal Tentacles when its holder is hurt.")
+                                        .defineInRange("tentacleChance", 1.0, 0.0, 1.0);
+                        tentacleCooldownTicks = builder.comment("Cooldown in ticks for the Tidal Tentacle assist.")
+                                        .defineInRange("tentacleCooldownTicks", 120, 0, 72000);
+                        orbSpeedMultiplier = builder.comment("Multiplier applied to the sustained Abyss Orb tracking speed.")
+                                        .defineInRange("orbSpeedMultiplier", 4.0, 0.1, 10.0);
+                        landOrbSpeedMultiplier = builder.comment("Multiplier applied to the sustained weakened land Abyss Orb tracking speed.")
+                                        .defineInRange("landOrbSpeedMultiplier", 3.2, 0.1, 10.0);
+                        landSkillDamageMultiplier = builder.comment("Damage multiplier for weakened land follow-up skills.")
+                                        .defineInRange("landSkillDamageMultiplier", 0.35, 0.0, 100.0);
+                        waterSkillDamageMultiplier = builder.comment("Damage multiplier for water/rain follow-up skills.")
+                                        .defineInRange("waterSkillDamageMultiplier", 0.85, 0.0, 100.0);
+                        portalDamage = builder.comment("Damage for the controlled Abyss Blast Portal.")
+                                        .defineInRange("portalDamage", 8.0, 0.0, 1000.0);
+                        portalHpDamage = builder.comment("Percent max-health damage for the controlled Abyss Blast Portal.")
+                                        .defineInRange("portalHpDamage", 0.0, 0.0, 100.0);
+                        portalWarmupTicks = builder.comment("Warmup delay in ticks for the controlled Abyss Blast Portal.")
+                                        .defineInRange("portalWarmupTicks", 4, 0, 200);
+                        riftDurationTicks = builder.comment("Lifetime in ticks for the safe tidal rift.")
+                                        .defineInRange("riftDurationTicks", 240, 1, 72000);
+                        riftRadius = builder.comment("Radius for the safe tidal rift pull and damage.")
+                                        .defineInRange("riftRadius", 10.0, 0.0, 64.0);
+                        riftDamage = builder.comment("Damage dealt by each safe tidal rift pulse.")
+                                        .defineInRange("riftDamage", 5.0, 0.0, 1000.0);
+                        riftPullStrength = builder.comment("Pull strength applied by the safe tidal rift each tick.")
+                                        .defineInRange("riftPullStrength", 0.14, 0.0, 2.0);
+                        riftDamageIntervalTicks = builder.comment("Ticks between safe tidal rift damage pulses.")
+                                        .defineInRange("riftDamageIntervalTicks", 5, 1, 200);
+                        builder.pop();
+                }
+        }
+
         public static class MirecallerConfig extends GunConfig {
                 public final ForgeConfigSpec.DoubleValue mineExplosionPower;
 
@@ -489,12 +604,12 @@ public class GWREConfig {
 
         // 手枪配置
         public static class PistolConfigs {
-                public final GunConfig tidal;
+                public final TidalPistolConfig tidal;
                 public final GunConfig hellforge;
 
                 public PistolConfigs(ForgeConfigSpec.Builder builder) {
                         builder.push("Pistol");
-                        tidal = new GunConfig(builder, "Tidal", 0, 1.0, 1.0, 18, 2.0);
+                        tidal = new TidalPistolConfig(builder);
                         hellforge = new GunConfig(builder, "Hellforge", 0, 1.0, 1.2, 60, 1.0);
                         builder.pop();
                 }

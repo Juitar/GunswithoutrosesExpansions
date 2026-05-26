@@ -16,13 +16,13 @@
   },
   "parent": "gwrexpansions:leviathans_phallus",
   "criteria": {
-    "first_tidal_portal_created": {
-      "trigger": "gwrexpansions:first_tidal_portal_created"
+    "tidal_portal_killed_enderman": {
+      "trigger": "gwrexpansions:tidal_portal_killed_enderman"
     }
   },
   "requirements": [
     [
-      "first_tidal_portal_created"
+      "tidal_portal_killed_enderman"
     ]
   ],
   "conditions": [{ "type": "forge:mod_loaded", "modid": "cataclysm" }]

@@ -8,7 +8,11 @@ import juitar.gwrexpansions.entity.cataclysm.CeraunusStormBulletEntity;
 import juitar.gwrexpansions.entity.cataclysm.CeraunusWaterBulletEntity;
 import juitar.gwrexpansions.entity.cataclysm.IgnitiumBulletEntity;
 import juitar.gwrexpansions.entity.cataclysm.LavapowerBulletEntity;
+import juitar.gwrexpansions.entity.cataclysm.TidalAbyssBlastPortalEntity;
+import juitar.gwrexpansions.entity.cataclysm.TidalAbyssOrbEntity;
 import juitar.gwrexpansions.entity.cataclysm.TidalBulletEntity;
+import juitar.gwrexpansions.entity.cataclysm.TidalPortalBeamEntity;
+import juitar.gwrexpansions.entity.cataclysm.TidalRiftEntity;
 import juitar.gwrexpansions.entity.iceandfire.FireDragonSteelBulletEntity;
 import juitar.gwrexpansions.entity.iceandfire.IceDragonSteelBulletEntity;
 import juitar.gwrexpansions.entity.iceandfire.LightningDragonSteelBulletEntity;
@@ -45,6 +49,10 @@ public class GWREEntities {
     public static RegistryObject<EntityType<LightningDragonSteelBulletEntity>> DRAGONSTEEL_LIGHTNING_BULLET;
     public static RegistryObject<EntityType<IgnitiumBulletEntity>> IGNITIUM_BULLET;
     public static RegistryObject<EntityType<TidalBulletEntity>> TIDAL_BULLET;
+    public static RegistryObject<EntityType<TidalRiftEntity>> TIDAL_RIFT;
+    public static RegistryObject<EntityType<TidalAbyssOrbEntity>> TIDAL_ABYSS_ORB;
+    public static RegistryObject<EntityType<TidalAbyssBlastPortalEntity>> TIDAL_ABYSS_BLAST_PORTAL;
+    public static RegistryObject<EntityType<TidalPortalBeamEntity>> TIDAL_PORTAL_BEAM;
     public static RegistryObject<EntityType<CeraunusWaterBulletEntity>> CERAUNUS_WATER_BULLET;
     public static RegistryObject<EntityType<CeraunusStormBulletEntity>> CERAUNUS_STORM_BULLET;
     public static RegistryObject<EntityType<CeraunusLightningBulletEntity>> CERAUNUS_LIGHTNING_BULLET;
@@ -105,6 +113,22 @@ public class GWREEntities {
                     .<TidalBulletEntity>of(TidalBulletEntity::new, MobCategory.MISC)
                     .sized(0.3125f, 0.3125f).setUpdateInterval(2).setTrackingRange(64).setShouldReceiveVelocityUpdates(true)
                     .build(GWRexpansions.MODID + ":tidal_bullet"));
+            TIDAL_RIFT = REG.register("tidal_rift", () -> EntityType.Builder
+                    .<TidalRiftEntity>of(TidalRiftEntity::new, MobCategory.MISC)
+                    .sized(1.2F, 1.2F).setUpdateInterval(2).setTrackingRange(64).setShouldReceiveVelocityUpdates(false)
+                    .build(GWRexpansions.MODID + ":tidal_rift"));
+            TIDAL_ABYSS_ORB = REG.register("tidal_abyss_orb", () -> EntityType.Builder
+                    .<TidalAbyssOrbEntity>of(TidalAbyssOrbEntity::new, MobCategory.MISC)
+                    .sized(0.3125F, 0.3125F).setUpdateInterval(2).setTrackingRange(64).setShouldReceiveVelocityUpdates(true)
+                    .build(GWRexpansions.MODID + ":tidal_abyss_orb"));
+            TIDAL_ABYSS_BLAST_PORTAL = REG.register("tidal_abyss_blast_portal", () -> EntityType.Builder
+                    .<TidalAbyssBlastPortalEntity>of(TidalAbyssBlastPortalEntity::new, MobCategory.MISC)
+                    .sized(1.0F, 1.0F).setUpdateInterval(2).setTrackingRange(96).setShouldReceiveVelocityUpdates(false)
+                    .build(GWRexpansions.MODID + ":tidal_abyss_blast_portal"));
+            TIDAL_PORTAL_BEAM = REG.register("tidal_portal_beam", () -> EntityType.Builder
+                    .<TidalPortalBeamEntity>of(TidalPortalBeamEntity::new, MobCategory.MISC)
+                    .sized(0.5F, 0.5F).setUpdateInterval(1).setTrackingRange(96).setShouldReceiveVelocityUpdates(false)
+                    .build(GWRexpansions.MODID + ":tidal_portal_beam"));
             CERAUNUS_WATER_BULLET = REG.register("ceraunus_water_bullet", () -> EntityType.Builder
                     .<CeraunusWaterBulletEntity>of(CeraunusWaterBulletEntity::new, MobCategory.MISC)
                     .sized(0.3125f, 0.3125f).setUpdateInterval(2).setTrackingRange(64).setShouldReceiveVelocityUpdates(true)

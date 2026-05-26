@@ -61,6 +61,24 @@ public class ClientConfig {
     public final ForgeConfigSpec.BooleanValue harbingerOverloadHudEnabled;
     public final ForgeConfigSpec.IntValue harbingerOverloadHudOffsetX;
     public final ForgeConfigSpec.IntValue harbingerOverloadHudOffsetY;
+    public final ForgeConfigSpec.BooleanValue tidalPistolHudEnabled;
+    public final ForgeConfigSpec.IntValue tidalPistolHudOffsetX;
+    public final ForgeConfigSpec.IntValue tidalPistolHudOffsetY;
+    public final ForgeConfigSpec.BooleanValue ceraunusBurstHudEnabled;
+    public final ForgeConfigSpec.IntValue ceraunusBurstHudOffsetX;
+    public final ForgeConfigSpec.IntValue ceraunusBurstHudOffsetY;
+    public final ForgeConfigSpec.BooleanValue remnantFangshotHudEnabled;
+    public final ForgeConfigSpec.IntValue remnantFangshotHudOffsetX;
+    public final ForgeConfigSpec.IntValue remnantFangshotHudOffsetY;
+    public final ForgeConfigSpec.BooleanValue superShotgunHudEnabled;
+    public final ForgeConfigSpec.IntValue superShotgunHudOffsetX;
+    public final ForgeConfigSpec.IntValue superShotgunHudOffsetY;
+    public final ForgeConfigSpec.BooleanValue skullcrusherHudEnabled;
+    public final ForgeConfigSpec.IntValue skullcrusherHudOffsetX;
+    public final ForgeConfigSpec.IntValue skullcrusherHudOffsetY;
+    public final ForgeConfigSpec.BooleanValue obsidianLauncherHudEnabled;
+    public final ForgeConfigSpec.IntValue obsidianLauncherHudOffsetX;
+    public final ForgeConfigSpec.IntValue obsidianLauncherHudOffsetY;
 
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
@@ -123,9 +141,53 @@ public class ClientConfig {
 
         harbingerOverloadHudOffsetY = builder
                 .comment("先兆裁光过载HUD Y轴偏移 / Y offset for Harbinger overload HUD")
-                .defineInRange("offset_y", 16, -2000, 2000);
+                .defineInRange("offset_y", 32, -2000, 2000);
 
         builder.pop();
+
+        builder.comment("武器HUD设置 / Weapon HUD Settings")
+                .push("weapon_huds");
+
+        tidalPistolHudEnabled = defineHudEnabled(builder, "tidal_pistol", "潮汐手枪 / Tidal Pistol");
+        tidalPistolHudOffsetX = defineHudOffsetX(builder, "tidal_pistol");
+        tidalPistolHudOffsetY = defineHudOffsetY(builder, "tidal_pistol", 42);
+
+        ceraunusBurstHudEnabled = defineHudEnabled(builder, "ceraunus_burst", "雷霆刻律 / Ceraunus Burst");
+        ceraunusBurstHudOffsetX = defineHudOffsetX(builder, "ceraunus_burst");
+        ceraunusBurstHudOffsetY = defineHudOffsetY(builder, "ceraunus_burst", 18);
+
+        remnantFangshotHudEnabled = defineHudEnabled(builder, "remnant_fangshot", "遗迹牙铳 / Remnant Fangshot");
+        remnantFangshotHudOffsetX = defineHudOffsetX(builder, "remnant_fangshot");
+        remnantFangshotHudOffsetY = defineHudOffsetY(builder, "remnant_fangshot", 13);
+
+        superShotgunHudEnabled = defineHudEnabled(builder, "super_shotgun", "超级霰弹枪 / Super Shotgun");
+        superShotgunHudOffsetX = defineHudOffsetX(builder, "super_shotgun");
+        superShotgunHudOffsetY = defineHudOffsetY(builder, "super_shotgun", 10);
+
+        skullcrusherHudEnabled = defineHudEnabled(builder, "skullcrusher", "骷髅粉碎者 / Skullcrusher");
+        skullcrusherHudOffsetX = defineHudOffsetX(builder, "skullcrusher");
+        skullcrusherHudOffsetY = defineHudOffsetY(builder, "skullcrusher", 10);
+
+        obsidianLauncherHudEnabled = defineHudEnabled(builder, "obsidian_launcher", "黑曜石发射器 / Obsidian Launcher");
+        obsidianLauncherHudOffsetX = defineHudOffsetX(builder, "obsidian_launcher");
+        obsidianLauncherHudOffsetY = defineHudOffsetY(builder, "obsidian_launcher", 10);
+
+        builder.pop();
+    }
+
+    private static ForgeConfigSpec.BooleanValue defineHudEnabled(ForgeConfigSpec.Builder builder, String key, String label) {
+        return builder.comment("是否启用" + label + " HUD / Enable " + label + " HUD")
+                .define(key + "_enabled", true);
+    }
+
+    private static ForgeConfigSpec.IntValue defineHudOffsetX(ForgeConfigSpec.Builder builder, String key) {
+        return builder.comment(key + " HUD X轴偏移 / HUD X offset")
+                .defineInRange(key + "_offset_x", 0, -2000, 2000);
+    }
+
+    private static ForgeConfigSpec.IntValue defineHudOffsetY(ForgeConfigSpec.Builder builder, String key, int defaultValue) {
+        return builder.comment(key + " HUD Y轴偏移 / HUD Y offset")
+                .defineInRange(key + "_offset_y", defaultValue, -2000, 2000);
     }
 
     /**
@@ -137,6 +199,22 @@ public class ClientConfig {
 
     public static void save() {
         CLIENT_SPEC.save();
+    }
+
+    public static boolean getBoolean(ForgeConfigSpec.BooleanValue value, boolean fallback) {
+        try {
+            return value.get();
+        } catch (IllegalStateException e) {
+            return fallback;
+        }
+    }
+
+    public static int getInt(ForgeConfigSpec.IntValue value, int fallback) {
+        try {
+            return value.get();
+        } catch (IllegalStateException e) {
+            return fallback;
+        }
     }
 
     /**

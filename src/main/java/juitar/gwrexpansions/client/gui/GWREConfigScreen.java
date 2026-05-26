@@ -130,10 +130,53 @@ public class GWREConfigScreen {
 
     private static void addPistolCategory(ConfigBuilder builder, ConfigEntryBuilder entries) {
         ConfigCategory category = builder.getOrCreateCategory(text("category.pistols"));
-        addGunSubCategory(category, entries, "item.gwrexpansions.tidal_pistol",
-                GWREConfig.PISTOL.tidal, 0, 1.0D, 1.0D, 18, 2.0D);
+        addTidalPistolSubCategory(category, entries);
         addGunSubCategory(category, entries, "item.gwrexpansions.hellforge_revolver",
                 GWREConfig.PISTOL.hellforge, 0, 1.0D, 1.2D, 60, 1.0D);
+    }
+
+    private static void addTidalPistolSubCategory(ConfigCategory category, ConfigEntryBuilder entries) {
+        GWREConfig.TidalPistolConfig config = GWREConfig.PISTOL.tidal;
+        SubCategoryBuilder subCategory = entries.startSubCategory(
+                Component.translatable("item.gwrexpansions.tidal_pistol")).setExpanded(false);
+
+        addGunEntries(subCategory::add, entries, config, 0, 1.0D, 1.0D, 18, 2.0D);
+        addInt(subCategory::add, entries, "tidal_max_energy", config.maxEnergy, 100, 1, 1000);
+        addInt(subCategory::add, entries, "tidal_inventory_regen", config.inventoryRegenPerSecond, 2, 0, 100);
+        addInt(subCategory::add, entries, "tidal_held_land_regen", config.heldLandRegenPerSecond, 5, 0, 100);
+        addInt(subCategory::add, entries, "tidal_held_water_regen", config.heldWaterRegenPerSecond, 8, 0, 100);
+        addInt(subCategory::add, entries, "tidal_hit_energy", config.hitEnergy, 5, 0, 1000);
+        addInt(subCategory::add, entries, "tidal_orb_cost", config.orbCost, 20, 0, 1000);
+        addInt(subCategory::add, entries, "tidal_mine_cost", config.mineCost, 12, 0, 1000);
+        addInt(subCategory::add, entries, "tidal_land_orb_cost", config.landOrbCost, 20, 0, 1000);
+        addInt(subCategory::add, entries, "tidal_land_mine_cost", config.landMineCost, 6, 0, 1000);
+        addInt(subCategory::add, entries, "tidal_portal_cost", config.portalCost, 50, 0, 1000);
+        addInt(subCategory::add, entries, "tidal_rift_cost", config.riftCost, 100, 0, 1000);
+        addInt(subCategory::add, entries, "tidal_portal_charge_ticks", config.portalChargeTicks, 12, 1, 72000);
+        addInt(subCategory::add, entries, "tidal_rift_charge_ticks", config.riftChargeTicks, 35, 1, 72000);
+        addInt(subCategory::add, entries, "tidal_land_orb_cooldown", config.landOrbCooldownTicks, 100, 0, 72000);
+        addInt(subCategory::add, entries, "tidal_land_mine_cooldown", config.landMineCooldownTicks, 140, 0, 72000);
+        addInt(subCategory::add, entries, "tidal_full_orb_cooldown", config.fullFormOrbCooldownTicks, 8, 0, 72000);
+        addInt(subCategory::add, entries, "tidal_full_mine_cooldown", config.fullFormMineCooldownTicks, 12, 0, 72000);
+        addDouble(subCategory::add, entries, "tidal_full_orb_chance", config.fullFormOrbChance, 0.45D, 0.0D, 1.0D);
+        addDouble(subCategory::add, entries, "tidal_full_mine_chance", config.fullFormMineChance, 0.30D, 0.0D, 1.0D);
+        addDouble(subCategory::add, entries, "tidal_land_orb_chance", config.landOrbChance, 0.20D, 0.0D, 1.0D);
+        addDouble(subCategory::add, entries, "tidal_land_mine_chance", config.landMineChance, 0.12D, 0.0D, 1.0D);
+        addDouble(subCategory::add, entries, "tidal_tentacle_chance", config.tentacleChance, 1.0D, 0.0D, 1.0D);
+        addInt(subCategory::add, entries, "tidal_tentacle_cooldown", config.tentacleCooldownTicks, 120, 0, 72000);
+        addDouble(subCategory::add, entries, "tidal_orb_speed", config.orbSpeedMultiplier, 4.0D, 0.1D, 10.0D);
+        addDouble(subCategory::add, entries, "tidal_land_orb_speed", config.landOrbSpeedMultiplier, 3.2D, 0.1D, 10.0D);
+        addDouble(subCategory::add, entries, "tidal_land_skill_damage_multiplier", config.landSkillDamageMultiplier, 0.35D, 0.0D, 100.0D);
+        addDouble(subCategory::add, entries, "tidal_water_skill_damage_multiplier", config.waterSkillDamageMultiplier, 0.85D, 0.0D, 100.0D);
+        addDouble(subCategory::add, entries, "tidal_portal_damage", config.portalDamage, 8.0D, 0.0D, 1000.0D);
+        addDouble(subCategory::add, entries, "tidal_portal_hp_damage", config.portalHpDamage, 0.0D, 0.0D, 100.0D);
+        addInt(subCategory::add, entries, "tidal_portal_warmup", config.portalWarmupTicks, 4, 0, 200);
+        addInt(subCategory::add, entries, "tidal_rift_duration", config.riftDurationTicks, 240, 1, 72000);
+        addDouble(subCategory::add, entries, "tidal_rift_radius", config.riftRadius, 10.0D, 0.0D, 64.0D);
+        addDouble(subCategory::add, entries, "tidal_rift_damage", config.riftDamage, 5.0D, 0.0D, 1000.0D);
+        addDouble(subCategory::add, entries, "tidal_rift_pull_strength", config.riftPullStrength, 0.14D, 0.0D, 2.0D);
+        addInt(subCategory::add, entries, "tidal_rift_damage_interval", config.riftDamageIntervalTicks, 5, 1, 200);
+        category.addEntry(subCategory.build());
     }
 
     private static void addLauncherCategory(ConfigBuilder builder, ConfigEntryBuilder entries) {
@@ -405,6 +448,27 @@ public class GWREConfigScreen {
                 ClientConfig.INSTANCE.harbingerOverloadHudOffsetX, 0, -2000, 2000);
         addInt(category::addEntry, entries, "harbinger_overload_hud_offset_y",
                 ClientConfig.INSTANCE.harbingerOverloadHudOffsetY, 32, -2000, 2000);
+        addHudClientEntries(category, entries, "tidal_pistol_hud", ClientConfig.INSTANCE.tidalPistolHudEnabled,
+                ClientConfig.INSTANCE.tidalPistolHudOffsetX, ClientConfig.INSTANCE.tidalPistolHudOffsetY, 42);
+        addHudClientEntries(category, entries, "ceraunus_burst_hud", ClientConfig.INSTANCE.ceraunusBurstHudEnabled,
+                ClientConfig.INSTANCE.ceraunusBurstHudOffsetX, ClientConfig.INSTANCE.ceraunusBurstHudOffsetY, 18);
+        addHudClientEntries(category, entries, "remnant_fangshot_hud", ClientConfig.INSTANCE.remnantFangshotHudEnabled,
+                ClientConfig.INSTANCE.remnantFangshotHudOffsetX, ClientConfig.INSTANCE.remnantFangshotHudOffsetY, 13);
+        addHudClientEntries(category, entries, "super_shotgun_hud", ClientConfig.INSTANCE.superShotgunHudEnabled,
+                ClientConfig.INSTANCE.superShotgunHudOffsetX, ClientConfig.INSTANCE.superShotgunHudOffsetY, 10);
+        addHudClientEntries(category, entries, "skullcrusher_hud", ClientConfig.INSTANCE.skullcrusherHudEnabled,
+                ClientConfig.INSTANCE.skullcrusherHudOffsetX, ClientConfig.INSTANCE.skullcrusherHudOffsetY, 10);
+        addHudClientEntries(category, entries, "obsidian_launcher_hud", ClientConfig.INSTANCE.obsidianLauncherHudEnabled,
+                ClientConfig.INSTANCE.obsidianLauncherHudOffsetX, ClientConfig.INSTANCE.obsidianLauncherHudOffsetY, 10);
+    }
+
+    private static void addHudClientEntries(ConfigCategory category, ConfigEntryBuilder entries, String key,
+            ForgeConfigSpec.BooleanValue enabled, ForgeConfigSpec.IntValue offsetX, ForgeConfigSpec.IntValue offsetY,
+            int defaultY) {
+
+        addBoolean(category::addEntry, entries, key + "_enabled", enabled, true);
+        addInt(category::addEntry, entries, key + "_offset_x", offsetX, 0, -2000, 2000);
+        addInt(category::addEntry, entries, key + "_offset_y", offsetY, defaultY, -2000, 2000);
     }
 
     private static void addStringList(EntrySink sink, ConfigEntryBuilder entries, String key,

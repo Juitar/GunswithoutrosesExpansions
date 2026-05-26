@@ -13,9 +13,14 @@ import juitar.gwrexpansions.client.render.ObsidianCoreRenderer;
 import juitar.gwrexpansions.client.render.ObsidianLauncherHudRenderer;
 import juitar.gwrexpansions.client.render.RemnantFangshotHudRenderer;
 import juitar.gwrexpansions.client.render.SupershotgunHudRenderer;
+import juitar.gwrexpansions.client.render.TidalAbyssBlastPortalRenderer;
+import juitar.gwrexpansions.client.render.TidalPistolHudRenderer;
+import juitar.gwrexpansions.client.render.TidalPortalBeamRenderer;
+import juitar.gwrexpansions.client.render.TidalRiftRenderer;
 import juitar.gwrexpansions.client.gui.CoinCounterOverlay;
 import juitar.gwrexpansions.config.ClientConfig;
 import juitar.gwrexpansions.registry.GWREEntities;
+import com.github.L_Ender.cataclysm.client.render.entity.Abyss_Orb_Renderer;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraftforge.api.distmarker.Dist;
@@ -42,6 +47,7 @@ public class ClientSetup {
                 MinecraftForge.EVENT_BUS.register(new RemnantFangshotHudRenderer());
                 MinecraftForge.EVENT_BUS.register(new CeraunusBurstHudRenderer());
                 MinecraftForge.EVENT_BUS.register(new HarbingerRaycasterHudRenderer());
+                MinecraftForge.EVENT_BUS.register(new TidalPistolHudRenderer());
             }
             // 注册黑曜石发射器HUD渲染器
             if(ModList.get().isLoaded(CompatModids.BOMD)) {
@@ -66,6 +72,10 @@ public class ClientSetup {
             event.registerEntityRenderer(GWREEntities.CURSIUM_BULLET.get(), ThrownItemRenderer::new);
             event.registerEntityRenderer(GWREEntities.IGNITIUM_BULLET.get(), ThrownItemRenderer::new);
             event.registerEntityRenderer(GWREEntities.TIDAL_BULLET.get(), ThrownItemRenderer::new);
+            event.registerEntityRenderer(GWREEntities.TIDAL_RIFT.get(), TidalRiftRenderer::new);
+            event.registerEntityRenderer(GWREEntities.TIDAL_ABYSS_ORB.get(), context -> new Abyss_Orb_Renderer(context));
+            event.registerEntityRenderer(GWREEntities.TIDAL_ABYSS_BLAST_PORTAL.get(), TidalAbyssBlastPortalRenderer::new);
+            event.registerEntityRenderer(GWREEntities.TIDAL_PORTAL_BEAM.get(), TidalPortalBeamRenderer::new);
             event.registerEntityRenderer(GWREEntities.CERAUNUS_WATER_BULLET.get(), ThrownItemRenderer::new);
             event.registerEntityRenderer(GWREEntities.CERAUNUS_STORM_BULLET.get(), ThrownItemRenderer::new);
             event.registerEntityRenderer(GWREEntities.CERAUNUS_LIGHTNING_BULLET.get(), ThrownItemRenderer::new);

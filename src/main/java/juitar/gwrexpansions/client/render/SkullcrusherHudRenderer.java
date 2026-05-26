@@ -2,11 +2,10 @@ package juitar.gwrexpansions.client.render;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import juitar.gwrexpansions.GWRexpansions;
+import juitar.gwrexpansions.config.ClientConfig;
 import juitar.gwrexpansions.item.BOMD.Skullcrusher;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.event.RenderGuiEvent;
@@ -27,7 +26,7 @@ public class SkullcrusherHudRenderer {
     public void onRenderGui(RenderGuiEvent event) {
         Minecraft mc = Minecraft.getInstance();
         Player player = mc.player;
-        if (player == null) return;
+        if (player == null || !ClientConfig.getBoolean(ClientConfig.INSTANCE.skullcrusherHudEnabled, true)) return;
         
         // 检查玩家是否手持Skullcrusher
         ItemStack mainHand = player.getMainHandItem();
@@ -57,8 +56,12 @@ public class SkullcrusherHudRenderer {
         // 进度条尺寸和位置
         int barWidth = 15;
         int barHeight = 2;
-        int x = (screenWidth - barWidth) / 2;
-        int y = screenHeight / 2 + 10; // 准星下方更近
+        int offsetX = ClientConfig.getInt(ClientConfig.INSTANCE.skullcrusherHudOffsetX, 0);
+        int offsetY = ClientConfig.getInt(ClientConfig.INSTANCE.skullcrusherHudOffsetY, 10);
+        HudCollisionLayout.Bounds bounds = HudCollisionLayout.claim(event, (screenWidth - barWidth) / 2 + offsetX,
+                screenHeight / 2 + offsetY, barWidth, barHeight, screenWidth, screenHeight);
+        int x = bounds.x;
+        int y = bounds.y;
         
         // 保存当前渲染状态
         RenderSystem.enableBlend();

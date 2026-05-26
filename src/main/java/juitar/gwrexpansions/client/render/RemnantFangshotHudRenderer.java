@@ -2,6 +2,7 @@ package juitar.gwrexpansions.client.render;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import juitar.gwrexpansions.config.ClientConfig;
 import juitar.gwrexpansions.item.cataclysm.RemnantFangshotItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -24,7 +25,8 @@ public class RemnantFangshotHudRenderer {
     public void onRenderGui(RenderGuiEvent event) {
         Minecraft mc = Minecraft.getInstance();
         Player player = mc.player;
-        if (player == null || mc.options.hideGui) {
+        if (player == null || mc.options.hideGui
+                || !ClientConfig.getBoolean(ClientConfig.INSTANCE.remnantFangshotHudEnabled, true)) {
             return;
         }
 
@@ -44,8 +46,12 @@ public class RemnantFangshotHudRenderer {
         PoseStack poseStack = guiGraphics.pose();
         int screenWidth = mc.getWindow().getGuiScaledWidth();
         int screenHeight = mc.getWindow().getGuiScaledHeight();
-        int x = (screenWidth - BAR_WIDTH) / 2;
-        int y = screenHeight / 2 + 13;
+        int offsetX = ClientConfig.getInt(ClientConfig.INSTANCE.remnantFangshotHudOffsetX, 0);
+        int offsetY = ClientConfig.getInt(ClientConfig.INSTANCE.remnantFangshotHudOffsetY, 13);
+        HudCollisionLayout.Bounds bounds = HudCollisionLayout.claim(event, (screenWidth - BAR_WIDTH) / 2 + offsetX,
+                screenHeight / 2 + offsetY, BAR_WIDTH, BAR_HEIGHT, screenWidth, screenHeight);
+        int x = bounds.x;
+        int y = bounds.y;
 
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();

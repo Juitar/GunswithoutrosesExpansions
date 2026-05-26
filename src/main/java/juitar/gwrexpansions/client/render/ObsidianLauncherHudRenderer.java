@@ -2,6 +2,7 @@ package juitar.gwrexpansions.client.render;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import juitar.gwrexpansions.config.ClientConfig;
 import juitar.gwrexpansions.item.BOMD.ObsidianLauncher;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -23,7 +24,7 @@ public class ObsidianLauncherHudRenderer {
     public void onRenderGui(RenderGuiEvent event) {
         Minecraft mc = Minecraft.getInstance();
         Player player = mc.player;
-        if (player == null) return;
+        if (player == null || !ClientConfig.getBoolean(ClientConfig.INSTANCE.obsidianLauncherHudEnabled, true)) return;
         
         // 检查玩家是否手持ObsidianLauncher
         ItemStack mainHand = player.getMainHandItem();
@@ -56,8 +57,12 @@ public class ObsidianLauncherHudRenderer {
         // 进度条尺寸和位置
         int barWidth = 16;
         int barHeight = 4;
-        int x = (screenWidth - barWidth) / 2;
-        int y = screenHeight / 2 + 10; // 准星下方
+        int offsetX = ClientConfig.getInt(ClientConfig.INSTANCE.obsidianLauncherHudOffsetX, 0);
+        int offsetY = ClientConfig.getInt(ClientConfig.INSTANCE.obsidianLauncherHudOffsetY, 10);
+        HudCollisionLayout.Bounds bounds = HudCollisionLayout.claim(event, (screenWidth - barWidth) / 2 + offsetX,
+                screenHeight / 2 + offsetY, barWidth, barHeight, screenWidth, screenHeight);
+        int x = bounds.x;
+        int y = bounds.y;
         
         // 保存当前渲染状态
         RenderSystem.enableBlend();

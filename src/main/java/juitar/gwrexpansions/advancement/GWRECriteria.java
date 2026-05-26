@@ -22,6 +22,7 @@ public final class GWRECriteria {
 	public static final HungerBulletDepleteFoodTrigger HUNGER_BULLET_DEPLETE_FOOD = CriteriaTriggers.register(new HungerBulletDepleteFoodTrigger());
 	public static final ChickenBurnedByFlameJetTrigger CHICKEN_BURNED_BY_FLAME_JET = CriteriaTriggers.register(new ChickenBurnedByFlameJetTrigger());
 	public static final FirstTidalPortalCreatedTrigger FIRST_TIDAL_PORTAL_CREATED = CriteriaTriggers.register(new FirstTidalPortalCreatedTrigger());
+	public static final TidalPortalKilledEndermanTrigger TIDAL_PORTAL_KILLED_ENDERMAN = CriteriaTriggers.register(new TidalPortalKilledEndermanTrigger());
 	public static final AllAchievementsCompletedTrigger ALL_ACHIEVEMENTS_COMPLETED = CriteriaTriggers.register(new AllAchievementsCompletedTrigger());
 	
 	// BOMD模组成就触发器
@@ -45,6 +46,7 @@ public final class GWRECriteria {
 		HUNGER_BULLET_DEPLETE_FOOD.getId();
 		CHICKEN_BURNED_BY_FLAME_JET.getId();
 		FIRST_TIDAL_PORTAL_CREATED.getId();
+		TIDAL_PORTAL_KILLED_ENDERMAN.getId();
 		ALL_ACHIEVEMENTS_COMPLETED.getId();
 		
 		// BOMD模组触发器初始化

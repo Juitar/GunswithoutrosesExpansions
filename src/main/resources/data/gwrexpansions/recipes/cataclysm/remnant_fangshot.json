@@ -1,0 +1,40 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ARB",
+    "NSK",
+    "ACA"
+  ],
+  "key": {
+    "A": {
+      "item": "cataclysm:ancient_metal_ingot"
+    },
+    "R": {
+      "item": "cataclysm:kobolediator_skull"
+    },
+    "B": {
+      "item": "cataclysm:sandstorm_in_a_bottle"
+    },
+    "N": {
+      "item": "minecraft:netherite_sword"
+    },
+    "S": {
+      "item": "gwrexpansions:netherite_shotgun"
+    },
+    "K": {
+      "item": "cataclysm:koboleton_bone"
+    },
+    "C": {
+      "item": "minecraft:amethyst_block"
+    }
+  },
+  "result": {
+    "item": "gwrexpansions:remnant_fangshot"
+  },
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cataclysm"
+    }
+  ]
+}

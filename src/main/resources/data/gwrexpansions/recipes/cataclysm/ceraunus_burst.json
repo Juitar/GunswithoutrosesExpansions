@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ELS",
+    "LGL",
+    "ERI"
+  ],
+  "key": {
+    "E": {
+      "item": "cataclysm:essence_of_the_storm"
+    },
+    "S": {
+      "item": "minecraft:conduit"
+    },
+    "L": {
+      "item": "cataclysm:lacrima"
+    },
+    "G": {
+      "item": "gwrexpansions:netherite_gatling"
+    },
+    "R": {
+      "item": "minecraft:nautilus_shell"
+    },
+    "I": {
+      "item": "minecraft:prismarine_crystals"
+    }
+  },
+  "result": {
+    "item": "gwrexpansions:ceraunus_burst"
+  },
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cataclysm"
+    }
+  ]
+}

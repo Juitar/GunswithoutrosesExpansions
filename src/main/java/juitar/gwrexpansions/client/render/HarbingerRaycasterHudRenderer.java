@@ -52,8 +52,12 @@ public class HarbingerRaycasterHudRenderer {
         PoseStack poseStack = guiGraphics.pose();
         int screenWidth = mc.getWindow().getGuiScaledWidth();
         int screenHeight = mc.getWindow().getGuiScaledHeight();
-        int x = (screenWidth - BODY_WIDTH - NUB_WIDTH) / 2 + getOffsetX();
-        int y = screenHeight / 2 + getOffsetY();
+        HudCollisionLayout.Bounds bounds = HudCollisionLayout.claim(event,
+                (screenWidth - BODY_WIDTH - NUB_WIDTH) / 2 + getOffsetX(),
+                screenHeight / 2 + getOffsetY(), BODY_WIDTH + NUB_WIDTH, BODY_HEIGHT,
+                screenWidth, screenHeight);
+        int x = bounds.x;
+        int y = bounds.y;
 
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
@@ -121,26 +125,14 @@ public class HarbingerRaycasterHudRenderer {
     }
 
     private static boolean isEnabled() {
-        try {
-            return ClientConfig.INSTANCE.harbingerOverloadHudEnabled.get();
-        } catch (IllegalStateException e) {
-            return true;
-        }
+        return ClientConfig.getBoolean(ClientConfig.INSTANCE.harbingerOverloadHudEnabled, true);
     }
 
     private static int getOffsetX() {
-        try {
-            return ClientConfig.INSTANCE.harbingerOverloadHudOffsetX.get();
-        } catch (IllegalStateException e) {
-            return 0;
-        }
+        return ClientConfig.getInt(ClientConfig.INSTANCE.harbingerOverloadHudOffsetX, 0);
     }
 
     private static int getOffsetY() {
-        try {
-            return ClientConfig.INSTANCE.harbingerOverloadHudOffsetY.get();
-        } catch (IllegalStateException e) {
-            return 32;
-        }
+        return ClientConfig.getInt(ClientConfig.INSTANCE.harbingerOverloadHudOffsetY, 32);
     }
 }

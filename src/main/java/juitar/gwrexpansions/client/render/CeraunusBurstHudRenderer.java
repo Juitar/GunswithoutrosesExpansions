@@ -3,6 +3,7 @@ package juitar.gwrexpansions.client.render;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import juitar.gwrexpansions.GWRexpansions;
+import juitar.gwrexpansions.config.ClientConfig;
 import juitar.gwrexpansions.item.cataclysm.CeraunusBurstItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -33,7 +34,8 @@ public class CeraunusBurstHudRenderer {
     public void onRenderGui(RenderGuiEvent event) {
         Minecraft mc = Minecraft.getInstance();
         Player player = mc.player;
-        if (player == null || mc.options.hideGui) {
+        if (player == null || mc.options.hideGui
+                || !ClientConfig.getBoolean(ClientConfig.INSTANCE.ceraunusBurstHudEnabled, true)) {
             return;
         }
 
@@ -47,8 +49,12 @@ public class CeraunusBurstHudRenderer {
         int screenWidth = mc.getWindow().getGuiScaledWidth();
         int screenHeight = mc.getWindow().getGuiScaledHeight();
         int rowWidth = SLOT_SIZE * 3 + SLOT_GAP * 2;
-        int x = (screenWidth - rowWidth) / 2;
-        int y = screenHeight / 2 + 18;
+        int offsetX = ClientConfig.getInt(ClientConfig.INSTANCE.ceraunusBurstHudOffsetX, 0);
+        int offsetY = ClientConfig.getInt(ClientConfig.INSTANCE.ceraunusBurstHudOffsetY, 18);
+        HudCollisionLayout.Bounds bounds = HudCollisionLayout.claim(event, (screenWidth - rowWidth) / 2 + offsetX,
+                screenHeight / 2 + offsetY, rowWidth, SLOT_SIZE, screenWidth, screenHeight);
+        int x = bounds.x;
+        int y = bounds.y;
         boolean completed = CeraunusBurstItem.isHudShowingLastCombo(gun);
 
         RenderSystem.enableBlend();
