@@ -1,12 +1,15 @@
 package juitar.gwrexpansions.entity.cataclysm;
 
+import com.github.L_Ender.cataclysm.init.ModEffect;
 import com.github.L_Ender.cataclysm.init.ModParticle;
+import juitar.gwrexpansions.advancement.CeraunusConductiveRiteTrigger;
 import juitar.gwrexpansions.entity.meetyourfight.DuskfallBulletDelegate;
 import juitar.gwrexpansions.item.cataclysm.CeraunusBurstItem;
 import juitar.gwrexpansions.registry.GWREEntities;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.registry.GWRDamage;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -49,6 +52,10 @@ public class CeraunusLightningBulletEntity extends BulletEntity implements Duskf
             }
 
             if (target instanceof LivingEntity livingTarget && shooter instanceof LivingEntity livingShooter) {
+                if (damaged && livingTarget.hasEffect(ModEffect.EFFECTWETNESS.get())
+                        && livingShooter instanceof ServerPlayer player) {
+                    CeraunusConductiveRiteTrigger.onCeraunusConductiveRite(player);
+                }
                 CeraunusBurstItem.applyLightningBulletHit(livingTarget, livingShooter,
                         waterBoosted ? getDamage() * CeraunusBurstItem.lightningBulletWaterDamageMultiplier() : getDamage());
             }

@@ -1,0 +1,36 @@
+{
+  "display": {
+    "icon": {
+      "item": "gwrexpansions:ceraunus_burst"
+    },
+    "title": {
+      "translate": "advancement.gwrexpansions.ceraunus_burst.title"
+    },
+    "description": {
+      "translate": "advancement.gwrexpansions.ceraunus_burst.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "gwrexpansions:root",
+  "criteria": {
+    "has_ceraunus_burst": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["gwrexpansions:ceraunus_burst"]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_ceraunus_burst"
+    ]
+  ],
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "cataclysm" }]
+}

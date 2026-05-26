@@ -1,0 +1,29 @@
+{
+  "display": {
+    "icon": {
+      "item": "gwrexpansions:harbinger_raycaster"
+    },
+    "title": {
+      "translate": "advancement.gwrexpansions.harbinger_overload_protocol.title"
+    },
+    "description": {
+      "translate": "advancement.gwrexpansions.harbinger_overload_protocol.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "gwrexpansions:harbinger_raycaster",
+  "criteria": {
+    "harbinger_overload_protocol": {
+      "trigger": "gwrexpansions:harbinger_overload_protocol"
+    }
+  },
+  "requirements": [
+    [
+      "harbinger_overload_protocol"
+    ]
+  ],
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "cataclysm" }]
+}

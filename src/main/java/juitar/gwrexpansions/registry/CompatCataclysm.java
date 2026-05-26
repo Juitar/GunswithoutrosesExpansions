@@ -60,7 +60,7 @@ public class CompatCataclysm {
 
                 ignitium_gatling = GWREItems.initItem(() -> new IgnitiumGatlingItem(
                                 GWREItems.defP().durability(10000).fireResistant().rarity(Rarity.EPIC),
-                                4, 1, 4, 3, 20,
+                                3, 1, 6, 3, 20,
                                 () -> GWREConfig.GATLING.Ignitium).repair(() -> Ingredient.of(IGNITIUM_INGOT.get())),
                                 "ignitium_gatling");
 

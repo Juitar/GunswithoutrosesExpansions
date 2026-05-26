@@ -1,0 +1,36 @@
+{
+  "display": {
+    "icon": {
+      "item": "gwrexpansions:harbinger_raycaster"
+    },
+    "title": {
+      "translate": "advancement.gwrexpansions.harbinger_raycaster.title"
+    },
+    "description": {
+      "translate": "advancement.gwrexpansions.harbinger_raycaster.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "gwrexpansions:root",
+  "criteria": {
+    "has_harbinger_raycaster": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["gwrexpansions:harbinger_raycaster"]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_harbinger_raycaster"
+    ]
+  ],
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "cataclysm" }]
+}

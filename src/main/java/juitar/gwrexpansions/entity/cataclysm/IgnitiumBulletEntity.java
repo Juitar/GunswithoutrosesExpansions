@@ -2,6 +2,7 @@ package juitar.gwrexpansions.entity.cataclysm;
 
 
 import com.github.L_Ender.cataclysm.init.ModEffect;
+import juitar.gwrexpansions.config.GWREConfig;
 import juitar.gwrexpansions.entity.meetyourfight.DuskfallBulletDelegate;
 import juitar.gwrexpansions.registry.GWREEntities;
 import lykrast.gunswithoutroses.entity.BulletEntity;
@@ -18,6 +19,7 @@ import net.minecraft.nbt.CompoundTag;
 
 public class IgnitiumBulletEntity extends BulletEntity implements DuskfallBulletDelegate {
     private boolean Healing = false;
+    private boolean BlueFire = false;
 
     public IgnitiumBulletEntity(EntityType<? extends BulletEntity> type, Level world) {
         super(type, world);
@@ -58,6 +60,9 @@ public class IgnitiumBulletEntity extends BulletEntity implements DuskfallBullet
 
             if (Healing && shooter instanceof LivingEntity) {
                 float healAmount = damage * (0.05f + (newAmplifier * 0.05f));
+                if (BlueFire) {
+                    healAmount += GWREConfig.GATLING.Ignitium.blueFireHealingBonus.get().floatValue();
+                }
                 ((LivingEntity) shooter).heal(healAmount);
             }
         }
@@ -68,6 +73,10 @@ public class IgnitiumBulletEntity extends BulletEntity implements DuskfallBullet
         this.Healing = healing;
     }
 
+    public void setBlueFire(boolean blueFire) {
+        this.BlueFire = blueFire;
+    }
+
     @Override
     public boolean gwrexpansions$onDuskfallHitEntity(EntityHitResult result) {
         onHitEntity(result);
@@ -76,7 +85,7 @@ public class IgnitiumBulletEntity extends BulletEntity implements DuskfallBullet
 
     @Override
     protected ParticleOptions getTrailParticle() {
-        return ParticleTypes.FLAME;
+        return BlueFire ? ParticleTypes.SOUL_FIRE_FLAME : ParticleTypes.FLAME;
     }
 
     @Override
@@ -88,11 +97,13 @@ public class IgnitiumBulletEntity extends BulletEntity implements DuskfallBullet
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putBoolean("Healing", Healing);
+        compound.putBoolean("BlueFire", BlueFire);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         Healing = compound.getBoolean("Healing");
+        BlueFire = compound.getBoolean("BlueFire");
     }
 }

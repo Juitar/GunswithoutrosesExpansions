@@ -47,6 +47,8 @@ public class HarbingerRaycasterItem extends ConfigurableGunItem {
     private static final String OVERLOAD_ACTIVE_TICKS_TAG = "HarbingerRaycasterOverloadActiveTicks";
     public static final String HARBINGER_REDSTONE_SHOT_TAG = "HarbingerRaycasterRedstoneShot";
     public static final String HARBINGER_OVERLOAD_SHOT_TAG = "HarbingerRaycasterOverloadShot";
+    public static final String HARBINGER_OVERLOAD_WEAPON_TAG = "GWREHarbingerOverload";
+    public static final String HARBINGER_OVERLOAD_OWNER_TAG = "GWREHarbingerOverloadOwner";
     private static final double DEATH_LASER_VERTICAL_OFFSET = -0.18D;
     private static final int DEATH_LASER_PREPARE_TICKS = 8;
     private static final double MISSILE_SPAWN_RADIUS = 1.15D;
@@ -173,6 +175,7 @@ public class HarbingerRaycasterItem extends ConfigurableGunItem {
                 durationTicks, (float) Math.max(1.0D, damage),
                 raycasterConfig().deathLaserHpDamage.get().floatValue());
         laser.setFire(false);
+        markOverloadWeapon(laser, player);
         level.addFreshEntity(laser);
         if (level instanceof ServerLevel serverLevel) {
             ACTIVE_DEATH_LASERS.add(new ActiveDeathLaserSegment(serverLevel.dimension(), player.getUUID(),
@@ -397,6 +400,9 @@ public class HarbingerRaycasterItem extends ConfigurableGunItem {
                     missileDamage, target);
             missile.setPos(spawn.x, spawn.y, spawn.z);
             missile.setDamage(missileDamage);
+            if (isOverloadActiveFor(level, owner)) {
+                markOverloadWeapon(missile, owner);
+            }
             level.addFreshEntity(missile);
         }
 
@@ -429,6 +435,12 @@ public class HarbingerRaycasterItem extends ConfigurableGunItem {
             }
         }
         return false;
+    }
+
+    private static void markOverloadWeapon(Entity entity, LivingEntity owner) {
+        CompoundTag data = entity.getPersistentData();
+        data.putBoolean(HARBINGER_OVERLOAD_WEAPON_TAG, true);
+        data.putUUID(HARBINGER_OVERLOAD_OWNER_TAG, owner.getUUID());
     }
 
     private static ItemStack snapshotAmmo(ItemStack ammo, IBullet bulletItem) {

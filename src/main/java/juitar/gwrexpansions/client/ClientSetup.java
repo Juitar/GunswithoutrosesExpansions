@@ -5,6 +5,7 @@ import juitar.gwrexpansions.GWRexpansions;
 import juitar.gwrexpansions.client.model.coin;
 import juitar.gwrexpansions.client.render.CoinEntityRenderer;
 import juitar.gwrexpansions.client.render.CeraunusBurstHudRenderer;
+import juitar.gwrexpansions.client.render.CursiumSniperHudRenderer;
 import juitar.gwrexpansions.client.render.HarbingerRaycasterHudRenderer;
 import juitar.gwrexpansions.client.render.HudRenderHandler;
 import juitar.gwrexpansions.client.render.MagneticPinRenderer;
@@ -19,8 +20,11 @@ import juitar.gwrexpansions.client.render.TidalPortalBeamRenderer;
 import juitar.gwrexpansions.client.render.TidalRiftRenderer;
 import juitar.gwrexpansions.client.gui.CoinCounterOverlay;
 import juitar.gwrexpansions.config.ClientConfig;
+import juitar.gwrexpansions.item.cataclysm.IgnitiumGatlingItem;
+import juitar.gwrexpansions.registry.CompatCataclysm;
 import juitar.gwrexpansions.registry.GWREEntities;
 import com.github.L_Ender.cataclysm.client.render.entity.Abyss_Orb_Renderer;
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraftforge.api.distmarker.Dist;
@@ -48,6 +52,9 @@ public class ClientSetup {
                 MinecraftForge.EVENT_BUS.register(new CeraunusBurstHudRenderer());
                 MinecraftForge.EVENT_BUS.register(new HarbingerRaycasterHudRenderer());
                 MinecraftForge.EVENT_BUS.register(new TidalPistolHudRenderer());
+                MinecraftForge.EVENT_BUS.register(new CursiumSniperHudRenderer());
+                ItemProperties.register(CompatCataclysm.ignitium_gatling.get(), GWRexpansions.resource("blue_fire"),
+                        (stack, level, entity, seed) -> IgnitiumGatlingItem.isBlueFireActive(stack) ? 1.0F : 0.0F);
             }
             // 注册黑曜石发射器HUD渲染器
             if(ModList.get().isLoaded(CompatModids.BOMD)) {

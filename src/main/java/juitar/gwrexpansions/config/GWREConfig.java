@@ -128,6 +128,46 @@ public class GWREConfig {
                 }
         }
 
+        public static class CursiumSniperConfig extends GunConfig {
+                public final ForgeConfigSpec.IntValue maxRage;
+
+                public CursiumSniperConfig(ForgeConfigSpec.Builder builder) {
+                        super(builder, "Cursium", 0, 2.0, 2.0, 24, 0.0);
+                        builder.push("Cursium");
+                        builder.push("Mechanics");
+                        maxRage = builder.comment("Maximum rage stored by Cursium Sniper headshots.")
+                                        .defineInRange("maxRage", 5, 1, 100);
+                        builder.pop();
+                        builder.pop();
+                }
+        }
+
+        public static class IgnitiumGatlingConfig extends GunConfig {
+                public final ForgeConfigSpec.IntValue blueFireBonusDamage;
+                public final ForgeConfigSpec.IntValue blueFireDelay;
+                public final ForgeConfigSpec.IntValue blueFireDurationTicks;
+                public final ForgeConfigSpec.DoubleValue blueFireHealingBonus;
+
+                public IgnitiumGatlingConfig(ForgeConfigSpec.Builder builder) {
+                        super(builder, "Ignitium", 3, 1.0, 1.0, 6, 3.0);
+                        builder.push("Ignitium");
+                        builder.push("Blue_Fire");
+                        blueFireBonusDamage = builder
+                                        .comment("Bonus damage used while Ignitium Gatling blue fire is active.")
+                                        .defineInRange("blueFireBonusDamage", 6, 0, 100);
+                        blueFireDelay = builder.comment("Fire delay used while Ignitium Gatling blue fire is active.")
+                                        .defineInRange("blueFireDelay", 3, 1, 100);
+                        blueFireDurationTicks = builder
+                                        .comment("Blue fire duration in ticks after crossing to half health or below.")
+                                        .defineInRange("blueFireDurationTicks", 100, 1, 72000);
+                        blueFireHealingBonus = builder.comment(
+                                        "Flat healing added to each Ignitium Bullet hit while blue fire is active.")
+                                        .defineInRange("blueFireHealingBonus", 1.0, 0.0, 100.0);
+                        builder.pop();
+                        builder.pop();
+                }
+        }
+
         public static class TidalPistolConfig extends GunConfig {
                 public final ForgeConfigSpec.IntValue maxEnergy;
                 public final ForgeConfigSpec.IntValue inventoryRegenPerSecond;
@@ -171,11 +211,14 @@ public class GWREConfig {
                         builder.push("Tidal_Mechanics");
                         maxEnergy = builder.comment("Maximum tidal energy stored on the Tidal Pistol.")
                                         .defineInRange("maxEnergy", 100, 1, 1000);
-                        inventoryRegenPerSecond = builder.comment("Tidal energy regenerated per second while the Tidal Pistol is in a player's inventory.")
+                        inventoryRegenPerSecond = builder.comment(
+                                        "Tidal energy regenerated per second while the Tidal Pistol is in a player's inventory.")
                                         .defineInRange("inventoryRegenPerSecond", 2, 0, 100);
-                        heldLandRegenPerSecond = builder.comment("Tidal energy regenerated per second while the Tidal Pistol is held outside water.")
+                        heldLandRegenPerSecond = builder.comment(
+                                        "Tidal energy regenerated per second while the Tidal Pistol is held outside water.")
                                         .defineInRange("heldLandRegenPerSecond", 5, 0, 100);
-                        heldWaterRegenPerSecond = builder.comment("Tidal energy regenerated per second while the Tidal Pistol is held in water.")
+                        heldWaterRegenPerSecond = builder.comment(
+                                        "Tidal energy regenerated per second while the Tidal Pistol is held in water.")
                                         .defineInRange("heldWaterRegenPerSecond", 8, 0, 100);
                         hitEnergy = builder.comment("Tidal energy gained when a Tidal Bullet damages an entity.")
                                         .defineInRange("hitEnergy", 5, 0, 1000);
@@ -197,37 +240,49 @@ public class GWREConfig {
                                         .defineInRange("riftChargeTicks", 35, 1, 72000);
                         landOrbCooldownTicks = builder.comment("Cooldown in ticks for the weakened land orb follow-up.")
                                         .defineInRange("landOrbCooldownTicks", 100, 0, 72000);
-                        landMineCooldownTicks = builder.comment("Cooldown in ticks for the weakened land mine follow-up.")
+                        landMineCooldownTicks = builder
+                                        .comment("Cooldown in ticks for the weakened land mine follow-up.")
                                         .defineInRange("landMineCooldownTicks", 140, 0, 72000);
                         fullFormOrbCooldownTicks = builder.comment("Cooldown in ticks for the water/rain orb echo.")
                                         .defineInRange("fullFormOrbCooldownTicks", 8, 0, 72000);
                         fullFormMineCooldownTicks = builder.comment("Cooldown in ticks for the water/rain mine echo.")
                                         .defineInRange("fullFormMineCooldownTicks", 12, 0, 72000);
-                        fullFormOrbChance = builder.comment("Chance for an entity hit to trigger a water/rain tracking Abyss Orb echo.")
+                        fullFormOrbChance = builder.comment(
+                                        "Chance for an entity hit to trigger a water/rain tracking Abyss Orb echo.")
                                         .defineInRange("fullFormOrbChance", 0.45, 0.0, 1.0);
-                        fullFormMineChance = builder.comment("Chance for a block hit to trigger a water/rain Abyss Mine echo.")
+                        fullFormMineChance = builder
+                                        .comment("Chance for a block hit to trigger a water/rain Abyss Mine echo.")
                                         .defineInRange("fullFormMineChance", 0.30, 0.0, 1.0);
-                        landOrbChance = builder.comment("Chance for an entity hit to trigger a weakened land tracking Abyss Orb echo.")
+                        landOrbChance = builder.comment(
+                                        "Chance for an entity hit to trigger a weakened land tracking Abyss Orb echo.")
                                         .defineInRange("landOrbChance", 0.20, 0.0, 1.0);
-                        landMineChance = builder.comment("Chance for a block hit to trigger a weakened land Abyss Mine echo.")
+                        landMineChance = builder
+                                        .comment("Chance for a block hit to trigger a weakened land Abyss Mine echo.")
                                         .defineInRange("landMineChance", 0.12, 0.0, 1.0);
-                        tentacleChance = builder.comment("Chance for the Tidal Pistol to launch Tidal Tentacles when its holder is hurt.")
+                        tentacleChance = builder.comment(
+                                        "Chance for the Tidal Pistol to launch Tidal Tentacles when its holder is hurt.")
                                         .defineInRange("tentacleChance", 1.0, 0.0, 1.0);
                         tentacleCooldownTicks = builder.comment("Cooldown in ticks for the Tidal Tentacle assist.")
                                         .defineInRange("tentacleCooldownTicks", 120, 0, 72000);
-                        orbSpeedMultiplier = builder.comment("Multiplier applied to the sustained Abyss Orb tracking speed.")
+                        orbSpeedMultiplier = builder
+                                        .comment("Multiplier applied to the sustained Abyss Orb tracking speed.")
                                         .defineInRange("orbSpeedMultiplier", 4.0, 0.1, 10.0);
-                        landOrbSpeedMultiplier = builder.comment("Multiplier applied to the sustained weakened land Abyss Orb tracking speed.")
+                        landOrbSpeedMultiplier = builder.comment(
+                                        "Multiplier applied to the sustained weakened land Abyss Orb tracking speed.")
                                         .defineInRange("landOrbSpeedMultiplier", 3.2, 0.1, 10.0);
-                        landSkillDamageMultiplier = builder.comment("Damage multiplier for weakened land follow-up skills.")
+                        landSkillDamageMultiplier = builder
+                                        .comment("Damage multiplier for weakened land follow-up skills.")
                                         .defineInRange("landSkillDamageMultiplier", 0.35, 0.0, 100.0);
-                        waterSkillDamageMultiplier = builder.comment("Damage multiplier for water/rain follow-up skills.")
+                        waterSkillDamageMultiplier = builder
+                                        .comment("Damage multiplier for water/rain follow-up skills.")
                                         .defineInRange("waterSkillDamageMultiplier", 0.85, 0.0, 100.0);
                         portalDamage = builder.comment("Damage for the controlled Abyss Blast Portal.")
                                         .defineInRange("portalDamage", 8.0, 0.0, 1000.0);
-                        portalHpDamage = builder.comment("Percent max-health damage for the controlled Abyss Blast Portal.")
+                        portalHpDamage = builder
+                                        .comment("Percent max-health damage for the controlled Abyss Blast Portal.")
                                         .defineInRange("portalHpDamage", 0.0, 0.0, 100.0);
-                        portalWarmupTicks = builder.comment("Warmup delay in ticks for the controlled Abyss Blast Portal.")
+                        portalWarmupTicks = builder
+                                        .comment("Warmup delay in ticks for the controlled Abyss Blast Portal.")
                                         .defineInRange("portalWarmupTicks", 4, 0, 200);
                         riftDurationTicks = builder.comment("Lifetime in ticks for the safe tidal rift.")
                                         .defineInRange("riftDurationTicks", 240, 1, 72000);
@@ -286,35 +341,44 @@ public class GWREConfig {
                                         .defineInRange("awakenedTicks", 200, 1, 6000);
                         bladeAmpTicks = builder.comment("Ticks the blade remains empowered after a projectile hit.")
                                         .defineInRange("bladeAmpTicks", 80, 1, 6000);
-                        comboWindowTicks = builder.comment("Ticks allowed between the shot hit and the charged melee hit.")
+                        comboWindowTicks = builder
+                                        .comment("Ticks allowed between the shot hit and the charged melee hit.")
                                         .defineInRange("comboWindowTicks", 100, 1, 6000);
                         baseMeleeDamage = builder.comment("Base melee damage shown by the gunblade.")
                                         .defineInRange("baseMeleeDamage", 9.0, 0.0, 1000.0);
                         bladeDamageBonus = builder.comment("Melee damage added while the blade is empowered.")
                                         .defineInRange("bladeDamageBonus", 3.0, 0.0, 1000.0);
-                        baseAttackSpeedModifier = builder.comment("Attack speed attribute modifier when the blade is not empowered.")
+                        baseAttackSpeedModifier = builder
+                                        .comment("Attack speed attribute modifier when the blade is not empowered.")
                                         .defineInRange("baseAttackSpeedModifier", -2.6, -10.0, 10.0);
-                        ampedAttackSpeedModifier = builder.comment("Attack speed attribute modifier while the blade is empowered.")
+                        ampedAttackSpeedModifier = builder
+                                        .comment("Attack speed attribute modifier while the blade is empowered.")
                                         .defineInRange("ampedAttackSpeedModifier", -2.4, -10.0, 10.0);
-                        minFullAttackScale = builder.comment("Minimum attack strength scale required for gunblade combo hits.")
+                        minFullAttackScale = builder
+                                        .comment("Minimum attack strength scale required for gunblade combo hits.")
                                         .defineInRange("minFullAttackScale", 0.9, 0.0, 1.0);
-                        cooldownRemainingMultiplier = builder.comment("Remaining firing cooldown multiplier after a correct charged melee hit. 0.5 cuts remaining cooldown in half.")
+                        cooldownRemainingMultiplier = builder.comment(
+                                        "Remaining firing cooldown multiplier after a correct charged melee hit. 0.5 cuts remaining cooldown in half.")
                                         .defineInRange("cooldownRemainingMultiplier", 0.5, 0.0, 1.0);
-                        powerProjectileDamageMultiplier = builder.comment("Projectile damage multiplier while awakened. 1.2 is +20%.")
+                        powerProjectileDamageMultiplier = builder
+                                        .comment("Projectile damage multiplier while awakened. 1.2 is +20%.")
                                         .defineInRange("powerProjectileDamageMultiplier", 1.2, 0.0, 10.0);
-                        powerStompDamageMultiplier = builder.comment("Awakened stomp damage as a multiplier of current melee damage.")
+                        powerStompDamageMultiplier = builder
+                                        .comment("Awakened stomp damage as a multiplier of current melee damage.")
                                         .defineInRange("powerStompDamageMultiplier", 0.6, 0.0, 10.0);
                         powerStompRange = builder.comment("Awakened stomp radius.")
                                         .defineInRange("powerStompRange", 2.75, 0.0, 64.0);
                         dashTicks = builder.comment("Remnant Charge duration in ticks.")
                                         .defineInRange("dashTicks", 10, 1, 200);
-                        dashDamageMultiplier = builder.comment("Remnant Charge damage as a multiplier of current melee damage.")
+                        dashDamageMultiplier = builder
+                                        .comment("Remnant Charge damage as a multiplier of current melee damage.")
                                         .defineInRange("dashDamageMultiplier", 2.5, 0.0, 20.0);
                         dashSpeed = builder.comment("Forward speed applied during Remnant Charge.")
                                         .defineInRange("dashSpeed", 1.25, 0.0, 10.0);
                         dashHitRange = builder.comment("Hit radius around the charging sandstorm.")
                                         .defineInRange("dashHitRange", 1.15, 0.0, 16.0);
-                        dashDamageReduction = builder.comment("Incoming damage reduction during Remnant Charge. 0.2 is 20%.")
+                        dashDamageReduction = builder
+                                        .comment("Incoming damage reduction during Remnant Charge. 0.2 is 20%.")
                                         .defineInRange("dashDamageReduction", 0.2, 0.0, 0.95);
                         builder.pop();
                 }
@@ -494,35 +558,46 @@ public class GWREConfig {
                         builder.push("HarbingerRaycaster_Mechanics");
                         maxOverload = builder.comment("Redstone shots required to fully overload Harbinger Raycaster.")
                                         .defineInRange("maxOverload", 6, 1, 100);
-                        overloadModeDurationTicks = builder.comment("Overload mode duration in ticks. 120 ticks = 6 seconds.")
+                        overloadModeDurationTicks = builder
+                                        .comment("Overload mode duration in ticks. 120 ticks = 6 seconds.")
                                         .defineInRange("overloadModeDurationTicks", 120, 1, 6000);
-                        overloadFlightEnabled = builder.comment("Whether overload mode temporarily allows the player to fly.")
+                        overloadFlightEnabled = builder
+                                        .comment("Whether overload mode temporarily allows the player to fly.")
                                         .define("overloadFlightEnabled", true);
-                        redstoneDamageBonus = builder.comment("Flat damage added to redstone bullets fired by Harbinger Raycaster.")
+                        redstoneDamageBonus = builder
+                                        .comment("Flat damage added to redstone bullets fired by Harbinger Raycaster.")
                                         .defineInRange("redstoneDamageBonus", 1.0, 0.0, 1000.0);
-                        redstonePierce = builder.comment("Additional entities a redstone bullet can pierce when fired by Harbinger Raycaster.")
+                        redstonePierce = builder.comment(
+                                        "Additional entities a redstone bullet can pierce when fired by Harbinger Raycaster.")
                                         .defineInRange("redstonePierce", 2, 0, 64);
-                        redstonePierceDamageMultiplier = builder.comment("Damage multiplier applied after each redstone bullet pierce.")
+                        redstonePierceDamageMultiplier = builder
+                                        .comment("Damage multiplier applied after each redstone bullet pierce.")
                                         .defineInRange("redstonePierceDamageMultiplier", 1.0, 0.0, 10.0);
-                        deathLaserDamageMultiplier = builder.comment("Damage multiplier applied to the empowered redstone shot damage for the death laser.")
+                        deathLaserDamageMultiplier = builder.comment(
+                                        "Damage multiplier applied to the empowered redstone shot damage for the death laser.")
                                         .defineInRange("deathLaserDamageMultiplier", 0.45, 0.0, 100.0);
-                        deathLaserHpDamage = builder.comment("Death laser bonus damage as percent of target max health.")
+                        deathLaserHpDamage = builder
+                                        .comment("Death laser bonus damage as percent of target max health.")
                                         .defineInRange("deathLaserHpDamage", 5.0, 0.0, 100.0);
-                        deathLaserSegments = builder.comment("Number of 30-block Cataclysm death laser segments to chain. Total range is segments * segment length.")
+                        deathLaserSegments = builder.comment(
+                                        "Number of 30-block Cataclysm death laser segments to chain. Total range is segments * segment length.")
                                         .defineInRange("deathLaserSegments", 2, 1, 16);
                         deathLaserSegmentLength = builder.comment("Length of each chained death laser segment.")
                                         .defineInRange("deathLaserSegmentLength", 30.0, 1.0, 128.0);
                         missilesPerWave = builder.comment("Homing missiles fired per overload wave.")
                                         .defineInRange("missilesPerWave", 3, 0, 32);
-                        normalHeadshotMissiles = builder.comment("Extra homing missiles fired near the player when a non-overload Harbinger redstone bullet headshots.")
+                        normalHeadshotMissiles = builder.comment(
+                                        "Extra homing missiles fired near the player when a non-overload Harbinger redstone bullet headshots.")
                                         .defineInRange("normalHeadshotMissiles", 1, 0, 32);
                         missileStartDelay = builder.comment("Delay in ticks before the first overload missile wave.")
                                         .defineInRange("missileStartDelay", 8, 0, 6000);
-                        missileIntervalTicks = builder.comment("Ticks between homing missile waves while overload mode is active.")
+                        missileIntervalTicks = builder
+                                        .comment("Ticks between homing missile waves while overload mode is active.")
                                         .defineInRange("missileIntervalTicks", 24, 1, 6000);
                         missileDamage = builder.comment("Damage dealt by each overload homing missile.")
                                         .defineInRange("missileDamage", 5.0, 0.0, 1000.0);
-                        missileTargetRange = builder.comment("Range used by overload homing missiles to find nearby enemies.")
+                        missileTargetRange = builder
+                                        .comment("Range used by overload homing missiles to find nearby enemies.")
                                         .defineInRange("missileTargetRange", 18.0, 1.0, 128.0);
                         builder.pop();
                 }
@@ -531,7 +606,7 @@ public class GWREConfig {
         // 狙击枪配置
         public static class SniperConfigs {
                 public final GunConfig netherite;
-                public final GunConfig cursium;
+                public final CursiumSniperConfig cursium;
                 public final GunConfig DragonSteel;
                 public final GunConfig destiny_seven;
                 public final HarbingerRaycasterConfig harbingerRaycaster;
@@ -539,7 +614,7 @@ public class GWREConfig {
                 public SniperConfigs(ForgeConfigSpec.Builder builder) {
                         builder.push("Sniper");
                         netherite = new GunConfig(builder, "Netherite", 0, 1.8, 1.5, 24, 0.0);
-                        cursium = new GunConfig(builder, "Cursium", 0, 2.0, 2.0, 24, 0.0);
+                        cursium = new CursiumSniperConfig(builder);
                         DragonSteel = new GunConfig(builder, "DragonSteel", 0, 1.9, 1.8, 24, 0.0);
                         destiny_seven = new GunConfig(builder, "DestinySeven", 0, 1.5, 1.5, 24, 0.0);
                         harbingerRaycaster = new HarbingerRaycasterConfig(builder);
@@ -586,7 +661,7 @@ public class GWREConfig {
         // 加特林配置
         public static class GatlingConfigs {
                 public final GunConfig Netherite;
-                public final GunConfig Ignitium;
+                public final IgnitiumGatlingConfig Ignitium;
                 public final GunConfig DragonSteel;
                 public final GunConfig skull;
                 public final GunConfig Magnetic;
@@ -594,7 +669,7 @@ public class GWREConfig {
                 public GatlingConfigs(ForgeConfigSpec.Builder builder) {
                         builder.push("Gatling");
                         Netherite = new GunConfig(builder, "Netherite", 1, 1.0, 1.0, 4, 3.0);
-                        Ignitium = new GunConfig(builder, "Ignitium", 4, 1.0, 1.0, 4, 3.0);
+                        Ignitium = new IgnitiumGatlingConfig(builder);
                         DragonSteel = new GunConfig(builder, "DragonSteel", 3, 1.0, 1.0, 4, 3.0);
                         skull = new GunConfig(builder, "Skull", 0, 1.0, 1.0, 6, 6.0);
                         Magnetic = new GunConfig(builder, "Magnetic", 0, 0.9, 1.0, 4, 4.0);

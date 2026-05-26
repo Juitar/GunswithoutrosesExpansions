@@ -47,6 +47,9 @@ public class BulletHitEventHandler {
         Entity direct = event.getSource().getDirectEntity();
         boolean directDashStorm = direct instanceof Sandstorm_Entity storm
                 && storm.getPersistentData().getBoolean(RemnantFangshotItem.DASH_STORM_TAG);
+        if (directDashStorm && direct.getPersistentData().getBoolean(RemnantFangshotItem.DASH_CUSTOM_DAMAGE_TAG)) {
+            return;
+        }
         if (!directDashStorm && !event.getSource().is(DamageTypes.MAGIC)) {
             return;
         }

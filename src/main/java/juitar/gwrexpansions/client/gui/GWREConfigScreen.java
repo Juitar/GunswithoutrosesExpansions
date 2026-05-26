@@ -91,8 +91,7 @@ public class GWREConfigScreen {
         ConfigCategory category = builder.getOrCreateCategory(text("category.snipers"));
         addGunSubCategory(category, entries, "item.gwrexpansions.netherite_sniper",
                 GWREConfig.SNIPER.netherite, 0, 1.8D, 1.5D, 24, 0.0D);
-        addGunSubCategory(category, entries, "item.gwrexpansions.cursium_sniper",
-                GWREConfig.SNIPER.cursium, 0, 2.0D, 2.0D, 24, 0.0D);
+        addCursiumSniperSubCategory(category, entries);
         addGunSubCategory(category, entries, "config.gwrexpansions.dragonsteel_snipers",
                 GWREConfig.SNIPER.DragonSteel, 0, 1.9D, 1.8D, 24, 0.0D);
         addGunSubCategory(category, entries, "item.gwrexpansions.destiny_seven",
@@ -118,8 +117,7 @@ public class GWREConfigScreen {
         ConfigCategory category = builder.getOrCreateCategory(text("category.gatlings"));
         addGunSubCategory(category, entries, "item.gwrexpansions.netherite_gatling",
                 GWREConfig.GATLING.Netherite, 1, 1.0D, 1.0D, 4, 3.0D);
-        addGunSubCategory(category, entries, "item.gwrexpansions.ignitium_gatling",
-                GWREConfig.GATLING.Ignitium, 4, 1.0D, 1.0D, 4, 3.0D);
+        addIgnitiumGatlingSubCategory(category, entries);
         addGunSubCategory(category, entries, "config.gwrexpansions.dragonsteel_gatlings",
                 GWREConfig.GATLING.DragonSteel, 3, 1.0D, 1.0D, 4, 3.0D);
         addGunSubCategory(category, entries, "item.gwrexpansions.skullcrusher_pulverizer",
@@ -311,6 +309,31 @@ public class GWREConfigScreen {
         category.addEntry(subCategory.build());
     }
 
+    private static void addCursiumSniperSubCategory(ConfigCategory category, ConfigEntryBuilder entries) {
+        GWREConfig.CursiumSniperConfig config = GWREConfig.SNIPER.cursium;
+        SubCategoryBuilder subCategory = entries.startSubCategory(
+                Component.translatable("item.gwrexpansions.cursium_sniper")).setExpanded(false);
+
+        addGunEntries(subCategory::add, entries, config, 0, 2.0D, 2.0D, 24, 0.0D);
+        addInt(subCategory::add, entries, "cursium_sniper_max_rage", config.maxRage, 6, 1, 100);
+        category.addEntry(subCategory.build());
+    }
+
+    private static void addIgnitiumGatlingSubCategory(ConfigCategory category, ConfigEntryBuilder entries) {
+        GWREConfig.IgnitiumGatlingConfig config = GWREConfig.GATLING.Ignitium;
+        SubCategoryBuilder subCategory = entries.startSubCategory(
+                Component.translatable("item.gwrexpansions.ignitium_gatling")).setExpanded(false);
+
+        addGunEntries(subCategory::add, entries, config, 3, 1.0D, 1.0D, 6, 3.0D);
+        addInt(subCategory::add, entries, "ignitium_blue_fire_bonus_damage", config.blueFireBonusDamage, 6, 0, 100);
+        addInt(subCategory::add, entries, "ignitium_blue_fire_delay", config.blueFireDelay, 3, 1, 100);
+        addInt(subCategory::add, entries, "ignitium_blue_fire_duration_ticks", config.blueFireDurationTicks, 300, 1,
+                72000);
+        addDouble(subCategory::add, entries, "ignitium_blue_fire_healing_bonus", config.blueFireHealingBonus, 1.0D,
+                0.0D, 100.0D);
+        category.addEntry(subCategory.build());
+    }
+
     private static void addMirecallerSubCategory(ConfigCategory category, ConfigEntryBuilder entries) {
         GWREConfig.MirecallerConfig config = GWREConfig.SHOTGUN.Mirecaller;
         SubCategoryBuilder subCategory = entries.startSubCategory(
@@ -454,6 +477,8 @@ public class GWREConfigScreen {
                 ClientConfig.INSTANCE.ceraunusBurstHudOffsetX, ClientConfig.INSTANCE.ceraunusBurstHudOffsetY, 18);
         addHudClientEntries(category, entries, "remnant_fangshot_hud", ClientConfig.INSTANCE.remnantFangshotHudEnabled,
                 ClientConfig.INSTANCE.remnantFangshotHudOffsetX, ClientConfig.INSTANCE.remnantFangshotHudOffsetY, 13);
+        addHudClientEntries(category, entries, "cursium_sniper_hud", ClientConfig.INSTANCE.cursiumSniperHudEnabled,
+                ClientConfig.INSTANCE.cursiumSniperHudOffsetX, ClientConfig.INSTANCE.cursiumSniperHudOffsetY, 23);
         addHudClientEntries(category, entries, "super_shotgun_hud", ClientConfig.INSTANCE.superShotgunHudEnabled,
                 ClientConfig.INSTANCE.superShotgunHudOffsetX, ClientConfig.INSTANCE.superShotgunHudOffsetY, 10);
         addHudClientEntries(category, entries, "skullcrusher_hud", ClientConfig.INSTANCE.skullcrusherHudEnabled,

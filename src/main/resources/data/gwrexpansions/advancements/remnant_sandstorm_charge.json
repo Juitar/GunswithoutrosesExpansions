@@ -1,0 +1,29 @@
+{
+  "display": {
+    "icon": {
+      "item": "gwrexpansions:remnant_fangshot"
+    },
+    "title": {
+      "translate": "advancement.gwrexpansions.remnant_sandstorm_charge.title"
+    },
+    "description": {
+      "translate": "advancement.gwrexpansions.remnant_sandstorm_charge.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "gwrexpansions:remnant_fangshot",
+  "criteria": {
+    "remnant_sandstorm_charge": {
+      "trigger": "gwrexpansions:remnant_sandstorm_charge"
+    }
+  },
+  "requirements": [
+    [
+      "remnant_sandstorm_charge"
+    ]
+  ],
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "cataclysm" }]
+}

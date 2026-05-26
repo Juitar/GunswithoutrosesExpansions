@@ -2,5 +2,13 @@
   "parent": "gunswithoutroses:item/base_gun",
   "textures": {
     "layer0": "gwrexpansions:item/ignitium_gatling"
-  }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "gwrexpansions:blue_fire": 1
+      },
+      "model": "gwrexpansions:item/ignitium_gatling_blue"
+    }
+  ]
 }

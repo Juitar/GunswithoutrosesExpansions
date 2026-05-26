@@ -4,6 +4,7 @@ import com.github.L_Ender.cataclysm.entity.projectile.Phantom_Halberd_Entity;
 import com.github.L_Ender.cataclysm.init.ModParticle;
 import juitar.gwrexpansions.config.GWREConfig;
 import juitar.gwrexpansions.entity.meetyourfight.DuskfallBulletDelegate;
+import juitar.gwrexpansions.item.cataclysm.CursiumGunItem;
 import juitar.gwrexpansions.registry.GWREEntities;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.registry.GWRDamage;
@@ -26,9 +27,6 @@ public class CursiumBulletEntity extends BulletEntity implements DuskfallBulletD
     private static final float VELOCITY_RETAIN = 0.625F;
     private static final float MIN_TRACKING_DISTANCE = 1.0F;
     private static final float MIN_VELOCITY = 1.25F;
-    private static final double PHANTOM_HALBERD_RANGE = GWREConfig.BulletConfig.phantomHalberdRange.get(); // 幻影戟的搜索范围
-    private static final double PHANTOM_HALBERD_DAMAGE = GWREConfig.BulletConfig.phantomHalberDamage.get(); // 幻影戟的伤害
-    private static final int PHANTOM_HALBERD_DELAY = GWREConfig.BulletConfig.phantomHalberdDelay.get();
     public CursiumBulletEntity(EntityType<? extends BulletEntity> type, Level level) {
         super(type, level);
     }
@@ -53,9 +51,12 @@ public class CursiumBulletEntity extends BulletEntity implements DuskfallBulletD
                 damage *= (float) getHeadshotMultiplier();
                 // 爆头时召唤幻影戟
                 if (SHOT_FROM_CURSIUM) {
+                    if (shooter instanceof Player player) {
+                        CursiumGunItem.addRage(player);
+                    }
                     List<LivingEntity> nearbyEntities = level().getEntitiesOfClass(
                             LivingEntity.class,
-                            getBoundingBox().inflate(PHANTOM_HALBERD_RANGE),
+                            getBoundingBox().inflate(GWREConfig.BulletConfig.phantomHalberdRange.get()),
                             entity -> entity != shooter &&
                                     entity.isAlive() && !entity.isSpectator()
                     );
@@ -72,9 +73,9 @@ public class CursiumBulletEntity extends BulletEntity implements DuskfallBulletD
                                 spawnY,
                                 spawnZ,
                                 yRot,
-                                PHANTOM_HALBERD_DELAY,
+                                GWREConfig.BulletConfig.phantomHalberdDelay.get(),
                                 shooter instanceof LivingEntity ? (LivingEntity) shooter : null,
-                                (float) PHANTOM_HALBERD_DAMAGE
+                                GWREConfig.BulletConfig.phantomHalberDamage.get().floatValue()
                         );
 
                         level().addFreshEntity(phantomHalberd);

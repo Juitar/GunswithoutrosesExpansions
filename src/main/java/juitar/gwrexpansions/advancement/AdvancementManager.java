@@ -59,6 +59,12 @@ public class AdvancementManager {
             if (!hasCompletedAdvancement(player, "gwrexpansions:leviathans_phallus")) return false;
             if (!hasCompletedAdvancement(player, "gwrexpansions:steves_lava_chicken")) return false;
             if (!hasCompletedAdvancement(player, "gwrexpansions:cenobites_lament_round")) return false;
+            if (!hasCompletedAdvancement(player, "gwrexpansions:harbinger_raycaster")) return false;
+            if (!hasCompletedAdvancement(player, "gwrexpansions:harbinger_overload_protocol")) return false;
+            if (!hasCompletedAdvancement(player, "gwrexpansions:remnant_fangshot")) return false;
+            if (!hasCompletedAdvancement(player, "gwrexpansions:remnant_sandstorm_charge")) return false;
+            if (!hasCompletedAdvancement(player, "gwrexpansions:ceraunus_burst")) return false;
+            if (!hasCompletedAdvancement(player, "gwrexpansions:ceraunus_conductive_rite")) return false;
         }
         
         // 检查ICE AND FIRE模组成就（如果模组加载）

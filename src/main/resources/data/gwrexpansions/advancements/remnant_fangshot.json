@@ -1,0 +1,36 @@
+{
+  "display": {
+    "icon": {
+      "item": "gwrexpansions:remnant_fangshot"
+    },
+    "title": {
+      "translate": "advancement.gwrexpansions.remnant_fangshot.title"
+    },
+    "description": {
+      "translate": "advancement.gwrexpansions.remnant_fangshot.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "gwrexpansions:root",
+  "criteria": {
+    "has_remnant_fangshot": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["gwrexpansions:remnant_fangshot"]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_remnant_fangshot"
+    ]
+  ],
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "cataclysm" }]
+}

@@ -23,6 +23,9 @@ public final class GWRECriteria {
 	public static final ChickenBurnedByFlameJetTrigger CHICKEN_BURNED_BY_FLAME_JET = CriteriaTriggers.register(new ChickenBurnedByFlameJetTrigger());
 	public static final FirstTidalPortalCreatedTrigger FIRST_TIDAL_PORTAL_CREATED = CriteriaTriggers.register(new FirstTidalPortalCreatedTrigger());
 	public static final TidalPortalKilledEndermanTrigger TIDAL_PORTAL_KILLED_ENDERMAN = CriteriaTriggers.register(new TidalPortalKilledEndermanTrigger());
+	public static final HarbingerOverloadProtocolTrigger HARBINGER_OVERLOAD_PROTOCOL = CriteriaTriggers.register(new HarbingerOverloadProtocolTrigger());
+	public static final RemnantSandstormChargeTrigger REMNANT_SANDSTORM_CHARGE = CriteriaTriggers.register(new RemnantSandstormChargeTrigger());
+	public static final CeraunusConductiveRiteTrigger CERAUNUS_CONDUCTIVE_RITE = CriteriaTriggers.register(new CeraunusConductiveRiteTrigger());
 	public static final AllAchievementsCompletedTrigger ALL_ACHIEVEMENTS_COMPLETED = CriteriaTriggers.register(new AllAchievementsCompletedTrigger());
 	
 	// BOMD模组成就触发器
@@ -47,6 +50,9 @@ public final class GWRECriteria {
 		CHICKEN_BURNED_BY_FLAME_JET.getId();
 		FIRST_TIDAL_PORTAL_CREATED.getId();
 		TIDAL_PORTAL_KILLED_ENDERMAN.getId();
+		HARBINGER_OVERLOAD_PROTOCOL.getId();
+		REMNANT_SANDSTORM_CHARGE.getId();
+		CERAUNUS_CONDUCTIVE_RITE.getId();
 		ALL_ACHIEVEMENTS_COMPLETED.getId();
 		
 		// BOMD模组触发器初始化

@@ -70,6 +70,9 @@ public class ClientConfig {
     public final ForgeConfigSpec.BooleanValue remnantFangshotHudEnabled;
     public final ForgeConfigSpec.IntValue remnantFangshotHudOffsetX;
     public final ForgeConfigSpec.IntValue remnantFangshotHudOffsetY;
+    public final ForgeConfigSpec.BooleanValue cursiumSniperHudEnabled;
+    public final ForgeConfigSpec.IntValue cursiumSniperHudOffsetX;
+    public final ForgeConfigSpec.IntValue cursiumSniperHudOffsetY;
     public final ForgeConfigSpec.BooleanValue superShotgunHudEnabled;
     public final ForgeConfigSpec.IntValue superShotgunHudOffsetX;
     public final ForgeConfigSpec.IntValue superShotgunHudOffsetY;
@@ -159,6 +162,10 @@ public class ClientConfig {
         remnantFangshotHudEnabled = defineHudEnabled(builder, "remnant_fangshot", "遗迹牙铳 / Remnant Fangshot");
         remnantFangshotHudOffsetX = defineHudOffsetX(builder, "remnant_fangshot");
         remnantFangshotHudOffsetY = defineHudOffsetY(builder, "remnant_fangshot", 13);
+
+        cursiumSniperHudEnabled = defineHudEnabled(builder, "cursium_sniper", "咒魂狙击枪 / Cursium Sniper");
+        cursiumSniperHudOffsetX = defineHudOffsetX(builder, "cursium_sniper");
+        cursiumSniperHudOffsetY = defineHudOffsetY(builder, "cursium_sniper", 23);
 
         superShotgunHudEnabled = defineHudEnabled(builder, "super_shotgun", "超级霰弹枪 / Super Shotgun");
         superShotgunHudOffsetX = defineHudOffsetX(builder, "super_shotgun");

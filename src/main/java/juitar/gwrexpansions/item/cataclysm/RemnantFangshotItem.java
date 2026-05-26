@@ -6,6 +6,7 @@ import com.github.L_Ender.cataclysm.init.ModParticle;
 import com.github.L_Ender.cataclysm.init.ModSounds;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
+import juitar.gwrexpansions.advancement.RemnantSandstormChargeTrigger;
 import juitar.gwrexpansions.config.GWREConfig;
 import juitar.gwrexpansions.item.ConfigurableGunItem;
 import lykrast.gunswithoutroses.entity.BulletEntity;
@@ -17,6 +18,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -28,6 +30,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -63,6 +66,7 @@ public class RemnantFangshotItem extends ConfigurableGunItem {
     private static final String DASH_HITS_TAG = "RemnantFangshotDashHits";
     private static final String DASH_STORM_ID_TAG = "RemnantFangshotDashStormId";
     public static final String DASH_STORM_TAG = "RemnantFangshotDashStorm";
+    public static final String DASH_CUSTOM_DAMAGE_TAG = "RemnantFangshotCustomDashDamage";
     public static final String PLAYER_DASH_TICKS_TAG = "RemnantFangshotDashTicks";
 
     private static final int EXPECT_SHOT = 0;
@@ -359,9 +363,17 @@ public class RemnantFangshotItem extends ConfigurableGunItem {
             hitIds.putBoolean(key, true);
             int invulnerableTime = target.invulnerableTime;
             target.invulnerableTime = 0;
-            boolean damaged = target.hurt(source, (float) damage);
+            damageDealer.getPersistentData().putBoolean(DASH_CUSTOM_DAMAGE_TAG, true);
+            boolean damaged;
+            try {
+                damaged = target.hurt(source, (float) damage);
+            } finally {
+                damageDealer.getPersistentData().remove(DASH_CUSTOM_DAMAGE_TAG);
+            }
             if (!damaged) {
                 target.invulnerableTime = invulnerableTime;
+            } else if (target instanceof Enemy && player instanceof ServerPlayer serverPlayer) {
+                RemnantSandstormChargeTrigger.onRemnantSandstormCharge(serverPlayer);
             }
         }
         tag.put(DASH_HITS_TAG, hitIds);

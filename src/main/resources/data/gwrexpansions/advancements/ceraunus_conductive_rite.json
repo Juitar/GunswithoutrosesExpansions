@@ -1,0 +1,29 @@
+{
+  "display": {
+    "icon": {
+      "item": "gwrexpansions:ceraunus_burst"
+    },
+    "title": {
+      "translate": "advancement.gwrexpansions.ceraunus_conductive_rite.title"
+    },
+    "description": {
+      "translate": "advancement.gwrexpansions.ceraunus_conductive_rite.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "gwrexpansions:ceraunus_burst",
+  "criteria": {
+    "ceraunus_conductive_rite": {
+      "trigger": "gwrexpansions:ceraunus_conductive_rite"
+    }
+  },
+  "requirements": [
+    [
+      "ceraunus_conductive_rite"
+    ]
+  ],
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "cataclysm" }]
+}
