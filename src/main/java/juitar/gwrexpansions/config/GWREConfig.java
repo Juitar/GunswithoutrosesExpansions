@@ -130,13 +130,21 @@ public class GWREConfig {
 
         public static class CursiumSniperConfig extends GunConfig {
                 public final ForgeConfigSpec.IntValue maxRage;
+                public final ForgeConfigSpec.DoubleValue damageMultiplierPerRage;
+                public final ForgeConfigSpec.DoubleValue fullRageHeadshotMultiplierBonus;
 
                 public CursiumSniperConfig(ForgeConfigSpec.Builder builder) {
-                        super(builder, "Cursium", 0, 2.0, 2.0, 24, 0.0);
+                        super(builder, "Cursium", 0, 1.8, 1.8, 24, 0.0);
                         builder.push("Cursium");
                         builder.push("Mechanics");
                         maxRage = builder.comment("Maximum rage stored by Cursium Sniper headshots.")
                                         .defineInRange("maxRage", 5, 1, 100);
+                        damageMultiplierPerRage = builder
+                                        .comment("Additional damage multiplier gained for each Cursium Sniper rage stack.")
+                                        .defineInRange("damageMultiplierPerRage", 0.1, 0.0, 10.0);
+                        fullRageHeadshotMultiplierBonus = builder
+                                        .comment("Additional headshot multiplier while Cursium Sniper is at full rage.")
+                                        .defineInRange("fullRageHeadshotMultiplierBonus", 0.25, 0.0, 10.0);
                         builder.pop();
                         builder.pop();
                 }

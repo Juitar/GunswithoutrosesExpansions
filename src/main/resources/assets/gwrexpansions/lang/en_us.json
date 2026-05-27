@@ -288,6 +288,8 @@
   "config.gwrexpansions.fire_delay": "Fire Delay",
   "config.gwrexpansions.inaccuracy": "Inaccuracy",
   "config.gwrexpansions.cursium_sniper_max_rage": "Cursium Sniper Max Rage",
+  "config.gwrexpansions.cursium_sniper_damage_multiplier_per_rage": "Damage Multiplier per Rage",
+  "config.gwrexpansions.cursium_sniper_full_rage_headshot_multiplier_bonus": "Full Rage Headshot Multiplier Bonus",
   "config.gwrexpansions.ignitium_blue_fire_bonus_damage": "Blue Fire Bonus Damage",
   "config.gwrexpansions.ignitium_blue_fire_delay": "Blue Fire Fire Delay",
   "config.gwrexpansions.ignitium_blue_fire_duration_ticks": "Blue Fire Duration",

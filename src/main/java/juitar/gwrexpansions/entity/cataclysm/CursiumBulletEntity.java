@@ -4,7 +4,6 @@ import com.github.L_Ender.cataclysm.entity.projectile.Phantom_Halberd_Entity;
 import com.github.L_Ender.cataclysm.init.ModParticle;
 import juitar.gwrexpansions.config.GWREConfig;
 import juitar.gwrexpansions.entity.meetyourfight.DuskfallBulletDelegate;
-import juitar.gwrexpansions.item.cataclysm.CursiumGunItem;
 import juitar.gwrexpansions.registry.GWREEntities;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.registry.GWRDamage;
@@ -51,9 +50,6 @@ public class CursiumBulletEntity extends BulletEntity implements DuskfallBulletD
                 damage *= (float) getHeadshotMultiplier();
                 // 爆头时召唤幻影戟
                 if (SHOT_FROM_CURSIUM) {
-                    if (shooter instanceof Player player) {
-                        CursiumGunItem.addRage(player);
-                    }
                     List<LivingEntity> nearbyEntities = level().getEntitiesOfClass(
                             LivingEntity.class,
                             getBoundingBox().inflate(GWREConfig.BulletConfig.phantomHalberdRange.get()),

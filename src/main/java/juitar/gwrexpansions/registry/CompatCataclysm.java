@@ -52,7 +52,7 @@ public class CompatCataclysm {
                 cursium_sniper = GWREItems.initItem(
                                 () -> new CursiumGunItem(
                                                 GWREItems.defP().durability(10000).fireResistant().rarity(Rarity.EPIC),
-                                                0, 2, 25, 0, 20,
+                                                0, 1.8, 25, 0, 20,
                                                 () -> GWREConfig.SNIPER.cursium).projectileSpeed(4).headshotMult(1.5)
                                                 .fireSound(GWRSounds.sniper)
                                                 .repair(() -> Ingredient.of(CURSIUM_INGOT.get())),

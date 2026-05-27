@@ -314,8 +314,12 @@ public class GWREConfigScreen {
         SubCategoryBuilder subCategory = entries.startSubCategory(
                 Component.translatable("item.gwrexpansions.cursium_sniper")).setExpanded(false);
 
-        addGunEntries(subCategory::add, entries, config, 0, 2.0D, 2.0D, 24, 0.0D);
-        addInt(subCategory::add, entries, "cursium_sniper_max_rage", config.maxRage, 6, 1, 100);
+        addGunEntries(subCategory::add, entries, config, 0, 1.8D, 2.0D, 24, 0.0D);
+        addInt(subCategory::add, entries, "cursium_sniper_max_rage", config.maxRage, 5, 1, 100);
+        addDouble(subCategory::add, entries, "cursium_sniper_damage_multiplier_per_rage",
+                config.damageMultiplierPerRage, 0.1D, 0.0D, 10.0D);
+        addDouble(subCategory::add, entries, "cursium_sniper_full_rage_headshot_multiplier_bonus",
+                config.fullRageHeadshotMultiplierBonus, 0.2D, 0.0D, 10.0D);
         category.addEntry(subCategory.build());
     }
 

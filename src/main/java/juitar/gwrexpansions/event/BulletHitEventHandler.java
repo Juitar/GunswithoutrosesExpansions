@@ -8,6 +8,7 @@ import juitar.gwrexpansions.GWRexpansions;
 import juitar.gwrexpansions.entity.BOMD.CoinEntity;
 import juitar.gwrexpansions.item.BOMD.Hellforge;
 import juitar.gwrexpansions.item.cataclysm.CeraunusBurstItem;
+import juitar.gwrexpansions.item.cataclysm.CursiumGunItem;
 import juitar.gwrexpansions.item.cataclysm.HarbingerRaycasterItem;
 import juitar.gwrexpansions.item.cataclysm.RemnantFangshotItem;
 import juitar.gwrexpansions.item.vanilla.RedstoneBulletItem;
@@ -178,6 +179,12 @@ public class BulletHitEventHandler {
                 boolean isHellforgeShot = bulletData.getBoolean("HellforgeShot");
                 boolean isRemnantFangshotShot = bulletData.getBoolean(RemnantFangshotItem.BULLET_TAG);
 
+                if (bulletData.getBoolean(CursiumGunItem.CURSIUM_SNIPER_SHOT_TAG)
+                        && shooter instanceof Player player
+                        && isBulletHeadshot(bullet, target)) {
+                    CursiumGunItem.addRage(player);
+                }
+
                 if (isRemnantFangshotShot && shooter instanceof Player player) {
                     ItemStack fangshot = RemnantFangshotItem.findHeldFangshot(player);
                     if (!fangshot.isEmpty()) {
@@ -203,6 +210,20 @@ public class BulletHitEventHandler {
             // 确保标记被重置
             PROCESSING.set(false);
         }
+    }
+
+    private static boolean isBulletHeadshot(BulletEntity bullet, LivingEntity target) {
+        if (bullet.getHeadshotMultiplier() <= 1.0D) {
+            return false;
+        }
+
+        Vec3 start = bullet.position();
+        Vec3 end = start.add(bullet.getDeltaMovement());
+        return target.getBoundingBox()
+                .setMaxY(target.getEyeY())
+                .inflate(0.3D)
+                .clip(start, end)
+                .isPresent();
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)

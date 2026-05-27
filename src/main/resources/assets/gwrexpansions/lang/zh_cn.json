@@ -288,6 +288,8 @@
   "config.gwrexpansions.fire_delay": "开火间隔",
   "config.gwrexpansions.inaccuracy": "散布",
   "config.gwrexpansions.cursium_sniper_max_rage": "咒魂狙击枪怒气上限",
+  "config.gwrexpansions.cursium_sniper_damage_multiplier_per_rage": "每层怒气伤害倍率加成",
+  "config.gwrexpansions.cursium_sniper_full_rage_headshot_multiplier_bonus": "满怒爆头倍率加成",
   "config.gwrexpansions.ignitium_blue_fire_bonus_damage": "蓝火额外伤害",
   "config.gwrexpansions.ignitium_blue_fire_delay": "蓝火开火间隔",
   "config.gwrexpansions.ignitium_blue_fire_duration_ticks": "蓝火持续时间",

@@ -4,6 +4,7 @@ import com.github.L_Ender.cataclysm.entity.projectile.Phantom_Halberd_Entity;
 import com.github.L_Ender.cataclysm.init.ModParticle;
 import com.github.L_Ender.cataclysm.init.ModSounds;
 import juitar.gwrexpansions.config.GWREConfig;
+import juitar.gwrexpansions.entity.cataclysm.CursiumBulletEntity;
 import juitar.gwrexpansions.item.ConfigurableGunItem;
 import juitar.gwrexpansions.registry.CompatCataclysm;
 import lykrast.gunswithoutroses.entity.BulletEntity;
@@ -33,6 +34,7 @@ import java.util.function.Supplier;
 public class CursiumGunItem extends ConfigurableGunItem {
     private static final String RAGE_TAG = "CursiumRage";
     private static final String TRIPLE_SHOT_READY_TAG = "CursiumTripleShotReady";
+    public static final String CURSIUM_SNIPER_SHOT_TAG = "CursiumSniperShot";
     private static final double TRIPLE_SHOT_SIDE_OFFSET = 0.45D;
 
     public CursiumGunItem(Properties properties, int bonusDamage, double damageMultiplier, int fireDelay, double inaccuracy, int enchantability, Supplier<GWREConfig.GunConfig> configSupplier) {
@@ -90,9 +92,33 @@ public class CursiumGunItem extends ConfigurableGunItem {
     }
 
     @Override
+    public double getDamageMultiplier(ItemStack stack, @Nullable LivingEntity shooter) {
+        double rageBonus = getRage(stack) * GWREConfig.SNIPER.cursium.damageMultiplierPerRage.get();
+        return Math.max(0.0D, super.getDamageMultiplier(stack, shooter) + rageBonus);
+    }
+
+    @Override
+    public double getHeadshotMultiplier(ItemStack stack, @Nullable LivingEntity shooter) {
+        double multiplier = super.getHeadshotMultiplier(stack, shooter);
+        if (getRage(stack) >= getMaxRage()) {
+            multiplier += GWREConfig.SNIPER.cursium.fullRageHeadshotMultiplierBonus.get();
+        }
+        return Math.max(1.0D, multiplier);
+    }
+
+    @Override
     protected ItemStack overrideFiredStack(LivingEntity shooter, ItemStack gun, ItemStack ammo, IBullet bulletItem, boolean bulletFree) {
         if (ammo.is(CompatCataclysm.tagBaseBullets)) return new ItemStack(CompatCataclysm.cursium_bullet.get());
         else return ammo;
+    }
+
+    @Override
+    protected void affectBulletEntity(LivingEntity shooter, ItemStack gun, BulletEntity bullet, boolean bulletFree) {
+        super.affectBulletEntity(shooter, gun, bullet, bulletFree);
+        bullet.getPersistentData().putBoolean(CURSIUM_SNIPER_SHOT_TAG, true);
+        if (bullet instanceof CursiumBulletEntity cursiumBullet) {
+            cursiumBullet.setSHOT_FROM_CURSIUM(true);
+        }
     }
 
     @Override
