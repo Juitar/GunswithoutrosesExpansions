@@ -7,6 +7,7 @@ import com.github.L_Ender.cataclysm.init.ModSounds;
 import juitar.gwrexpansions.config.GWREConfig;
 import juitar.gwrexpansions.entity.vanilla.RedstonePiercingBulletEntity;
 import juitar.gwrexpansions.item.ConfigurableGunItem;
+import juitar.gwrexpansions.registry.GWRECataclysmEnchantments;
 import juitar.gwrexpansions.registry.VanillaItem;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.item.IBullet;
@@ -92,9 +93,9 @@ public class HarbingerRaycasterItem extends ConfigurableGunItem {
             return;
         }
 
-        int overload = Math.min(getMaxOverload(), getOverload(gun) + 1);
+        int overload = Math.min(getMaxOverload(gun), getOverload(gun) + 1);
         setOverload(gun, overload);
-        if (overload >= getMaxOverload()) {
+        if (overload >= getMaxOverload(gun)) {
             level.playSound(null, player.getX(), player.getY(), player.getZ(),
                     ModSounds.HARBINGER_MODE_CHANGE.get(), SoundSource.PLAYERS, 0.75F, 1.15F);
         }
@@ -456,15 +457,15 @@ public class HarbingerRaycasterItem extends ConfigurableGunItem {
 
     public static int getOverload(ItemStack stack) {
         CompoundTag tag = stack.getTag();
-        return tag == null ? 0 : Mth.clamp(tag.getInt(OVERLOAD_TAG), 0, getMaxOverload());
+        return tag == null ? 0 : Mth.clamp(tag.getInt(OVERLOAD_TAG), 0, getMaxOverload(stack));
     }
 
     public static int getHudOverload(ItemStack stack) {
-        return isOverloadActive(stack) ? getMaxOverload() : getOverload(stack);
+        return isOverloadActive(stack) ? getMaxOverload(stack) : getOverload(stack);
     }
 
     private static void setOverload(ItemStack stack, int overload) {
-        stack.getOrCreateTag().putInt(OVERLOAD_TAG, Mth.clamp(overload, 0, getMaxOverload()));
+        stack.getOrCreateTag().putInt(OVERLOAD_TAG, Mth.clamp(overload, 0, getMaxOverload(stack)));
     }
 
     public static boolean isOverloadActive(ItemStack stack) {
@@ -482,7 +483,7 @@ public class HarbingerRaycasterItem extends ConfigurableGunItem {
     }
 
     private static boolean isOverloaded(ItemStack stack) {
-        return getOverload(stack) >= getMaxOverload();
+        return getOverload(stack) >= getMaxOverload(stack);
     }
 
     @Override
@@ -509,7 +510,7 @@ public class HarbingerRaycasterItem extends ConfigurableGunItem {
         tooltip.add(Component.translatable("tooltip.gwrexpansions.harbinger_raycaster.desc3").withStyle(ChatFormatting.GRAY));
         ChatFormatting color = isOverloaded(stack) ? ChatFormatting.RED : ChatFormatting.DARK_AQUA;
         tooltip.add(Component.translatable("tooltip.gwrexpansions.harbinger_raycaster.overload",
-                getOverload(stack), getMaxOverload()).withStyle(color));
+                getOverload(stack), getMaxOverload(stack)).withStyle(color));
     }
 
     private static GWREConfig.HarbingerRaycasterConfig raycasterConfig() {
@@ -518,6 +519,14 @@ public class HarbingerRaycasterItem extends ConfigurableGunItem {
 
     public static int getMaxOverload() {
         return Math.max(1, raycasterConfig().maxOverload.get());
+    }
+
+    public static int getMaxOverload(ItemStack stack) {
+        int overload = getMaxOverload();
+        if (GWRECataclysmEnchantments.has(stack, GWRECataclysmEnchantments.OVERLOAD_CALIBRATION)) {
+            overload -= 2;
+        }
+        return Math.max(1, overload);
     }
 
     public static int getOverloadDurationTicks() {

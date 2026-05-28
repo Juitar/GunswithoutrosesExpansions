@@ -2,17 +2,18 @@ package juitar.gwrexpansions.item.cataclysm;
 
 import com.github.L_Ender.cataclysm.entity.effect.Sandstorm_Entity;
 import com.github.L_Ender.cataclysm.entity.projectile.Sandstorm_Projectile;
-import com.github.L_Ender.cataclysm.init.ModParticle;
 import com.github.L_Ender.cataclysm.init.ModSounds;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import juitar.gwrexpansions.advancement.RemnantSandstormChargeTrigger;
 import juitar.gwrexpansions.config.GWREConfig;
 import juitar.gwrexpansions.item.ConfigurableGunItem;
+import juitar.gwrexpansions.registry.GWRECataclysmEnchantments;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.item.IBullet;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -75,6 +76,8 @@ public class RemnantFangshotItem extends ConfigurableGunItem {
     private static final int SANDSTORM_PARTICLES_PER_TICK = 36;
     private static final int SAND_GUST_PARTICLES_PER_TICK = 16;
     private static final ResourceLocation IRON_BULLET_ID = new ResourceLocation("gunswithoutroses", "iron_bullet");
+    private static final ResourceLocation CATACLYSM_SANDSTORM_PARTICLE = new ResourceLocation("cataclysm", "sandstorm");
+    private static final ResourceLocation CATACLYSM_DUST_BLAST_PARTICLE = new ResourceLocation("cataclysm", "dust_blast");
 
     private static final ThreadLocal<Integer> FIRING_SHOT_ID = ThreadLocal.withInitial(() -> 0);
     private static final ThreadLocal<Boolean> FIRING_POWER_SHOT = ThreadLocal.withInitial(() -> false);
@@ -211,7 +214,7 @@ public class RemnantFangshotItem extends ConfigurableGunItem {
         tooltip.add(Component.translatable("tooltip.gwrexpansions.remnant_fangshot.power",
                 getPowerSeconds(stack)).withStyle(isPowered(stack) ? ChatFormatting.GOLD : ChatFormatting.DARK_GRAY));
         tooltip.add(Component.translatable("tooltip.gwrexpansions.remnant_fangshot.rage",
-                getCycle(stack), getMaxRage()).withStyle(ChatFormatting.DARK_GREEN));
+                getRage(stack), getMaxRage(stack)).withStyle(ChatFormatting.DARK_GREEN));
         tooltip.add(Component.translatable("tooltip.gwrexpansions.remnant_fangshot.power_charge",
                 getPowerChargeState(stack)).withStyle(canPowerDash(stack) ? ChatFormatting.GOLD : ChatFormatting.DARK_GRAY));
     }
@@ -274,7 +277,7 @@ public class RemnantFangshotItem extends ConfigurableGunItem {
         tag.putInt(EXPECTED_TAG, EXPECT_SHOT);
         halveFiringCooldown(stack, player);
         int cycle = tag.getInt(CYCLE_TAG) + 1;
-        if (cycle >= getMaxRage()) {
+        if (cycle >= getMaxRage(stack)) {
             enterPower(stack, player);
             player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
                     ModSounds.REMNANT_ROAR.get(), SoundSource.PLAYERS, 0.8F, 1.1F);
@@ -418,6 +421,7 @@ public class RemnantFangshotItem extends ConfigurableGunItem {
         Vec3 base = player.position();
         Vec3 direction = horizontalLook(player);
         Vec3 right = new Vec3(-direction.z, 0.0D, direction.x).normalize();
+        ParticleOptions sandstorm = sandstormParticle();
         BlockParticleOption sand = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.SAND.defaultBlockState());
 
         for (int i = 0; i < SANDSTORM_PARTICLES_PER_TICK; i++) {
@@ -430,7 +434,7 @@ public class RemnantFangshotItem extends ConfigurableGunItem {
             double z = base.z + Math.sin(angle) * radius;
             double vx = -Math.sin(angle) * 0.055D;
             double vz = Math.cos(angle) * 0.055D;
-            level.sendParticles(ModParticle.SANDSTORM.get(), x, y, z, 1, vx, 0.035D, vz, 0.02D);
+            level.sendParticles(sandstorm, x, y, z, 1, vx, 0.035D, vz, 0.02D);
         }
 
         for (int i = 0; i < SAND_GUST_PARTICLES_PER_TICK; i++) {
@@ -586,11 +590,19 @@ public class RemnantFangshotItem extends ConfigurableGunItem {
     }
 
     public static int getRage(ItemStack stack) {
-        return getCycle(stack);
+        return Math.min(getCycle(stack), getMaxRage(stack));
     }
 
     public static int getMaxRage() {
         return rageRequired();
+    }
+
+    public static int getMaxRage(ItemStack stack) {
+        int required = rageRequired();
+        if (GWRECataclysmEnchantments.has(stack, GWRECataclysmEnchantments.REMNANT_FERVOR)) {
+            required -= 1;
+        }
+        return Math.max(1, required);
     }
 
     public static int getMaxAwakenedTicks() {
@@ -754,15 +766,26 @@ public class RemnantFangshotItem extends ConfigurableGunItem {
 
     private static void spawnPowerAwakenParticles(ServerLevel level, Player player) {
         Vec3 base = player.position();
+        ParticleOptions sandstorm = sandstormParticle();
         for (int i = 0; i < 54; i++) {
             double angle = i * (Math.PI * 2.0D / 54.0D);
             double radius = 0.55D + (i % 6) * 0.17D;
-            level.sendParticles(ModParticle.SANDSTORM.get(),
+            level.sendParticles(sandstorm,
                     base.x + Math.cos(angle) * radius,
                     base.y + 0.25D + (i % 8) * 0.12D,
                     base.z + Math.sin(angle) * radius,
                     1, -Math.sin(angle) * 0.05D, 0.06D, Math.cos(angle) * 0.05D, 0.02D);
         }
+    }
+
+    private static ParticleOptions sandstormParticle() {
+        if (ForgeRegistries.PARTICLE_TYPES.getValue(CATACLYSM_SANDSTORM_PARTICLE) instanceof ParticleOptions particle) {
+            return particle;
+        }
+        if (ForgeRegistries.PARTICLE_TYPES.getValue(CATACLYSM_DUST_BLAST_PARTICLE) instanceof ParticleOptions particle) {
+            return particle;
+        }
+        return ParticleTypes.CLOUD;
     }
 
     private static void spawnPowerStompParticles(ServerLevel level, Vec3 center) {

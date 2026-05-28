@@ -4,6 +4,7 @@
   "package": "juitar.gwrexpansions.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "BulletEntityMixin",
     "SignalGetterMixin"
   ],
   "client": [],

@@ -1,7 +1,6 @@
 package juitar.gwrexpansions.item.BOMD;
 
 import juitar.gwrexpansions.advancement.BOMD.AvadaKedavraTrigger;
-import juitar.gwrexpansions.client.render.ObsidianLauncherHudRenderer;
 import juitar.gwrexpansions.config.GWREConfig;
 import juitar.gwrexpansions.entity.BOMD.ObsidianCoreEntity;
 import juitar.gwrexpansions.item.ConfigurableLauncherItem;

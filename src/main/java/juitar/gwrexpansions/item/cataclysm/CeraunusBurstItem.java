@@ -6,6 +6,7 @@ import com.github.L_Ender.cataclysm.entity.effect.Wave_Entity;
 import com.github.L_Ender.cataclysm.entity.projectile.Lightning_Spear_Entity;
 import com.github.L_Ender.cataclysm.entity.projectile.Storm_Serpent_Entity;
 import com.github.L_Ender.cataclysm.init.ModEffect;
+import com.github.L_Ender.cataclysm.init.ModEntities;
 import com.github.L_Ender.cataclysm.init.ModParticle;
 import com.github.L_Ender.cataclysm.init.ModSounds;
 import juitar.gwrexpansions.config.GWREConfig;
@@ -13,6 +14,7 @@ import juitar.gwrexpansions.entity.cataclysm.CeraunusLightningBulletEntity;
 import juitar.gwrexpansions.entity.cataclysm.CeraunusStormBulletEntity;
 import juitar.gwrexpansions.entity.cataclysm.CeraunusWaterBulletEntity;
 import juitar.gwrexpansions.item.ConfigurableBurstGunItem;
+import juitar.gwrexpansions.registry.GWRECataclysmEnchantments;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.item.IBullet;
 import lykrast.gunswithoutroses.registry.GWRAttributes;
@@ -80,6 +82,8 @@ public class CeraunusBurstItem extends ConfigurableBurstGunItem {
     private static final int LIGHTNING_SPEAR_INTERVAL_TICKS = 15;
     private static final int LIGHTNING_BULLET_RETARGET_DELAY_TICKS = 8;
     private static final int LIGHTNING_BULLET_STORM_DELAY_TICKS = 0;
+    private static final double ELEMENTAL_RESONANCE_BULLET_MULTIPLIER = 1.2D;
+    private static final double ELEMENTAL_RESONANCE_COMBO_MULTIPLIER = 1.15D;
 
     private static final ResourceLocation IRON_BULLET_ID = new ResourceLocation("gunswithoutroses", "iron_bullet");
     private static final ResourceLocation GOLD_BULLET_ID = new ResourceLocation("gwrexpansions", "golden_bullet");
@@ -259,7 +263,8 @@ public class CeraunusBurstItem extends ConfigurableBurstGunItem {
                     (float) getProjectileSpeed(gun, player), (float) getInaccuracy(gun, player));
             shot.setDamage(Math.max(0.0D, shot.getDamage() + getBonusDamage(gun, player))
                     * getDamageMultiplier(gun, player)
-                    * GWREConfig.BURSTGUN.ceraunusBurst.baseElementDamageMultiplier.get());
+                    * GWREConfig.BURSTGUN.ceraunusBurst.baseElementDamageMultiplier.get()
+                    * elementalResonanceBulletMultiplier(gun));
             if (player.getAttribute((Attribute) GWRAttributes.knockback.get()) != null) {
                 shot.setKnockbackStrength(shot.getKnockbackStrength()
                         + player.getAttributeValue((Attribute) GWRAttributes.knockback.get()));
@@ -318,7 +323,8 @@ public class CeraunusBurstItem extends ConfigurableBurstGunItem {
             int lightning = tag.getInt(LIGHTNING_TAG);
             storeLastCombo(tag, level.getGameTime(), water, storm, lightning);
             resetCombo(tag);
-            scheduleCombo((ServerLevel) level, player, findComboCenter(player), water, storm, lightning, damage);
+            scheduleCombo((ServerLevel) level, player, findComboCenter(player), water, storm, lightning, damage,
+                    elementalResonanceComboMultiplier(gun));
         }
     }
 
@@ -350,10 +356,12 @@ public class CeraunusBurstItem extends ConfigurableBurstGunItem {
         return tag != null && tag.getInt(COUNT_TAG) <= 0 && tag.getInt(LAST_COUNT_TAG) > 0;
     }
 
-    private static void scheduleCombo(ServerLevel level, Player player, Vec3 center, int water, int storm, int lightning, double baseDamage) {
+    private static void scheduleCombo(ServerLevel level, Player player, Vec3 center, int water, int storm, int lightning,
+                                      double baseDamage, double enchantmentMultiplier) {
         GWREConfig.CeraunusBurstConfig config = GWREConfig.BURSTGUN.ceraunusBurst;
         PENDING_COMBOS.add(new PendingCombo(level.dimension(), player.getUUID(), center, water, storm, lightning,
-                Math.max(0, config.comboDelayTicks.get()), config.comboRadius.get(), baseDamage * config.comboDamageMultiplier.get()));
+                Math.max(0, config.comboDelayTicks.get()), config.comboRadius.get(),
+                baseDamage * config.comboDamageMultiplier.get() * enchantmentMultiplier));
         level.playSound(null, center.x, center.y, center.z, ModSounds.SCYLLA_ROAR.get(), SoundSource.PLAYERS, 0.55F, 1.45F);
     }
 
@@ -540,15 +548,32 @@ public class CeraunusBurstItem extends ConfigurableBurstGunItem {
     }
 
     private static void spawnLightningSpear(ServerLevel level, LivingEntity owner, Vec3 spawnPos, float damage) {
-        Lightning_Spear_Entity spear = new Lightning_Spear_Entity(owner, new Vec3(0.0D, -1.0D, 0.0D), level, damage);
-        spear.setPos(spawnPos.x, spawnPos.y, spawnPos.z);
-        spear.setAreaDamage(damage * 0.72F);
-        spear.setHpDamage(0.0F);
-        spear.setAreaRadius(2.2F);
-        spear.accelerationPower = 0.22D;
-        level.addFreshEntity(spear);
+        try {
+            Lightning_Spear_Entity spear = new Lightning_Spear_Entity(ModEntities.LIGHTNING_SPEAR.get(), level);
+            spear.setOwner(owner);
+            spear.setPos(spawnPos.x, spawnPos.y, spawnPos.z);
+            spear.setState(1);
+            spear.setDamage(damage);
+            spear.setAreaDamage(damage * 0.72F);
+            spear.setHpDamage(0.0F);
+            spear.setAreaRadius(2.2F);
+            spear.accelerationPower = 0.22D;
+            spear.setDeltaMovement(0.0D, -spear.accelerationPower, 0.0D);
+            level.addFreshEntity(spear);
+        } catch (LinkageError error) {
+            spawnLightningSpearFallback(level, owner, spawnPos, damage);
+            return;
+        }
         level.sendParticles(ModParticle.SPARK.get(), spawnPos.x, spawnPos.y, spawnPos.z, 12, 0.4D, 0.25D, 0.4D, 0.08D);
         level.playSound(null, spawnPos.x, spawnPos.y, spawnPos.z, ModSounds.EMP_ACTIVATED.get(), SoundSource.PLAYERS, 0.35F, 1.25F);
+    }
+
+    private static void spawnLightningSpearFallback(ServerLevel level, LivingEntity owner, Vec3 spawnPos, float damage) {
+        Vec3 ground = groundPoint(level, spawnPos);
+        radialKnock(level, ground, owner, 2.2D, damage * 0.72F, true);
+        level.sendParticles(ParticleTypes.ELECTRIC_SPARK, ground.x, ground.y + 0.25D, ground.z,
+                24, 0.65D, 0.18D, 0.65D, 0.1D);
+        level.playSound(null, ground.x, ground.y, ground.z, ModSounds.EMP_ACTIVATED.get(), SoundSource.PLAYERS, 0.35F, 1.25F);
     }
 
     private static Vec3 randomLightningSpearFallback(ServerLevel level, Vec3 center, double radius) {
@@ -767,6 +792,18 @@ public class CeraunusBurstItem extends ConfigurableBurstGunItem {
                 * GWREConfig.BURSTGUN.ceraunusBurst.baseElementDamageMultiplier.get();
         reference.discard();
         return damage;
+    }
+
+    private static double elementalResonanceBulletMultiplier(ItemStack stack) {
+        return GWRECataclysmEnchantments.has(stack, GWRECataclysmEnchantments.ELEMENTAL_RESONANCE)
+                ? ELEMENTAL_RESONANCE_BULLET_MULTIPLIER
+                : 1.0D;
+    }
+
+    private static double elementalResonanceComboMultiplier(ItemStack stack) {
+        return GWRECataclysmEnchantments.has(stack, GWRECataclysmEnchantments.ELEMENTAL_RESONANCE)
+                ? ELEMENTAL_RESONANCE_COMBO_MULTIPLIER
+                : 1.0D;
     }
 
     private static DamageSource comboDamageSource(ServerLevel level, @Nullable LivingEntity owner) {

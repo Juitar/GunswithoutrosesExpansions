@@ -7,6 +7,7 @@ import juitar.gwrexpansions.config.GWREConfig;
 import juitar.gwrexpansions.entity.cataclysm.CursiumBulletEntity;
 import juitar.gwrexpansions.item.ConfigurableGunItem;
 import juitar.gwrexpansions.registry.CompatCataclysm;
+import juitar.gwrexpansions.registry.GWRECataclysmEnchantments;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.item.IBullet;
 import net.minecraft.ChatFormatting;
@@ -18,6 +19,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -33,6 +35,7 @@ import java.util.function.Supplier;
 
 public class CursiumGunItem extends ConfigurableGunItem {
     private static final String RAGE_TAG = "CursiumRage";
+    private static final String RAGE_HALF_TAG = "CursiumRageHalf";
     private static final String TRIPLE_SHOT_READY_TAG = "CursiumTripleShotReady";
     public static final String CURSIUM_SNIPER_SHOT_TAG = "CursiumSniperShot";
     private static final double TRIPLE_SHOT_SIDE_OFFSET = 0.45D;
@@ -53,6 +56,7 @@ public class CursiumGunItem extends ConfigurableGunItem {
         int clamped = Mth.clamp(rage, 0, getMaxRage());
         if (clamped <= 0) {
             stack.getOrCreateTag().remove(RAGE_TAG);
+            stack.getOrCreateTag().remove(RAGE_HALF_TAG);
         } else {
             stack.getOrCreateTag().putInt(RAGE_TAG, clamped);
         }
@@ -61,7 +65,30 @@ public class CursiumGunItem extends ConfigurableGunItem {
     public static void addRage(Player player) {
         ItemStack stack = findHeldCursiumSniper(player);
         if (!stack.isEmpty()) {
+            addRage(stack);
+        }
+    }
+
+    private static void addRage(ItemStack stack) {
+        if (!GWRECataclysmEnchantments.has(stack, GWRECataclysmEnchantments.CURSIUM_DRAIN)) {
             setRage(stack, getRage(stack) + 1);
+            return;
+        }
+
+        boolean hadHalf = stack.getOrCreateTag().getBoolean(RAGE_HALF_TAG);
+        setRage(stack, getRage(stack) + (hadHalf ? 2 : 1));
+        if (getRage(stack) >= getMaxRage()) {
+            stack.getOrCreateTag().remove(RAGE_HALF_TAG);
+        } else {
+            stack.getOrCreateTag().putBoolean(RAGE_HALF_TAG, !hadHalf);
+        }
+    }
+
+    public static void onBulletHeadshot(BulletEntity bullet, Entity shooter, boolean headshot) {
+        if (headshot
+                && bullet.getPersistentData().getBoolean(CURSIUM_SNIPER_SHOT_TAG)
+                && shooter instanceof Player player) {
+            addRage(player);
         }
     }
 

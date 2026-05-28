@@ -6,6 +6,7 @@ import juitar.gwrexpansions.entity.cataclysm.TidalAbyssBlastPortalEntity;
 import juitar.gwrexpansions.entity.cataclysm.TidalRiftEntity;
 import juitar.gwrexpansions.item.ConfigurableGunItem;
 import juitar.gwrexpansions.registry.CompatCataclysm;
+import juitar.gwrexpansions.registry.GWRECataclysmEnchantments;
 import juitar.gwrexpansions.registry.GWREEntities;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.item.IBullet;
@@ -48,6 +49,7 @@ public class TidalGunItem extends ConfigurableGunItem {
     private static final String ENTITY_FULL_MINE_COOLDOWN_TAG = "GWRETidalFullMineCooldownUntil";
     private static final String ENTITY_TENTACLE_COOLDOWN_TAG = "GWRETidalTentacleCooldownUntil";
     private static final double AIM_RANGE = 48.0D;
+    private static final double ABYSSAL_CHARGE_HIT_ENERGY_MULTIPLIER = 1.5D;
 
     public TidalGunItem(Properties properties, int bonusDamage, double damageMultiplier, int fireDelay, double inaccuracy, int enchantability, Supplier<GWREConfig.GunConfig> configSupplier) {
         super(properties, bonusDamage, damageMultiplier, fireDelay, inaccuracy, enchantability, configSupplier);
@@ -236,8 +238,15 @@ public class TidalGunItem extends ConfigurableGunItem {
     public static void addEnergyToHeld(LivingEntity entity, int amount) {
         ItemStack stack = findHeldTidalPistol(entity);
         if (!stack.isEmpty()) {
-            addEnergy(stack, amount);
+            addEnergy(stack, modifiedHitEnergy(stack, amount));
         }
+    }
+
+    private static int modifiedHitEnergy(ItemStack stack, int amount) {
+        if (!GWRECataclysmEnchantments.has(stack, GWRECataclysmEnchantments.ABYSSAL_CHARGE)) {
+            return amount;
+        }
+        return Math.max(1, (int) Math.ceil(amount * ABYSSAL_CHARGE_HIT_ENERGY_MULTIPLIER));
     }
 
     public static boolean isFullForm(Level level, LivingEntity entity) {

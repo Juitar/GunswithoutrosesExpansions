@@ -3,6 +3,7 @@ import juitar.gwrexpansions.config.ClientConfig;
 import juitar.gwrexpansions.config.GWREConfig;
 import juitar.gwrexpansions.loot.GWRELootModifiers;
 import juitar.gwrexpansions.registry.GWREEffects;
+import juitar.gwrexpansions.registry.GWRECataclysmEnchantments;
 import juitar.gwrexpansions.registry.GWREEntities;
 import juitar.gwrexpansions.registry.GWREItems;
 import juitar.gwrexpansions.registry.GWRESounds;
@@ -31,6 +32,7 @@ public class GWRexpansions {
         });
 
         GWREItems.REG.register(eventBus);
+        GWRECataclysmEnchantments.register(eventBus);
         GWRESounds.REG.register(eventBus);
         GWREEntities.REG.register(eventBus);
         GWREEffects.REG.register(eventBus);

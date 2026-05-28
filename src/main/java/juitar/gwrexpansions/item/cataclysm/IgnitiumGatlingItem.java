@@ -5,6 +5,7 @@ import juitar.gwrexpansions.config.GWREConfig;
 import juitar.gwrexpansions.entity.cataclysm.IgnitiumBulletEntity;
 import juitar.gwrexpansions.item.ConfigurableGatlingItem;
 import juitar.gwrexpansions.registry.CompatCataclysm;
+import juitar.gwrexpansions.registry.GWRECataclysmEnchantments;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.item.IBullet;
 import lykrast.gunswithoutroses.registry.GWRAttributes;
@@ -27,6 +28,7 @@ import java.util.function.Supplier;
 public class IgnitiumGatlingItem extends ConfigurableGatlingItem {
     private static final String BLUE_FIRE_TICKS_TAG = "IgnitiumBlueFireTicks";
     private static final String WAS_BELOW_HALF_TAG = "IgnitiumWasBelowHalf";
+    private static final double BLUE_FLAME_BRINK_DURATION_MULTIPLIER = 1.5D;
 
     public IgnitiumGatlingItem(Properties properties, int bonusDamage, double damageMultiplier, int fireDelay, double inaccuracy, int enchantability, Supplier<GWREConfig.GunConfig> config){
         super(properties, bonusDamage, damageMultiplier, fireDelay, inaccuracy, enchantability,config);
@@ -58,7 +60,7 @@ public class IgnitiumGatlingItem extends ConfigurableGatlingItem {
         int ticks = getBlueFireTicks(stack);
 
         if (belowHalf && !wasBelowHalf) {
-            ticks = getConfig().blueFireDurationTicks.get();
+            ticks = getBlueFireDurationTicks(stack);
             stack.getOrCreateTag().putInt(BLUE_FIRE_TICKS_TAG, ticks);
             if (!level.isClientSide) {
                 spawnBlueFireBurst((ServerLevel) level, player);
@@ -117,11 +119,19 @@ public class IgnitiumGatlingItem extends ConfigurableGatlingItem {
         tooltip.add(Component.translatable("tooltip.gwrexpansions.ignitium_gatling.desc").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.gwrexpansions.ignitium_gatling.desc2") .withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.gwrexpansions.ignitium_gatling.blue_fire",
-                getConfig().blueFireDurationTicks.get() / 20.0D).withStyle(ChatFormatting.AQUA));
+                getBlueFireDurationTicks(stack) / 20.0D).withStyle(ChatFormatting.AQUA));
     }
 
     private static GWREConfig.IgnitiumGatlingConfig getConfig() {
         return GWREConfig.GATLING.Ignitium;
+    }
+
+    private static int getBlueFireDurationTicks(ItemStack stack) {
+        int ticks = getConfig().blueFireDurationTicks.get();
+        if (GWRECataclysmEnchantments.has(stack, GWRECataclysmEnchantments.BLUE_FLAME_BRINK)) {
+            return Math.max(1, (int) Math.ceil(ticks * BLUE_FLAME_BRINK_DURATION_MULTIPLIER));
+        }
+        return ticks;
     }
 
     private static void spawnBlueFireBurst(ServerLevel level, Player player) {

@@ -40,7 +40,7 @@ public class HarbingerRaycasterHudRenderer {
             return;
         }
 
-        int maxOverload = HarbingerRaycasterItem.getMaxOverload();
+        int maxOverload = HarbingerRaycasterItem.getMaxOverload(stack);
         int overload = Math.min(maxOverload, HarbingerRaycasterItem.getHudOverload(stack));
         boolean active = HarbingerRaycasterItem.isOverloadActive(stack);
         double activeProgress = active

@@ -66,7 +66,7 @@ public class CompatCataclysm {
 
                 tidal_pistol = GWREItems.initItem(() -> new TidalGunItem(
                                 GWREItems.defP().durability(10000).fireResistant().rarity(Rarity.EPIC),
-                                0, 1.5, 0, 2.0, 0,
+                                0, 1.5, 0, 2.0, 20,
                                 () -> GWREConfig.PISTOL.tidal), "tidal_pistol");
 
                 ignitium_bullet = GWREItems.initItem(() -> new IgnitiumBulletItem(GWREItems.defP().fireResistant(), 12),

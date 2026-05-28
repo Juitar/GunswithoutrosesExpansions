@@ -118,12 +118,16 @@ public class GWREConfig {
 
         public static class GeneralConfig {
                 public final ForgeConfigSpec.BooleanValue enableAllAchievementsSuperShotgunReward;
+                public final ForgeConfigSpec.BooleanValue allowShooterProjectileSelfDamage;
 
                 public GeneralConfig(ForgeConfigSpec.Builder builder) {
                         builder.push("General");
                         enableAllAchievementsSuperShotgunReward = builder
                                         .comment("Whether completing the RIP AND TEAR all-achievements challenge grants the Super Shotgun reward.")
                                         .define("enableAllAchievementsSuperShotgunReward", true);
+                        allowShooterProjectileSelfDamage = builder
+                                        .comment("Whether shooter-owned special projectiles can damage their shooter. Currently affects Diamond Bullet Shrapnel and Slime Bullets.")
+                                        .define("allowShooterProjectileSelfDamage", true);
                         builder.pop();
                 }
         }
@@ -167,7 +171,7 @@ public class GWREConfig {
                                         .defineInRange("blueFireDelay", 3, 1, 100);
                         blueFireDurationTicks = builder
                                         .comment("Blue fire duration in ticks after crossing to half health or below.")
-                                        .defineInRange("blueFireDurationTicks", 100, 1, 72000);
+                                        .defineInRange("blueFireDurationTicks", 200, 1, 72000);
                         blueFireHealingBonus = builder.comment(
                                         "Flat healing added to each Ignitium Bullet hit while blue fire is active.")
                                         .defineInRange("blueFireHealingBonus", 1.0, 0.0, 100.0);
@@ -344,9 +348,9 @@ public class GWREConfig {
 
                         builder.push("RemnantFangshot_Mechanics");
                         rageRequired = builder.comment("Gunblade cycles required to awaken Remnant Fangshot.")
-                                        .defineInRange("rageRequired", 3, 1, 20);
+                                        .defineInRange("rageRequired", 5, 1, 20);
                         awakenedTicks = builder.comment("Awakened duration in ticks. 200 ticks = 10 seconds.")
-                                        .defineInRange("awakenedTicks", 200, 1, 6000);
+                                        .defineInRange("awakenedTicks", 150, 1, 6000);
                         bladeAmpTicks = builder.comment("Ticks the blade remains empowered after a projectile hit.")
                                         .defineInRange("bladeAmpTicks", 80, 1, 6000);
                         comboWindowTicks = builder
@@ -727,6 +731,8 @@ public class GWREConfig {
                 public final ForgeConfigSpec.IntValue jackpotShots;
                 public final ForgeConfigSpec.IntValue pityJackpotWeightPerShot;
                 public final ForgeConfigSpec.IntValue pityMaxJackpotWeight;
+                public final ForgeConfigSpec.IntValue luckWeightPerPoint;
+                public final ForgeConfigSpec.IntValue luckMaxBonusWeight;
                 public final ForgeConfigSpec.DoubleValue obsidianCoreBaseDamage;
                 public final ForgeConfigSpec.ConfigValue<List<? extends String>> bustBulletPool;
                 public final ForgeConfigSpec.ConfigValue<List<? extends String>> rewardBulletPool;
@@ -764,6 +770,11 @@ public class GWREConfig {
                                         .defineInRange("pityJackpotWeightPerShot", 1, 0, 100);
                         pityMaxJackpotWeight = builder.comment("Maximum extra jackpot weight from stored pity.")
                                         .defineInRange("pityMaxJackpotWeight", 25, 0, 1000);
+                        luckWeightPerPoint = builder.comment(
+                                        "Base lottery bonus weight per point of player Luck. Each base weight adds +1x Double, +2x Triple, and +3x Jackpot weight before rolling.")
+                                        .defineInRange("luckWeightPerPoint", 1, 0, 100);
+                        luckMaxBonusWeight = builder.comment("Maximum base lottery bonus weight from player Luck.")
+                                        .defineInRange("luckMaxBonusWeight", 100, 0, 1000);
                         obsidianCoreBaseDamage = builder.comment(
                                         "Base damage used when Destiny Seven rolls a rare Obsidian Core entity. Gun bonus damage and damage multiplier still apply.")
                                         .defineInRange("obsidianCoreBaseDamage", 20.0, 0.0, 1000.0);

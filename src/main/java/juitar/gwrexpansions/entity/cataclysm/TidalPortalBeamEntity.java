@@ -1,11 +1,11 @@
 package juitar.gwrexpansions.entity.cataclysm;
 
-import com.github.L_Ender.cataclysm.client.particle.LightningParticle;
 import com.github.L_Ender.cataclysm.entity.AnimationMonster.BossMonsters.The_Leviathan.Portal_Abyss_Blast_Entity;
 import com.github.L_Ender.cataclysm.init.ModEffect;
 import com.github.L_Ender.cataclysm.init.ModSounds;
 import com.github.L_Ender.cataclysm.util.CMDamageTypes;
 import juitar.gwrexpansions.advancement.TidalPortalKilledEndermanTrigger;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
@@ -111,7 +111,7 @@ public class TidalPortalBeamEntity extends Portal_Abyss_Blast_Entity {
             Vec3 end = new Vec3(this.endPosX, this.endPosY, this.endPosZ);
             List<LivingEntity> targets = collectBeamTargets(start, end);
 
-            if (this.blockSide != null) {
+            if (level().isClientSide && this.blockSide != null) {
                 spawnOriginalImpactParticles(3);
             }
 
@@ -279,7 +279,7 @@ public class TidalPortalBeamEntity extends Portal_Abyss_Blast_Entity {
             float speedY = random.nextFloat() * 0.08F;
             float xSpeed = Mth.cos(angle);
             float zSpeed = Mth.sin(angle);
-            level().addParticle(new LightningParticle.OrbData(102, 26, 204),
+            level().addParticle(ParticleTypes.ELECTRIC_SPARK,
                     this.collidePosX, this.collidePosY + 0.1D, this.collidePosZ,
                     xSpeed, speedY, zSpeed);
         }

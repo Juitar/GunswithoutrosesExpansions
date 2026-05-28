@@ -36,7 +36,7 @@ public class RemnantFangshotHudRenderer {
         }
 
         boolean awakened = RemnantFangshotItem.isAwakened(stack);
-        int maxRage = RemnantFangshotItem.getMaxRage();
+        int maxRage = RemnantFangshotItem.getMaxRage(stack);
         int maxAwakenedTicks = RemnantFangshotItem.getMaxAwakenedTicks();
         float progress = awakened
                 ? Math.min(1.0F, RemnantFangshotItem.getAwakenedTicks(stack) / (float) maxAwakenedTicks)

@@ -5,14 +5,16 @@ import com.github.L_Ender.cataclysm.entity.projectile.Sandstorm_Projectile;
 import com.github.L_Ender.cataclysm.entity.projectile.Storm_Serpent_Entity;
 import com.github.L_Ender.cataclysm.init.ModEffect;
 import juitar.gwrexpansions.GWRexpansions;
+import juitar.gwrexpansions.config.GWREConfig;
 import juitar.gwrexpansions.entity.BOMD.CoinEntity;
+import juitar.gwrexpansions.entity.vanilla.SlimeBulletEntity;
 import juitar.gwrexpansions.item.BOMD.Hellforge;
 import juitar.gwrexpansions.item.cataclysm.CeraunusBurstItem;
-import juitar.gwrexpansions.item.cataclysm.CursiumGunItem;
 import juitar.gwrexpansions.item.cataclysm.HarbingerRaycasterItem;
 import juitar.gwrexpansions.item.cataclysm.RemnantFangshotItem;
 import juitar.gwrexpansions.item.vanilla.RedstoneBulletItem;
 import juitar.gwrexpansions.registry.GWREEffects;
+import juitar.gwrexpansions.registry.VanillaItem;
 import juitar.gwrexpansions.util.CoinTargetUtils;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import net.minecraft.nbt.CompoundTag;
@@ -93,13 +95,28 @@ public class BulletHitEventHandler {
 
         Entity owner = bullet.getOwner();
         Entity target = entityHit.getEntity();
-        if (owner == null || target == null || bullet.getPersistentData().getBoolean(ALLOW_SHOOTER_HIT)) {
+        if (owner == null || target == null) {
+            return;
+        }
+
+        boolean allowShooterHit = bullet.getPersistentData().getBoolean(ALLOW_SHOOTER_HIT);
+        if (allowShooterHit
+                && (!isConfigurableShooterSelfDamageBullet(bullet)
+                        || GWREConfig.GENERAL.allowShooterProjectileSelfDamage.get())) {
             return;
         }
 
         if (target == owner || target.isPassengerOfSameVehicle(owner)) {
             event.setImpactResult(ProjectileImpactEvent.ImpactResult.SKIP_ENTITY);
+            return;
         }
+
+    }
+
+    private static boolean isConfigurableShooterSelfDamageBullet(BulletEntity bullet) {
+        ItemStack bulletItem = bullet.getItem();
+        return bullet instanceof SlimeBulletEntity
+                || (!bulletItem.isEmpty() && bulletItem.is(VanillaItem.diamond_bullet_shrapnel.get()));
     }
 
     private static void handleRemnantFangshotSandstormImpact(ProjectileImpactEvent event, Sandstorm_Projectile sandstorm) {
@@ -179,12 +196,6 @@ public class BulletHitEventHandler {
                 boolean isHellforgeShot = bulletData.getBoolean("HellforgeShot");
                 boolean isRemnantFangshotShot = bulletData.getBoolean(RemnantFangshotItem.BULLET_TAG);
 
-                if (bulletData.getBoolean(CursiumGunItem.CURSIUM_SNIPER_SHOT_TAG)
-                        && shooter instanceof Player player
-                        && isBulletHeadshot(bullet, target)) {
-                    CursiumGunItem.addRage(player);
-                }
-
                 if (isRemnantFangshotShot && shooter instanceof Player player) {
                     ItemStack fangshot = RemnantFangshotItem.findHeldFangshot(player);
                     if (!fangshot.isEmpty()) {
@@ -210,20 +221,6 @@ public class BulletHitEventHandler {
             // 确保标记被重置
             PROCESSING.set(false);
         }
-    }
-
-    private static boolean isBulletHeadshot(BulletEntity bullet, LivingEntity target) {
-        if (bullet.getHeadshotMultiplier() <= 1.0D) {
-            return false;
-        }
-
-        Vec3 start = bullet.position();
-        Vec3 end = start.add(bullet.getDeltaMovement());
-        return target.getBoundingBox()
-                .setMaxY(target.getEyeY())
-                .inflate(0.3D)
-                .clip(start, end)
-                .isPresent();
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)

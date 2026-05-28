@@ -48,7 +48,7 @@ public class DestinyGunItem extends ConfigurableGunItem {
         }
 
         int pityShots = gun.getOrCreateTag().getInt(PITY_TAG);
-        Outcome outcome = rollOutcome(world.getRandom(), ticket, pityShots);
+        Outcome outcome = rollOutcome(world.getRandom(), ticket, pityShots, player.getLuck());
         List<? extends String> bulletPool = outcome == Outcome.BUST ? GWREConfig.DESTINY.bustBulletPool.get() : GWREConfig.DESTINY.rewardBulletPool.get();
         int shots = outcome.getShots();
         UUID jackpotGroup = null;
@@ -86,7 +86,7 @@ public class DestinyGunItem extends ConfigurableGunItem {
         return null;
     }
 
-    private static Outcome rollOutcome(RandomSource random, Ticket ticket, int pityShots) {
+    private static Outcome rollOutcome(RandomSource random, Ticket ticket, int pityShots, float playerLuck) {
         GWREConfig.DestinyConfig config = GWREConfig.DESTINY;
         int bust = ticket.bustWeight();
         int doubled = ticket.doubleWeight();
@@ -95,6 +95,20 @@ public class DestinyGunItem extends ConfigurableGunItem {
         int pityBonus = Math.min(config.pityMaxJackpotWeight.get(), pityShots * config.pityJackpotWeightPerShot.get());
         bust = Math.max(0, bust - pityBonus);
         jackpot += pityBonus;
+
+        int luckBonus = Math.min(config.luckMaxBonusWeight.get(),
+                Math.max(0, (int) Math.floor(playerLuck * config.luckWeightPerPoint.get())));
+        if (luckBonus > 0) {
+            int doubleBonus = luckBonus;
+            int tripleBonus = luckBonus * 2;
+            int jackpotBonus = luckBonus * 3;
+            int winningBonus = doubleBonus + tripleBonus + jackpotBonus;
+
+            bust = Math.max(0, bust - winningBonus);
+            doubled += doubleBonus;
+            triple += tripleBonus;
+            jackpot += jackpotBonus;
+        }
 
         int total = bust + doubled + triple + jackpot;
         if (total <= 0) return Outcome.BUST;
@@ -204,6 +218,7 @@ public class DestinyGunItem extends ConfigurableGunItem {
         tooltip.add(Component.translatable("tooltip.gwrexpansions.destiny_seven.desc").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.gwrexpansions.destiny_seven.desc2").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.gwrexpansions.destiny_seven.desc3").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.gwrexpansions.destiny_seven.desc4").withStyle(ChatFormatting.GRAY));
     }
 
     private enum Ticket {

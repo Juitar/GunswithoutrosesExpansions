@@ -59,10 +59,11 @@ public class IgnitiumBulletEntity extends BulletEntity implements DuskfallBullet
             }
 
             if (Healing && shooter instanceof LivingEntity) {
-                float healAmount = damage * (0.05f + (newAmplifier * 0.05f));
+                float healRatio = 0.05f + (newAmplifier * 0.05f);
                 if (BlueFire) {
-                    healAmount += GWREConfig.GATLING.Ignitium.blueFireHealingBonus.get().floatValue();
+                    healRatio *= 1.0F + GWREConfig.GATLING.Ignitium.blueFireHealingBonus.get().floatValue();
                 }
+                float healAmount = damage * healRatio;
                 ((LivingEntity) shooter).heal(healAmount);
             }
         }

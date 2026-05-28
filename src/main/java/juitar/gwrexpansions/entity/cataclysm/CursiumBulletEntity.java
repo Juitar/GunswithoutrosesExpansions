@@ -4,14 +4,18 @@ import com.github.L_Ender.cataclysm.entity.projectile.Phantom_Halberd_Entity;
 import com.github.L_Ender.cataclysm.init.ModParticle;
 import juitar.gwrexpansions.config.GWREConfig;
 import juitar.gwrexpansions.entity.meetyourfight.DuskfallBulletDelegate;
+import juitar.gwrexpansions.item.cataclysm.CursiumGunItem;
 import juitar.gwrexpansions.registry.GWREEntities;
 import lykrast.gunswithoutroses.entity.BulletEntity;
+import lykrast.gunswithoutroses.item.IBullet;
 import lykrast.gunswithoutroses.registry.GWRDamage;
+import lykrast.gunswithoutroses.registry.GWRItems;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -47,6 +51,7 @@ public class CursiumBulletEntity extends BulletEntity implements DuskfallBulletD
             float damage = (float) this.getDamage();
             boolean headshot = hasHeadshot(target);
             if (headshot) {
+                CursiumGunItem.onBulletHeadshot(this, shooter, true);
                 damage *= (float) getHeadshotMultiplier();
                 // 爆头时召唤幻影戟
                 if (SHOT_FROM_CURSIUM) {
@@ -85,6 +90,10 @@ public class CursiumBulletEntity extends BulletEntity implements DuskfallBulletD
             // 如果伤害未生效，恢复无敌时间
             if (!damaged) {
                 target.invulnerableTime = lastHurtResistant;
+            } else if (target instanceof LivingEntity livingTarget) {
+                Item item = this.getItemRaw().getItem();
+                IBullet bullet = item instanceof IBullet ? (IBullet) item : GWRItems.ironBullet.get();
+                bullet.onLivingEntityHit(this, livingTarget, shooter, level(), headshot);
             }
     }
 
