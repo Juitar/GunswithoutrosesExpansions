@@ -13,6 +13,7 @@ import lykrast.gunswithoutroses.item.IBullet;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -32,6 +33,7 @@ import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 public class TidalGunItem extends ConfigurableGunItem {
@@ -48,8 +50,11 @@ public class TidalGunItem extends ConfigurableGunItem {
     private static final String ENTITY_FULL_ORB_COOLDOWN_TAG = "GWRETidalFullOrbCooldownUntil";
     private static final String ENTITY_FULL_MINE_COOLDOWN_TAG = "GWRETidalFullMineCooldownUntil";
     private static final String ENTITY_TENTACLE_COOLDOWN_TAG = "GWRETidalTentacleCooldownUntil";
+    private static final String PORTAL_PRIORITY_TARGET_TAG = "GWRETidalPortalPriorityTarget";
+    private static final String PORTAL_PRIORITY_TARGET_TIME_TAG = "GWRETidalPortalPriorityTargetTime";
     private static final double AIM_RANGE = 48.0D;
     private static final double ABYSSAL_CHARGE_HIT_ENERGY_MULTIPLIER = 1.5D;
+    private static final int PORTAL_PRIORITY_TARGET_WINDOW_TICKS = 60;
 
     public TidalGunItem(Properties properties, int bonusDamage, double damageMultiplier, int fireDelay, double inaccuracy, int enchantability, Supplier<GWREConfig.GunConfig> configSupplier) {
         super(properties, bonusDamage, damageMultiplier, fireDelay, inaccuracy, enchantability, configSupplier);
@@ -173,6 +178,7 @@ public class TidalGunItem extends ConfigurableGunItem {
         tooltip.add(Component.translatable("tooltip.gwrexpansions.tidal_pistol.desc").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.gwrexpansions.tidal_pistol.desc2").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.gwrexpansions.tidal_pistol.desc3").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.gwrexpansions.tidal_pistol.desc4").withStyle(ChatFormatting.GRAY));
     }
 
     public static GWREConfig.TidalPistolConfig tidalConfig() {
@@ -324,6 +330,47 @@ public class TidalGunItem extends ConfigurableGunItem {
         }
     }
 
+    public static void rememberPortalPriorityTarget(Player player, LivingEntity target) {
+        if (player.level().isClientSide || target == player || !target.isAlive() || target.isSpectator()) {
+            return;
+        }
+        if (player.isAlliedTo(target) || target.isAlliedTo(player)) {
+            return;
+        }
+
+        CompoundTag data = player.getPersistentData();
+        data.putUUID(PORTAL_PRIORITY_TARGET_TAG, target.getUUID());
+        data.putLong(PORTAL_PRIORITY_TARGET_TIME_TAG, player.level().getGameTime());
+    }
+
+    @Nullable
+    private static LivingEntity getRecentPortalPriorityTarget(Player player) {
+        CompoundTag data = player.getPersistentData();
+        if (!data.hasUUID(PORTAL_PRIORITY_TARGET_TAG)) {
+            return null;
+        }
+        long recordedAt = data.getLong(PORTAL_PRIORITY_TARGET_TIME_TAG);
+        if (player.level().getGameTime() - recordedAt > PORTAL_PRIORITY_TARGET_WINDOW_TICKS) {
+            data.remove(PORTAL_PRIORITY_TARGET_TAG);
+            data.remove(PORTAL_PRIORITY_TARGET_TIME_TAG);
+            return null;
+        }
+        if (!(player.level() instanceof ServerLevel serverLevel)) {
+            return null;
+        }
+
+        UUID targetId = data.getUUID(PORTAL_PRIORITY_TARGET_TAG);
+        Entity entity = serverLevel.getEntity(targetId);
+        return entity instanceof LivingEntity target && isValidPortalPriorityTarget(player, target) ? target : null;
+    }
+
+    private static boolean isValidPortalPriorityTarget(Player player, LivingEntity target) {
+        return target != player && target.isAlive() && !target.isSpectator()
+                && !player.isAlliedTo(target) && !target.isAlliedTo(player)
+                && target.getVehicle() != player && player.getVehicle() != target
+                && (target.getVehicle() == null || target.getVehicle() != player.getVehicle());
+    }
+
     public static int getHudChargeTicks(ItemStack stack) {
         return stack.getOrCreateTag().getInt(CHARGE_TICKS_TAG);
     }
@@ -368,6 +415,7 @@ public class TidalGunItem extends ConfigurableGunItem {
         portal.setPos(portalPos.x, portalPos.y, portalPos.z);
         portal.configure(player, target, tidalConfig().portalWarmupTicks.get(),
                 80, tidalConfig().portalDamage.get().floatValue(), tidalConfig().portalHpDamage.get().floatValue());
+        portal.setPriorityTarget(getRecentPortalPriorityTarget(player));
         level.addFreshEntity(portal);
         level.playSound(null, target.x, target.y, target.z, SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.8F, 1.15F);
 

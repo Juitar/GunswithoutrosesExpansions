@@ -22,6 +22,7 @@ public class TidalAbyssBlastPortalEntity extends Abyss_Blast_Portal_Entity {
     private static final String DIR_X_TAG = "DirX";
     private static final String DIR_Y_TAG = "DirY";
     private static final String DIR_Z_TAG = "DirZ";
+    private static final String PRIORITY_TARGET_TAG = "PriorityTarget";
 
     private int warmupDelayTicks;
     private int lifeTicks = 260;
@@ -29,6 +30,7 @@ public class TidalAbyssBlastPortalEntity extends Abyss_Blast_Portal_Entity {
     private boolean sentAttackEvent;
     private boolean clientSideAttackStarted;
     private UUID casterUuid;
+    private UUID priorityTargetUuid;
     private Vec3 beamDirection = Vec3.ZERO;
 
     public TidalAbyssBlastPortalEntity(EntityType<? extends Entity> type, Level level) {
@@ -46,6 +48,10 @@ public class TidalAbyssBlastPortalEntity extends Abyss_Blast_Portal_Entity {
         setDamage(Math.max(0.0F, damage));
         setHpDamage(Math.max(0.0F, hpDamage));
         setYRot((float) (Math.atan2(this.beamDirection.z, this.beamDirection.x) * 180.0D / Math.PI) + 90.0F);
+    }
+
+    public void setPriorityTarget(@Nullable LivingEntity target) {
+        this.priorityTargetUuid = target == null ? null : target.getUUID();
     }
 
     @Override
@@ -100,8 +106,9 @@ public class TidalAbyssBlastPortalEntity extends Abyss_Blast_Portal_Entity {
         LivingEntity caster = getResolvedCaster();
         TidalPortalBeamEntity blast = new TidalPortalBeamEntity(GWREEntities.TIDAL_PORTAL_BEAM.get(), level());
         blast.setPos(getX(), getY(), getZ());
+        LivingEntity priorityTarget = getResolvedPriorityTarget();
         if (caster != null) {
-            blast.configure(caster, this.beamDirection, this.laserDuration, getDamage(), getHpDamage());
+            blast.configure(caster, this.beamDirection, this.laserDuration, getDamage(), getHpDamage(), priorityTarget);
         } else {
             blast.configureFromPortal(this.beamDirection, this.laserDuration, getDamage(), getHpDamage());
         }
@@ -124,6 +131,15 @@ public class TidalAbyssBlastPortalEntity extends Abyss_Blast_Portal_Entity {
         return null;
     }
 
+    @Nullable
+    private LivingEntity getResolvedPriorityTarget() {
+        if (this.priorityTargetUuid != null && level() instanceof ServerLevel serverLevel) {
+            Entity entity = serverLevel.getEntity(this.priorityTargetUuid);
+            return entity instanceof LivingEntity living ? living : null;
+        }
+        return null;
+    }
+
     @Override
     public void handleEntityEvent(byte id) {
         super.handleEntityEvent(id);
@@ -141,6 +157,9 @@ public class TidalAbyssBlastPortalEntity extends Abyss_Blast_Portal_Entity {
         if (tag.hasUUID(OWNER_TAG)) {
             this.casterUuid = tag.getUUID(OWNER_TAG);
         }
+        if (tag.hasUUID(PRIORITY_TARGET_TAG)) {
+            this.priorityTargetUuid = tag.getUUID(PRIORITY_TARGET_TAG);
+        }
         this.beamDirection = new Vec3(tag.getDouble(DIR_X_TAG), tag.getDouble(DIR_Y_TAG), tag.getDouble(DIR_Z_TAG));
     }
 
@@ -152,6 +171,9 @@ public class TidalAbyssBlastPortalEntity extends Abyss_Blast_Portal_Entity {
         tag.putInt(LASER_DURATION_TAG, this.laserDuration);
         if (this.casterUuid != null) {
             tag.putUUID(OWNER_TAG, this.casterUuid);
+        }
+        if (this.priorityTargetUuid != null) {
+            tag.putUUID(PRIORITY_TARGET_TAG, this.priorityTargetUuid);
         }
         tag.putDouble(DIR_X_TAG, this.beamDirection.x);
         tag.putDouble(DIR_Y_TAG, this.beamDirection.y);

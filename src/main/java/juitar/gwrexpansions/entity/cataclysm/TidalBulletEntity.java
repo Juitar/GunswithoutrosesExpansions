@@ -1,6 +1,5 @@
 package juitar.gwrexpansions.entity.cataclysm;
 
-import com.github.L_Ender.cataclysm.entity.AnimationMonster.BossMonsters.The_Leviathan.Abyss_Mine_Entity;
 import juitar.gwrexpansions.config.GWREConfig;
 import juitar.gwrexpansions.entity.meetyourfight.DuskfallBulletDelegate;
 import juitar.gwrexpansions.item.cataclysm.TidalGunItem;
@@ -110,12 +109,12 @@ public class TidalBulletEntity extends BulletEntity implements DuskfallBulletDel
         GWREConfig.TidalPistolConfig config = TidalGunItem.tidalConfig();
         boolean fullForm = TidalGunItem.isFullForm(level(), shooter);
         int cost = fullForm ? config.orbCost.get() : config.landOrbCost.get();
-        double damageMultiplier = fullForm ? config.waterSkillDamageMultiplier.get() : config.landSkillDamageMultiplier.get();
+        double damage = fullForm ? config.waterOrbDamage.get() : config.landOrbDamage.get();
         double speedMultiplier = fullForm ? config.orbSpeedMultiplier.get() : config.landOrbSpeedMultiplier.get();
         int cooldownTicks = fullForm ? config.fullFormOrbCooldownTicks.get() : config.landOrbCooldownTicks.get();
 
         if (TidalGunItem.consumeHeldEnergy(shooter, cost)) {
-            spawnOrb(shooter, target, true, damageMultiplier, speedMultiplier);
+            spawnOrb(shooter, target, true, damage, speedMultiplier);
             return;
         }
 
@@ -128,7 +127,7 @@ public class TidalBulletEntity extends BulletEntity implements DuskfallBulletDel
             return;
         }
 
-        spawnOrb(shooter, target, true, damageMultiplier, speedMultiplier);
+        spawnOrb(shooter, target, true, damage, speedMultiplier);
         TidalGunItem.setEchoCooldown(shooter, false, fullForm, cooldownTicks);
     }
 
@@ -137,10 +136,11 @@ public class TidalBulletEntity extends BulletEntity implements DuskfallBulletDel
         boolean fullForm = TidalGunItem.isFullForm(level(), shooter);
         int cost = fullForm ? config.mineCost.get() : config.landMineCost.get();
         int warmup = fullForm ? 8 : 24;
+        double damage = fullForm ? config.waterMineDamage.get() : config.landMineDamage.get();
         int cooldownTicks = fullForm ? config.fullFormMineCooldownTicks.get() : config.landMineCooldownTicks.get();
 
         if (TidalGunItem.consumeHeldEnergy(shooter, cost)) {
-            spawnMine(shooter, result, warmup);
+            spawnMine(shooter, result, warmup, damage);
             return;
         }
 
@@ -153,11 +153,11 @@ public class TidalBulletEntity extends BulletEntity implements DuskfallBulletDel
             return;
         }
 
-        spawnMine(shooter, result, warmup);
+        spawnMine(shooter, result, warmup, damage);
         TidalGunItem.setEchoCooldown(shooter, true, fullForm, cooldownTicks);
     }
 
-    private void spawnOrb(LivingEntity shooter, LivingEntity target, boolean tracking, double damageMultiplier, double speedMultiplier) {
+    private void spawnOrb(LivingEntity shooter, LivingEntity target, boolean tracking, double damage, double speedMultiplier) {
         Vec3 start = shooter.getEyePosition().add(shooter.getLookAngle().scale(0.65D));
         Vec3 targetCenter = target.position().add(0.0D, target.getBbHeight() * 0.65D, 0.0D);
         Vec3 direction = targetCenter.subtract(start);
@@ -171,7 +171,7 @@ public class TidalBulletEntity extends BulletEntity implements DuskfallBulletDel
                 direction.y,
                 direction.z,
                 level(),
-                (float) Math.max(1.0D, this.damage * damageMultiplier),
+                (float) Math.max(0.0D, damage),
                 target,
                 speedMultiplier);
         orb.setPos(start.x, start.y, start.z);
@@ -182,9 +182,11 @@ public class TidalBulletEntity extends BulletEntity implements DuskfallBulletDel
                 tracking ? 0.7F : 0.45F, tracking ? 1.2F : 0.85F);
     }
 
-    private void spawnMine(LivingEntity shooter, BlockHitResult result, int warmup) {
+    private void spawnMine(LivingEntity shooter, BlockHitResult result, int warmup, double damage) {
         Vec3 hit = result.getLocation();
-        Abyss_Mine_Entity mine = new Abyss_Mine_Entity(level(), hit.x, hit.y + 0.05D, hit.z, shooter.getYRot(), warmup, shooter);
+        float mineDamage = (float) Math.max(0.0D, damage);
+        TidalAbyssMineEntity mine = new TidalAbyssMineEntity(level(), hit.x, hit.y + 0.05D, hit.z,
+                shooter.getYRot(), warmup, shooter, mineDamage);
         level().addFreshEntity(mine);
         level().playSound(null, hit.x, hit.y, hit.z, SoundEvents.BUBBLE_COLUMN_WHIRLPOOL_INSIDE, SoundSource.PLAYERS,
                 0.75F, warmup <= 8 ? 1.15F : 0.8F);

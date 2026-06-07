@@ -28,6 +28,18 @@ public final class CataclysmCombatEventHandler {
         }
 
         @SubscribeEvent(priority = EventPriority.LOW)
+        public static void onPlayerAttack(LivingHurtEvent event) {
+            if (event.getEntity().level().isClientSide || event.isCanceled() || event.getAmount() <= 0.0F) {
+                return;
+            }
+
+            Entity attacker = event.getSource().getEntity();
+            if (attacker instanceof Player player) {
+                TidalGunItem.rememberPortalPriorityTarget(player, event.getEntity());
+            }
+        }
+
+        @SubscribeEvent(priority = EventPriority.LOW)
         public static void onPlayerHurt(LivingHurtEvent event) {
             if (!(event.getEntity() instanceof Player player) || player.level().isClientSide
                     || event.isCanceled() || event.getAmount() <= 0.0F) {

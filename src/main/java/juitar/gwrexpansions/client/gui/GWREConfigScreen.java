@@ -63,6 +63,14 @@ public class GWREConfigScreen {
                                 .setSaveConsumer(GWREConfig.GENERAL.allowShooterProjectileSelfDamage::set)
                                 .setTooltip(text("allow_shooter_projectile_self_damage.tooltip"))
                                 .build());
+                category.addEntry(entries.startBooleanToggle(text("enable_cataclysm_enchantment_librarian_trades"),
+                                GWREConfig.GENERAL.enableCataclysmEnchantmentLibrarianTrades.get())
+                                .setDefaultValue(
+                                                GWREConfig.GENERAL.enableCataclysmEnchantmentLibrarianTrades
+                                                                .getDefault())
+                                .setSaveConsumer(GWREConfig.GENERAL.enableCataclysmEnchantmentLibrarianTrades::set)
+                                .setTooltip(text("enable_cataclysm_enchantment_librarian_trades.tooltip"))
+                                .build());
         }
 
         private static void addBulletCategory(ConfigBuilder builder, ConfigEntryBuilder entries) {
@@ -84,13 +92,6 @@ public class GWREConfigScreen {
                                 100.0D);
                 addInt(lavapower::add, entries, "flamejet_count", GWREConfig.BulletConfig.flamejetCount, 5, 0, 20);
                 category.addEntry(lavapower.build());
-
-                SubCategoryBuilder tidal = entries.startSubCategory(text("bullet.tidal")).setExpanded(false);
-                addDouble(tidal::add, entries, "portal_damage", GWREConfig.BulletConfig.portal_damage, 10.0D, 0.0D,
-                                100.0D);
-                addDouble(tidal::add, entries, "portal_hpdamage", GWREConfig.BulletConfig.portal_hpdamage, 0.0D, 0.0D,
-                                100.0D);
-                category.addEntry(tidal.build());
 
                 SubCategoryBuilder gold = entries.startSubCategory(text("bullet.gold")).setExpanded(false);
                 addDouble(gold::add, entries, "golden_nugget_drop_rate",
@@ -188,10 +189,14 @@ public class GWREConfigScreen {
                 addDouble(subCategory::add, entries, "tidal_orb_speed", config.orbSpeedMultiplier, 4.0D, 0.1D, 10.0D);
                 addDouble(subCategory::add, entries, "tidal_land_orb_speed", config.landOrbSpeedMultiplier, 3.2D, 0.1D,
                                 10.0D);
-                addDouble(subCategory::add, entries, "tidal_land_skill_damage_multiplier",
-                                config.landSkillDamageMultiplier, 0.35D, 0.0D, 100.0D);
-                addDouble(subCategory::add, entries, "tidal_water_skill_damage_multiplier",
-                                config.waterSkillDamageMultiplier, 0.85D, 0.0D, 100.0D);
+                addDouble(subCategory::add, entries, "tidal_land_orb_damage", config.landOrbDamage, 7.0D, 0.0D,
+                                1000.0D);
+                addDouble(subCategory::add, entries, "tidal_water_orb_damage", config.waterOrbDamage, 10.0D, 0.0D,
+                                1000.0D);
+                addDouble(subCategory::add, entries, "tidal_land_mine_damage", config.landMineDamage, 7.0D, 0.0D,
+                                1000.0D);
+                addDouble(subCategory::add, entries, "tidal_water_mine_damage", config.waterMineDamage, 10.0D, 0.0D,
+                                1000.0D);
                 addDouble(subCategory::add, entries, "tidal_portal_damage", config.portalDamage, 8.0D, 0.0D, 1000.0D);
                 addDouble(subCategory::add, entries, "tidal_portal_hp_damage", config.portalHpDamage, 0.0D, 0.0D,
                                 100.0D);

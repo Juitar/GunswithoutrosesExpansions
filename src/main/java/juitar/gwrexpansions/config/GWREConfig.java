@@ -119,6 +119,7 @@ public class GWREConfig {
         public static class GeneralConfig {
                 public final ForgeConfigSpec.BooleanValue enableAllAchievementsSuperShotgunReward;
                 public final ForgeConfigSpec.BooleanValue allowShooterProjectileSelfDamage;
+                public final ForgeConfigSpec.BooleanValue enableCataclysmEnchantmentLibrarianTrades;
 
                 public GeneralConfig(ForgeConfigSpec.Builder builder) {
                         builder.push("General");
@@ -128,6 +129,9 @@ public class GWREConfig {
                         allowShooterProjectileSelfDamage = builder
                                         .comment("Whether shooter-owned special projectiles can damage their shooter. Currently affects Diamond Bullet Shrapnel and Slime Bullets.")
                                         .define("allowShooterProjectileSelfDamage", true);
+                        enableCataclysmEnchantmentLibrarianTrades = builder
+                                        .comment("Whether Cataclysm gun-specific enchantments can appear in librarian villager trades.")
+                                        .define("enableCataclysmEnchantmentLibrarianTrades", false);
                         builder.pop();
                 }
         }
@@ -165,15 +169,15 @@ public class GWREConfig {
                         builder.push("Ignitium");
                         builder.push("Blue_Fire");
                         blueFireBonusDamage = builder
-                                        .comment("Bonus damage used while Ignitium Gatling blue fire is active.")
+                                        .comment("Bonus damage used while Ignitium Gatling Soul Fire is active.")
                                         .defineInRange("blueFireBonusDamage", 6, 0, 100);
-                        blueFireDelay = builder.comment("Fire delay used while Ignitium Gatling blue fire is active.")
+                        blueFireDelay = builder.comment("Fire delay used while Ignitium Gatling Soul Fire is active.")
                                         .defineInRange("blueFireDelay", 3, 1, 100);
                         blueFireDurationTicks = builder
-                                        .comment("Blue fire duration in ticks after crossing to half health or below.")
+                                        .comment("Soul Fire duration in ticks after crossing to half health or below.")
                                         .defineInRange("blueFireDurationTicks", 200, 1, 72000);
                         blueFireHealingBonus = builder.comment(
-                                        "Flat healing added to each Ignitium Bullet hit while blue fire is active.")
+                                        "Flat healing added to each Ignitium Bullet hit while Soul Fire is active.")
                                         .defineInRange("blueFireHealingBonus", 1.0, 0.0, 100.0);
                         builder.pop();
                         builder.pop();
@@ -206,8 +210,10 @@ public class GWREConfig {
                 public final ForgeConfigSpec.IntValue tentacleCooldownTicks;
                 public final ForgeConfigSpec.DoubleValue orbSpeedMultiplier;
                 public final ForgeConfigSpec.DoubleValue landOrbSpeedMultiplier;
-                public final ForgeConfigSpec.DoubleValue landSkillDamageMultiplier;
-                public final ForgeConfigSpec.DoubleValue waterSkillDamageMultiplier;
+                public final ForgeConfigSpec.DoubleValue landOrbDamage;
+                public final ForgeConfigSpec.DoubleValue waterOrbDamage;
+                public final ForgeConfigSpec.DoubleValue landMineDamage;
+                public final ForgeConfigSpec.DoubleValue waterMineDamage;
                 public final ForgeConfigSpec.DoubleValue portalDamage;
                 public final ForgeConfigSpec.DoubleValue portalHpDamage;
                 public final ForgeConfigSpec.IntValue portalWarmupTicks;
@@ -238,9 +244,9 @@ public class GWREConfig {
                                         .defineInRange("orbCost", 20, 0, 1000);
                         mineCost = builder.comment("Tidal energy cost for the block-hit Abyss Mine follow-up.")
                                         .defineInRange("mineCost", 12, 0, 1000);
-                        landOrbCost = builder.comment("Tidal energy cost for the weakened land Abyss Orb echo.")
+                        landOrbCost = builder.comment("Tidal energy cost for the land Abyss Orb follow-up.")
                                         .defineInRange("landOrbCost", 20, 0, 1000);
-                        landMineCost = builder.comment("Tidal energy cost for the weakened land Abyss Mine echo.")
+                        landMineCost = builder.comment("Tidal energy cost for the land Abyss Mine follow-up.")
                                         .defineInRange("landMineCost", 6, 0, 1000);
                         portalCost = builder.comment("Tidal energy cost for the charged Abyss Blast Portal.")
                                         .defineInRange("portalCost", 50, 0, 1000);
@@ -250,26 +256,26 @@ public class GWREConfig {
                                         .defineInRange("portalChargeTicks", 12, 1, 72000);
                         riftChargeTicks = builder.comment("Minimum held ticks for the full rift release.")
                                         .defineInRange("riftChargeTicks", 35, 1, 72000);
-                        landOrbCooldownTicks = builder.comment("Cooldown in ticks for the weakened land orb follow-up.")
+                        landOrbCooldownTicks = builder.comment("Cooldown in ticks for land Abyss Orb follow-ups.")
                                         .defineInRange("landOrbCooldownTicks", 100, 0, 72000);
                         landMineCooldownTicks = builder
-                                        .comment("Cooldown in ticks for the weakened land mine follow-up.")
+                                        .comment("Cooldown in ticks for land Abyss Mine follow-ups.")
                                         .defineInRange("landMineCooldownTicks", 140, 0, 72000);
-                        fullFormOrbCooldownTicks = builder.comment("Cooldown in ticks for the water/rain orb echo.")
+                        fullFormOrbCooldownTicks = builder.comment("Cooldown in ticks for water/rain Abyss Orb follow-ups.")
                                         .defineInRange("fullFormOrbCooldownTicks", 8, 0, 72000);
-                        fullFormMineCooldownTicks = builder.comment("Cooldown in ticks for the water/rain mine echo.")
+                        fullFormMineCooldownTicks = builder.comment("Cooldown in ticks for water/rain Abyss Mine follow-ups.")
                                         .defineInRange("fullFormMineCooldownTicks", 12, 0, 72000);
                         fullFormOrbChance = builder.comment(
-                                        "Chance for an entity hit to trigger a water/rain tracking Abyss Orb echo.")
+                                        "Chance for an entity hit to trigger a water/rain tracking Abyss Orb follow-up.")
                                         .defineInRange("fullFormOrbChance", 0.45, 0.0, 1.0);
                         fullFormMineChance = builder
-                                        .comment("Chance for a block hit to trigger a water/rain Abyss Mine echo.")
+                                        .comment("Chance for a block hit to trigger a water/rain Abyss Mine follow-up.")
                                         .defineInRange("fullFormMineChance", 0.30, 0.0, 1.0);
                         landOrbChance = builder.comment(
-                                        "Chance for an entity hit to trigger a weakened land tracking Abyss Orb echo.")
+                                        "Chance for an entity hit to trigger a land tracking Abyss Orb follow-up.")
                                         .defineInRange("landOrbChance", 0.20, 0.0, 1.0);
                         landMineChance = builder
-                                        .comment("Chance for a block hit to trigger a weakened land Abyss Mine echo.")
+                                        .comment("Chance for a block hit to trigger a land Abyss Mine follow-up.")
                                         .defineInRange("landMineChance", 0.12, 0.0, 1.0);
                         tentacleChance = builder.comment(
                                         "Chance for the Tidal Pistol to launch Tidal Tentacles when its holder is hurt.")
@@ -280,14 +286,16 @@ public class GWREConfig {
                                         .comment("Multiplier applied to the sustained Abyss Orb tracking speed.")
                                         .defineInRange("orbSpeedMultiplier", 4.0, 0.1, 10.0);
                         landOrbSpeedMultiplier = builder.comment(
-                                        "Multiplier applied to the sustained weakened land Abyss Orb tracking speed.")
+                                        "Multiplier applied to the sustained land Abyss Orb tracking speed.")
                                         .defineInRange("landOrbSpeedMultiplier", 3.2, 0.1, 10.0);
-                        landSkillDamageMultiplier = builder
-                                        .comment("Damage multiplier for weakened land follow-up skills.")
-                                        .defineInRange("landSkillDamageMultiplier", 0.35, 0.0, 100.0);
-                        waterSkillDamageMultiplier = builder
-                                        .comment("Damage multiplier for water/rain follow-up skills.")
-                                        .defineInRange("waterSkillDamageMultiplier", 0.85, 0.0, 100.0);
+                        landOrbDamage = builder.comment("Fixed damage for land Abyss Orb follow-ups.")
+                                        .defineInRange("landOrbDamage", 7.0, 0.0, 1000.0);
+                        waterOrbDamage = builder.comment("Fixed damage for water/rain Abyss Orb follow-ups.")
+                                        .defineInRange("waterOrbDamage", 10.0, 0.0, 1000.0);
+                        landMineDamage = builder.comment("Fixed damage for land Abyss Mine follow-ups.")
+                                        .defineInRange("landMineDamage", 7.0, 0.0, 1000.0);
+                        waterMineDamage = builder.comment("Fixed damage for water/rain Abyss Mine follow-ups.")
+                                        .defineInRange("waterMineDamage", 10.0, 0.0, 1000.0);
                         portalDamage = builder.comment("Damage for the controlled Abyss Blast Portal.")
                                         .defineInRange("portalDamage", 8.0, 0.0, 1000.0);
                         portalHpDamage = builder

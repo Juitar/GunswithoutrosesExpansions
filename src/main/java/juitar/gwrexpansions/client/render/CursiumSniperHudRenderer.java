@@ -56,8 +56,8 @@ public class CursiumSniperHudRenderer {
 
     private static void drawRage(GuiGraphics guiGraphics, ItemStack stack, int x, int y) {
         int max = Math.max(1, CursiumGunItem.getMaxRage());
-        int rage = Math.min(max, CursiumGunItem.getRage(stack));
-        float progress = rage / (float) max;
+        double rage = Math.min(max, CursiumGunItem.getRage(stack));
+        float progress = (float) (rage / max);
 
         guiGraphics.blit(RAGE_BAR, x, y, 0.0F, 0.0F, BAR_WIDTH, BAR_HEIGHT,
                 TEXTURE_WIDTH, TEXTURE_HEIGHT);

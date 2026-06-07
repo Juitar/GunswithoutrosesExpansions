@@ -9,6 +9,7 @@ import juitar.gwrexpansions.entity.cataclysm.CeraunusWaterBulletEntity;
 import juitar.gwrexpansions.entity.cataclysm.IgnitiumBulletEntity;
 import juitar.gwrexpansions.entity.cataclysm.LavapowerBulletEntity;
 import juitar.gwrexpansions.entity.cataclysm.TidalAbyssBlastPortalEntity;
+import juitar.gwrexpansions.entity.cataclysm.TidalAbyssMineEntity;
 import juitar.gwrexpansions.entity.cataclysm.TidalAbyssOrbEntity;
 import juitar.gwrexpansions.entity.cataclysm.TidalBulletEntity;
 import juitar.gwrexpansions.entity.cataclysm.TidalPortalBeamEntity;
@@ -51,6 +52,7 @@ public class GWREEntities {
     public static RegistryObject<EntityType<TidalBulletEntity>> TIDAL_BULLET;
     public static RegistryObject<EntityType<TidalRiftEntity>> TIDAL_RIFT;
     public static RegistryObject<EntityType<TidalAbyssOrbEntity>> TIDAL_ABYSS_ORB;
+    public static RegistryObject<EntityType<TidalAbyssMineEntity>> TIDAL_ABYSS_MINE;
     public static RegistryObject<EntityType<TidalAbyssBlastPortalEntity>> TIDAL_ABYSS_BLAST_PORTAL;
     public static RegistryObject<EntityType<TidalPortalBeamEntity>> TIDAL_PORTAL_BEAM;
     public static RegistryObject<EntityType<CeraunusWaterBulletEntity>> CERAUNUS_WATER_BULLET;
@@ -121,6 +123,10 @@ public class GWREEntities {
                     .<TidalAbyssOrbEntity>of(TidalAbyssOrbEntity::new, MobCategory.MISC)
                     .sized(0.3125F, 0.3125F).setUpdateInterval(2).setTrackingRange(64).setShouldReceiveVelocityUpdates(true)
                     .build(GWRexpansions.MODID + ":tidal_abyss_orb"));
+            TIDAL_ABYSS_MINE = REG.register("tidal_abyss_mine", () -> EntityType.Builder
+                    .<TidalAbyssMineEntity>of(TidalAbyssMineEntity::new, MobCategory.MISC)
+                    .sized(1.0F, 1.0F).setUpdateInterval(2).setTrackingRange(64).setShouldReceiveVelocityUpdates(false)
+                    .build(GWRexpansions.MODID + ":tidal_abyss_mine"));
             TIDAL_ABYSS_BLAST_PORTAL = REG.register("tidal_abyss_blast_portal", () -> EntityType.Builder
                     .<TidalAbyssBlastPortalEntity>of(TidalAbyssBlastPortalEntity::new, MobCategory.MISC)
                     .sized(1.0F, 1.0F).setUpdateInterval(2).setTrackingRange(96).setShouldReceiveVelocityUpdates(false)

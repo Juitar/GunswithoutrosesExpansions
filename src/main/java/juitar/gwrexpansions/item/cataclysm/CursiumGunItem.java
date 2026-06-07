@@ -35,30 +35,29 @@ import java.util.function.Supplier;
 
 public class CursiumGunItem extends ConfigurableGunItem {
     private static final String RAGE_TAG = "CursiumRage";
-    private static final String RAGE_HALF_TAG = "CursiumRageHalf";
     private static final String TRIPLE_SHOT_READY_TAG = "CursiumTripleShotReady";
     public static final String CURSIUM_SNIPER_SHOT_TAG = "CursiumSniperShot";
+    private static final double CURSIUM_DRAIN_RAGE_PER_HEADSHOT = 1.5D;
     private static final double TRIPLE_SHOT_SIDE_OFFSET = 0.45D;
 
     public CursiumGunItem(Properties properties, int bonusDamage, double damageMultiplier, int fireDelay, double inaccuracy, int enchantability, Supplier<GWREConfig.GunConfig> configSupplier) {
         super(properties, bonusDamage, damageMultiplier, fireDelay, inaccuracy, enchantability,configSupplier);
     }
 
-    public static int getRage(ItemStack stack) {
-        return stack.hasTag() ? Mth.clamp(stack.getOrCreateTag().getInt(RAGE_TAG), 0, getMaxRage()) : 0;
+    public static double getRage(ItemStack stack) {
+        return stack.hasTag() ? Mth.clamp(stack.getOrCreateTag().getDouble(RAGE_TAG), 0.0D, getMaxRage()) : 0.0D;
     }
 
     public static int getMaxRage() {
         return GWREConfig.SNIPER.cursium.maxRage.get();
     }
 
-    public static void setRage(ItemStack stack, int rage) {
-        int clamped = Mth.clamp(rage, 0, getMaxRage());
-        if (clamped <= 0) {
+    public static void setRage(ItemStack stack, double rage) {
+        double clamped = Mth.clamp(rage, 0.0D, getMaxRage());
+        if (clamped <= 0.0D) {
             stack.getOrCreateTag().remove(RAGE_TAG);
-            stack.getOrCreateTag().remove(RAGE_HALF_TAG);
         } else {
-            stack.getOrCreateTag().putInt(RAGE_TAG, clamped);
+            stack.getOrCreateTag().putDouble(RAGE_TAG, clamped);
         }
     }
 
@@ -71,17 +70,11 @@ public class CursiumGunItem extends ConfigurableGunItem {
 
     private static void addRage(ItemStack stack) {
         if (!GWRECataclysmEnchantments.has(stack, GWRECataclysmEnchantments.CURSIUM_DRAIN)) {
-            setRage(stack, getRage(stack) + 1);
+            setRage(stack, getRage(stack) + 1.0D);
             return;
         }
 
-        boolean hadHalf = stack.getOrCreateTag().getBoolean(RAGE_HALF_TAG);
-        setRage(stack, getRage(stack) + (hadHalf ? 2 : 1));
-        if (getRage(stack) >= getMaxRage()) {
-            stack.getOrCreateTag().remove(RAGE_HALF_TAG);
-        } else {
-            stack.getOrCreateTag().putBoolean(RAGE_HALF_TAG, !hadHalf);
-        }
+        setRage(stack, getRage(stack) + CURSIUM_DRAIN_RAGE_PER_HEADSHOT);
     }
 
     public static void onBulletHeadshot(BulletEntity bullet, Entity shooter, boolean headshot) {
@@ -152,13 +145,13 @@ public class CursiumGunItem extends ConfigurableGunItem {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (player.isShiftKeyDown()) {
-            int maxRage = getMaxRage();
+            double maxRage = getMaxRage();
             if (getRage(stack) < maxRage) {
                 return InteractionResultHolder.fail(stack);
             }
 
             if (!level.isClientSide) {
-                setRage(stack, 0);
+                setRage(stack, 0.0D);
                 setTripleShotReady(stack, true);
                 releasePhantomHalberdStorm((ServerLevel) level, player);
             }

@@ -1,5 +1,6 @@
 package juitar.gwrexpansions.enchantment;
 
+import juitar.gwrexpansions.config.GWREConfig;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -38,5 +39,10 @@ public class ExclusiveGunEnchantment extends Enchantment {
     @Override
     public boolean canEnchant(ItemStack stack) {
         return target.test(stack);
+    }
+
+    @Override
+    public boolean isTradeable() {
+        return GWREConfig.GENERAL.enableCataclysmEnchantmentLibrarianTrades.get();
     }
 }

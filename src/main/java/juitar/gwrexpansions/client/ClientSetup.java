@@ -23,6 +23,7 @@ import juitar.gwrexpansions.config.ClientConfig;
 import juitar.gwrexpansions.item.cataclysm.IgnitiumGatlingItem;
 import juitar.gwrexpansions.registry.CompatCataclysm;
 import juitar.gwrexpansions.registry.GWREEntities;
+import com.github.L_Ender.cataclysm.client.render.entity.Abyss_Mine_Renderer;
 import com.github.L_Ender.cataclysm.client.render.entity.Abyss_Orb_Renderer;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.renderer.entity.EntityRenderers;
@@ -81,6 +82,7 @@ public class ClientSetup {
             event.registerEntityRenderer(GWREEntities.TIDAL_BULLET.get(), ThrownItemRenderer::new);
             event.registerEntityRenderer(GWREEntities.TIDAL_RIFT.get(), TidalRiftRenderer::new);
             event.registerEntityRenderer(GWREEntities.TIDAL_ABYSS_ORB.get(), context -> new Abyss_Orb_Renderer(context));
+            event.registerEntityRenderer(GWREEntities.TIDAL_ABYSS_MINE.get(), context -> new Abyss_Mine_Renderer(context));
             event.registerEntityRenderer(GWREEntities.TIDAL_ABYSS_BLAST_PORTAL.get(), TidalAbyssBlastPortalRenderer::new);
             event.registerEntityRenderer(GWREEntities.TIDAL_PORTAL_BEAM.get(), TidalPortalBeamRenderer::new);
             event.registerEntityRenderer(GWREEntities.CERAUNUS_WATER_BULLET.get(), ThrownItemRenderer::new);

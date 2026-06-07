@@ -6,8 +6,12 @@ import com.github.L_Ender.cataclysm.init.ModSounds;
 import com.github.L_Ender.cataclysm.util.CMDamageTypes;
 import juitar.gwrexpansions.advancement.TidalPortalKilledEndermanTrigger;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -15,6 +19,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.PushReaction;
@@ -27,9 +32,17 @@ import net.minecraft.sounds.SoundSource;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class TidalPortalBeamEntity extends Portal_Abyss_Blast_Entity {
     private static final double RANGE = 50.0D;
+    private static final double RANGE_SQR = RANGE * RANGE;
+    private static final String PRIORITY_TARGET_TAG = "PriorityTarget";
+    private static final EntityDataAccessor<Integer> PRIORITY_TARGET_ID = SynchedEntityData
+            .defineId(TidalPortalBeamEntity.class, EntityDataSerializers.INT);
+
+    @Nullable
+    private UUID priorityTargetUuid;
 
     public TidalPortalBeamEntity(EntityType<? extends Portal_Abyss_Blast_Entity> type, Level level) {
         super(type, level);
@@ -37,7 +50,13 @@ public class TidalPortalBeamEntity extends Portal_Abyss_Blast_Entity {
     }
 
     public void configure(LivingEntity owner, Vec3 direction, int duration, float damage, float hpDamage) {
+        configure(owner, direction, duration, damage, hpDamage, null);
+    }
+
+    public void configure(LivingEntity owner, Vec3 direction, int duration, float damage, float hpDamage,
+            @Nullable LivingEntity priorityTarget) {
         this.caster = owner;
+        setPriorityTarget(priorityTarget);
         Vec3 beamDirection = getAutoTargetPoint().subtract(position());
         if (beamDirection.lengthSqr() < 0.001D) {
             Vec3 aimedPoint = getCasterAimedPoint(owner);
@@ -50,6 +69,12 @@ public class TidalPortalBeamEntity extends Portal_Abyss_Blast_Entity {
         if (!level().isClientSide) {
             setCasterID(owner.getId());
         }
+    }
+
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(PRIORITY_TARGET_ID, -1);
     }
 
     public void configureFromPortal(Vec3 direction, int duration, float damage, float hpDamage) {
@@ -144,11 +169,39 @@ public class TidalPortalBeamEntity extends Portal_Abyss_Blast_Entity {
     }
 
     private Vec3 getAutoTargetPoint() {
-        LivingEntity target = findNearestEnemy();
+        LivingEntity target = findPriorityTarget();
+        if (target == null) {
+            target = findNearestEnemy();
+        }
         if (target == null) {
             return position();
         }
         return target.position().add(0.0D, target.getBbHeight() * 0.55D, 0.0D);
+    }
+
+    @Nullable
+    private LivingEntity findPriorityTarget() {
+        int targetId = this.entityData.get(PRIORITY_TARGET_ID);
+        if (targetId >= 0) {
+            Entity entity = level().getEntity(targetId);
+            if (entity instanceof LivingEntity target && isPriorityTarget(target)) {
+                return target;
+            }
+        }
+
+        if (this.priorityTargetUuid != null && level() instanceof ServerLevel serverLevel) {
+            Entity entity = serverLevel.getEntity(this.priorityTargetUuid);
+            if (entity instanceof LivingEntity target && isPriorityTarget(target)) {
+                setPriorityTarget(target);
+                return target;
+            }
+        }
+        return null;
+    }
+
+    private void setPriorityTarget(@Nullable LivingEntity target) {
+        this.priorityTargetUuid = target == null ? null : target.getUUID();
+        this.entityData.set(PRIORITY_TARGET_ID, target == null ? -1 : target.getId());
     }
 
     @Nullable
@@ -230,11 +283,19 @@ public class TidalPortalBeamEntity extends Portal_Abyss_Blast_Entity {
     }
 
     private boolean shouldIgnore(LivingEntity target) {
-        return !isEnemyTarget(target);
+        return !isEnemyTarget(target) && !isPriorityTarget(target);
+    }
+
+    private boolean isPriorityTarget(LivingEntity target) {
+        return isValidOwnedTarget(target) && target.distanceToSqr(this) <= RANGE_SQR;
     }
 
     private boolean isEnemyTarget(LivingEntity target) {
-        if (!(target instanceof Enemy) || !target.isAlive() || target.isSpectator() || target == this.caster) {
+        return target instanceof Enemy && isValidOwnedTarget(target);
+    }
+
+    private boolean isValidOwnedTarget(LivingEntity target) {
+        if (!target.isAlive() || target.isSpectator() || target == this.caster) {
             return false;
         }
         if (this.caster == null) {
@@ -243,6 +304,22 @@ public class TidalPortalBeamEntity extends Portal_Abyss_Blast_Entity {
         return !this.caster.isAlliedTo(target) && !target.isAlliedTo(this.caster)
                 && target.getVehicle() != this.caster && this.caster.getVehicle() != target
                 && (target.getVehicle() == null || target.getVehicle() != this.caster.getVehicle());
+    }
+
+    @Override
+    protected void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        if (tag.hasUUID(PRIORITY_TARGET_TAG)) {
+            this.priorityTargetUuid = tag.getUUID(PRIORITY_TARGET_TAG);
+        }
+    }
+
+    @Override
+    protected void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        if (this.priorityTargetUuid != null) {
+            tag.putUUID(PRIORITY_TARGET_TAG, this.priorityTargetUuid);
+        }
     }
 
     private void hurtTarget(LivingEntity target) {
