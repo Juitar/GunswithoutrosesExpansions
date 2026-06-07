@@ -325,8 +325,8 @@ public class GWREConfig {
                         super(builder, "Mirecaller", 0, 0.7, 1.0, 24, 4.5);
                         builder.push("Mirecaller_Mechanics");
                         mineExplosionPower = builder
-                                        .comment("Explosion power for mines thrown by the Mirecaller Shotgun. Vanilla MYF Swampjaw mines default to 2.5.")
-                                        .defineInRange("mineExplosionPower", 2.5, 0.0, 16.0);
+                                        .comment("Controls how strongly Mirecaller bomb bullet damage scales explosion radius. 2.5 matches the base GWR explosive bullet scaling.")
+                                        .defineInRange("mineExplosionPower", 3.0, 0.0, 16.0);
                         builder.pop();
                 }
         }

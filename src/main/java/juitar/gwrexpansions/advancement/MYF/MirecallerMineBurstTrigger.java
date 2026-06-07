@@ -45,6 +45,19 @@ public class MirecallerMineBurstTrigger extends SimpleCriterionTrigger<Mirecalle
         ACTIVE_EXPLOSIONS.remove(player.getUUID());
     }
 
+    public static void recordMineKill(ServerPlayer player) {
+        MineExplosion explosion = ACTIVE_EXPLOSIONS.get(player.getUUID());
+        if (explosion == null) {
+            return;
+        }
+
+        explosion.kills++;
+        if (explosion.kills >= REQUIRED_KILLS) {
+            MYFCriteria.MIRECALLER_MINE_BURST.trigger(player);
+            ACTIVE_EXPLOSIONS.remove(player.getUUID());
+        }
+    }
+
     @SubscribeEvent
     public static void onLivingDeath(LivingDeathEvent event) {
         if (!event.getSource().is(DamageTypeTags.IS_EXPLOSION)) {
@@ -56,16 +69,7 @@ public class MirecallerMineBurstTrigger extends SimpleCriterionTrigger<Mirecalle
             return;
         }
 
-        MineExplosion explosion = ACTIVE_EXPLOSIONS.get(player.getUUID());
-        if (explosion == null) {
-            return;
-        }
-
-        explosion.kills++;
-        if (explosion.kills >= REQUIRED_KILLS) {
-            MYFCriteria.MIRECALLER_MINE_BURST.trigger(player);
-            ACTIVE_EXPLOSIONS.remove(player.getUUID());
-        }
+        recordMineKill(player);
     }
 
     public static class TriggerInstance extends AbstractCriterionTriggerInstance {

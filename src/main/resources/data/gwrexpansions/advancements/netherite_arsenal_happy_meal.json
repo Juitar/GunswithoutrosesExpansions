@@ -49,9 +49,13 @@
   },
   "requirements": [
     [
-      "has_netherite_shotgun",
-      "has_netherite_sniper", 
+      "has_netherite_shotgun"
+    ],
+    [
+      "has_netherite_sniper"
+    ],
+    [
       "has_netherite_gatling"
     ]
   ]
-} 
+}

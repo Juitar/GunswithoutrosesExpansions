@@ -1,5 +1,6 @@
 package juitar.gwrexpansions.client.gui;
 
+import juitar.gwrexpansions.CompatModids;
 import juitar.gwrexpansions.config.ClientConfig;
 import juitar.gwrexpansions.config.GWREConfig;
 import me.shedaniel.clothconfig2.api.AbstractConfigListEntry;
@@ -11,6 +12,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 
 import java.util.Arrays;
@@ -63,35 +65,39 @@ public class GWREConfigScreen {
                                 .setSaveConsumer(GWREConfig.GENERAL.allowShooterProjectileSelfDamage::set)
                                 .setTooltip(text("allow_shooter_projectile_self_damage.tooltip"))
                                 .build());
-                category.addEntry(entries.startBooleanToggle(text("enable_cataclysm_enchantment_librarian_trades"),
-                                GWREConfig.GENERAL.enableCataclysmEnchantmentLibrarianTrades.get())
-                                .setDefaultValue(
-                                                GWREConfig.GENERAL.enableCataclysmEnchantmentLibrarianTrades
-                                                                .getDefault())
-                                .setSaveConsumer(GWREConfig.GENERAL.enableCataclysmEnchantmentLibrarianTrades::set)
-                                .setTooltip(text("enable_cataclysm_enchantment_librarian_trades.tooltip"))
-                                .build());
+                if (isLoaded(CompatModids.CATACLYSM)) {
+                        category.addEntry(entries.startBooleanToggle(text("enable_cataclysm_enchantment_librarian_trades"),
+                                        GWREConfig.GENERAL.enableCataclysmEnchantmentLibrarianTrades.get())
+                                        .setDefaultValue(
+                                                        GWREConfig.GENERAL.enableCataclysmEnchantmentLibrarianTrades
+                                                                        .getDefault())
+                                        .setSaveConsumer(GWREConfig.GENERAL.enableCataclysmEnchantmentLibrarianTrades::set)
+                                        .setTooltip(text("enable_cataclysm_enchantment_librarian_trades.tooltip"))
+                                        .build());
+                }
         }
 
         private static void addBulletCategory(ConfigBuilder builder, ConfigEntryBuilder entries) {
                 ConfigCategory category = builder.getOrCreateCategory(text("category.bullets"));
-                SubCategoryBuilder cursium = entries.startSubCategory(text("bullet.cursium")).setExpanded(false);
-                addDouble(cursium::add, entries, "phantom_halberd_damage", GWREConfig.BulletConfig.phantomHalberDamage,
-                                10.0D,
-                                0.0D, 100.0D);
-                addDouble(cursium::add, entries, "phantom_halberd_range", GWREConfig.BulletConfig.phantomHalberdRange,
-                                5.0D,
-                                0.0D, 100.0D);
-                addInt(cursium::add, entries, "phantom_halberd_delay", GWREConfig.BulletConfig.phantomHalberdDelay, 20,
-                                0, 100);
-                category.addEntry(cursium.build());
+                if (isLoaded(CompatModids.CATACLYSM)) {
+                        SubCategoryBuilder cursium = entries.startSubCategory(text("bullet.cursium")).setExpanded(false);
+                        addDouble(cursium::add, entries, "phantom_halberd_damage", GWREConfig.BulletConfig.phantomHalberDamage,
+                                        10.0D,
+                                        0.0D, 100.0D);
+                        addDouble(cursium::add, entries, "phantom_halberd_range", GWREConfig.BulletConfig.phantomHalberdRange,
+                                        5.0D,
+                                        0.0D, 100.0D);
+                        addInt(cursium::add, entries, "phantom_halberd_delay", GWREConfig.BulletConfig.phantomHalberdDelay, 20,
+                                        0, 100);
+                        category.addEntry(cursium.build());
 
-                SubCategoryBuilder lavapower = entries.startSubCategory(text("bullet.lavapower")).setExpanded(false);
-                addDouble(lavapower::add, entries, "flamejet_damage", GWREConfig.BulletConfig.flamejetDamage, 7.0D,
-                                0.0D,
-                                100.0D);
-                addInt(lavapower::add, entries, "flamejet_count", GWREConfig.BulletConfig.flamejetCount, 5, 0, 20);
-                category.addEntry(lavapower.build());
+                        SubCategoryBuilder lavapower = entries.startSubCategory(text("bullet.lavapower")).setExpanded(false);
+                        addDouble(lavapower::add, entries, "flamejet_damage", GWREConfig.BulletConfig.flamejetDamage, 7.0D,
+                                        0.0D,
+                                        100.0D);
+                        addInt(lavapower::add, entries, "flamejet_count", GWREConfig.BulletConfig.flamejetCount, 5, 0, 20);
+                        category.addEntry(lavapower.build());
+                }
 
                 SubCategoryBuilder gold = entries.startSubCategory(text("bullet.gold")).setExpanded(false);
                 addDouble(gold::add, entries, "golden_nugget_drop_rate",
@@ -107,46 +113,73 @@ public class GWREConfigScreen {
                 ConfigCategory category = builder.getOrCreateCategory(text("category.snipers"));
                 addGunSubCategory(category, entries, "item.gwrexpansions.netherite_sniper",
                                 GWREConfig.SNIPER.netherite, 0, 1.8D, 1.5D, 24, 0.0D);
-                addCursiumSniperSubCategory(category, entries);
-                addGunSubCategory(category, entries, "config.gwrexpansions.dragonsteel_snipers",
-                                GWREConfig.SNIPER.DragonSteel, 0, 1.9D, 1.8D, 24, 0.0D);
-                addGunSubCategory(category, entries, "item.gwrexpansions.destiny_seven",
-                                GWREConfig.SNIPER.destiny_seven, 0, 1.5D, 1.5D, 24, 0.0D);
-                addHarbingerRaycasterSubCategory(category, entries);
+                if (isLoaded(CompatModids.CATACLYSM)) {
+                        addCursiumSniperSubCategory(category, entries);
+                        addHarbingerRaycasterSubCategory(category, entries);
+                }
+                if (isLoaded(CompatModids.ICEANDFIRE)) {
+                        addGunSubCategory(category, entries, "config.gwrexpansions.dragonsteel_snipers",
+                                        GWREConfig.SNIPER.DragonSteel, 0, 1.9D, 1.8D, 24, 0.0D);
+                }
+                if (isLoaded(CompatModids.MEETYOURFIGHT)) {
+                        addGunSubCategory(category, entries, "item.gwrexpansions.destiny_seven",
+                                        GWREConfig.SNIPER.destiny_seven, 0, 1.5D, 1.5D, 24, 0.0D);
+                }
         }
 
         private static void addShotgunCategory(ConfigBuilder builder, ConfigEntryBuilder entries) {
                 ConfigCategory category = builder.getOrCreateCategory(text("category.shotguns"));
                 addGunSubCategory(category, entries, "item.gwrexpansions.netherite_shotgun",
                                 GWREConfig.SHOTGUN.Netherite, 0, 0.6D, 1.0D, 20, 5.0D);
-                addGunSubCategory(category, entries, "item.gwrexpansions.netherite_monster_shotgun",
-                                GWREConfig.SHOTGUN.NetheriteMonster, 0, 0.8D, 1.0D, 20, 4.0D);
-                addGunSubCategory(category, entries, "config.gwrexpansions.dragonsteel_shotguns",
-                                GWREConfig.SHOTGUN.DragonSteel, 0, 0.75D, 1.0D, 20, 4.0D);
                 addGunSubCategory(category, entries, "item.gwrexpansions.super_shotgun",
                                 GWREConfig.SHOTGUN.Supershotgun, 0, 1.5D, 1.0D, 40, 4.0D);
-                addRemnantFangshotSubCategory(category, entries);
-                addMirecallerSubCategory(category, entries);
+                if (isLoaded(CompatModids.CATACLYSM)) {
+                        addGunSubCategory(category, entries, "item.gwrexpansions.netherite_monster_shotgun",
+                                        GWREConfig.SHOTGUN.NetheriteMonster, 0, 0.8D, 1.0D, 20, 4.0D);
+                        addRemnantFangshotSubCategory(category, entries);
+                }
+                if (isLoaded(CompatModids.ICEANDFIRE)) {
+                        addGunSubCategory(category, entries, "config.gwrexpansions.dragonsteel_shotguns",
+                                        GWREConfig.SHOTGUN.DragonSteel, 0, 0.75D, 1.0D, 20, 4.0D);
+                }
+                if (isLoaded(CompatModids.MEETYOURFIGHT)) {
+                        addMirecallerSubCategory(category, entries);
+                }
         }
 
         private static void addGatlingCategory(ConfigBuilder builder, ConfigEntryBuilder entries) {
                 ConfigCategory category = builder.getOrCreateCategory(text("category.gatlings"));
                 addGunSubCategory(category, entries, "item.gwrexpansions.netherite_gatling",
                                 GWREConfig.GATLING.Netherite, 1, 1.0D, 1.0D, 4, 3.0D);
-                addIgnitiumGatlingSubCategory(category, entries);
-                addGunSubCategory(category, entries, "config.gwrexpansions.dragonsteel_gatlings",
-                                GWREConfig.GATLING.DragonSteel, 3, 1.0D, 1.0D, 4, 3.0D);
-                addGunSubCategory(category, entries, "item.gwrexpansions.skullcrusher_pulverizer",
-                                GWREConfig.GATLING.skull, 0, 1.0D, 1.0D, 6, 6.0D);
-                addGunSubCategory(category, entries, "item.gwrexpansions.magnetic_gatling",
-                                GWREConfig.GATLING.Magnetic, 0, 0.9D, 1.0D, 4, 4.0D);
+                if (isLoaded(CompatModids.CATACLYSM)) {
+                        addIgnitiumGatlingSubCategory(category, entries);
+                }
+                if (isLoaded(CompatModids.ICEANDFIRE)) {
+                        addGunSubCategory(category, entries, "config.gwrexpansions.dragonsteel_gatlings",
+                                        GWREConfig.GATLING.DragonSteel, 3, 1.0D, 1.0D, 4, 3.0D);
+                }
+                if (isLoaded(CompatModids.BOMD)) {
+                        addGunSubCategory(category, entries, "item.gwrexpansions.skullcrusher_pulverizer",
+                                        GWREConfig.GATLING.skull, 0, 1.0D, 1.0D, 6, 6.0D);
+                }
+                if (isLoaded(CompatModids.ALEXSCAVES)) {
+                        addGunSubCategory(category, entries, "item.gwrexpansions.magnetic_gatling",
+                                        GWREConfig.GATLING.Magnetic, 0, 0.9D, 1.0D, 4, 4.0D);
+                }
         }
 
         private static void addPistolCategory(ConfigBuilder builder, ConfigEntryBuilder entries) {
+                if (!isLoaded(CompatModids.CATACLYSM) && !isLoaded(CompatModids.BOMD)) {
+                        return;
+                }
                 ConfigCategory category = builder.getOrCreateCategory(text("category.pistols"));
-                addTidalPistolSubCategory(category, entries);
-                addGunSubCategory(category, entries, "item.gwrexpansions.hellforge_revolver",
-                                GWREConfig.PISTOL.hellforge, 0, 1.0D, 1.2D, 60, 1.0D);
+                if (isLoaded(CompatModids.CATACLYSM)) {
+                        addTidalPistolSubCategory(category, entries);
+                }
+                if (isLoaded(CompatModids.BOMD)) {
+                        addGunSubCategory(category, entries, "item.gwrexpansions.hellforge_revolver",
+                                        GWREConfig.PISTOL.hellforge, 0, 1.0D, 1.2D, 60, 1.0D);
+                }
         }
 
         private static void addTidalPistolSubCategory(ConfigCategory category, ConfigEntryBuilder entries) {
@@ -212,17 +245,31 @@ public class GWREConfigScreen {
         }
 
         private static void addLauncherCategory(ConfigBuilder builder, ConfigEntryBuilder entries) {
+                if (!isLoaded(CompatModids.BOMD)) {
+                        return;
+                }
                 ConfigCategory category = builder.getOrCreateCategory(text("category.launchers"));
                 addGunSubCategory(category, entries, "item.gwrexpansions.obsidian_launcher",
                                 GWREConfig.LAUNCHER.Obisidian, 30, 1.0D, 1.0D, 60, 0.0D);
         }
 
         private static void addBurstGunCategory(ConfigBuilder builder, ConfigEntryBuilder entries) {
+                if (!isLoaded(CompatModids.BOMD)
+                                && !isLoaded(CompatModids.MEETYOURFIGHT)
+                                && !isLoaded(CompatModids.CATACLYSM)) {
+                        return;
+                }
                 ConfigCategory category = builder.getOrCreateCategory(text("category.burstguns"));
-                addBurstGunSubCategory(category, entries, "item.gwrexpansions.voidspike",
-                                GWREConfig.BURSTGUN.voidBurst, 2, 1.0D, 1.0D, 25, 0.0D, 3, 5);
-                addDuskfallSubCategory(category, entries);
-                addCeraunusSubCategory(category, entries);
+                if (isLoaded(CompatModids.BOMD)) {
+                        addBurstGunSubCategory(category, entries, "item.gwrexpansions.voidspike",
+                                        GWREConfig.BURSTGUN.voidBurst, 2, 1.0D, 1.0D, 25, 0.0D, 3, 5);
+                }
+                if (isLoaded(CompatModids.MEETYOURFIGHT)) {
+                        addDuskfallSubCategory(category, entries);
+                }
+                if (isLoaded(CompatModids.CATACLYSM)) {
+                        addCeraunusSubCategory(category, entries);
+                }
         }
 
         private static void addGunSubCategory(ConfigCategory category, ConfigEntryBuilder entries, String titleKey,
@@ -408,7 +455,7 @@ public class GWREConfigScreen {
                                 Component.translatable("item.gwrexpansions.mirecaller_shotgun")).setExpanded(false);
 
                 addGunEntries(subCategory::add, entries, config, 0, 0.7D, 1.0D, 24, 4.5D);
-                addDouble(subCategory::add, entries, "mirecaller_mine_explosion_power", config.mineExplosionPower, 2.5D,
+                addDouble(subCategory::add, entries, "mirecaller_mine_explosion_power", config.mineExplosionPower, 3.0D,
                                 0.0D,
                                 16.0D);
                 category.addEntry(subCategory.build());
@@ -459,6 +506,9 @@ public class GWREConfigScreen {
         }
 
         private static void addDestinyCategory(ConfigBuilder builder, ConfigEntryBuilder entries) {
+                if (!isLoaded(CompatModids.MEETYOURFIGHT)) {
+                        return;
+                }
                 GWREConfig.DestinyConfig config = GWREConfig.DESTINY;
                 ConfigCategory category = builder.getOrCreateCategory(text("category.destiny"));
 
@@ -521,67 +571,73 @@ public class GWREConfigScreen {
 
         private static void addClientCategory(ConfigBuilder builder, ConfigEntryBuilder entries) {
                 ConfigCategory category = builder.getOrCreateCategory(text("category.client"));
-                category.addEntry(
-                                entries.startBooleanToggle(text("coin_counter_enabled"),
-                                                ClientConfig.INSTANCE.coinCounterEnabled.get())
-                                                .setDefaultValue(ClientConfig.INSTANCE.coinCounterEnabled.getDefault())
-                                                .setSaveConsumer(ClientConfig.INSTANCE.coinCounterEnabled::set)
-                                                .build());
-                category.addEntry(entries.startEnumSelector(text("coin_counter_position"),
-                                ClientConfig.CoinCounterPosition.class, ClientConfig.INSTANCE.coinCounterPosition.get())
-                                .setEnumNameProvider(
-                                                value -> text("coin_counter_position." + value.name().toLowerCase()))
-                                .setDefaultValue(ClientConfig.INSTANCE.coinCounterPosition.getDefault())
-                                .setSaveConsumer(ClientConfig.INSTANCE.coinCounterPosition::set)
-                                .build());
-                addInt(category::addEntry, entries, "coin_counter_offset_x", ClientConfig.INSTANCE.coinCounterOffsetX,
-                                0, -2000,
-                                2000);
-                addInt(category::addEntry, entries, "coin_counter_offset_y", ClientConfig.INSTANCE.coinCounterOffsetY,
-                                8, -2000,
-                                2000);
-                addInt(category::addEntry, entries, "coin_counter_background_alpha",
-                                ClientConfig.INSTANCE.coinCounterBackgroundAlpha, 0, 0, 255);
-                addInt(category::addEntry, entries, "coin_counter_scale", ClientConfig.INSTANCE.coinCounterScale, 100,
-                                50, 200);
-                category.addEntry(entries
-                                .startBooleanToggle(text("coin_counter_show_progress"),
-                                                ClientConfig.INSTANCE.coinCounterShowProgress.get())
-                                .setDefaultValue(ClientConfig.INSTANCE.coinCounterShowProgress.getDefault())
-                                .setSaveConsumer(ClientConfig.INSTANCE.coinCounterShowProgress::set)
-                                .build());
-                addBoolean(category::addEntry, entries, "harbinger_overload_hud_enabled",
-                                ClientConfig.INSTANCE.harbingerOverloadHudEnabled, true);
-                addInt(category::addEntry, entries, "harbinger_overload_hud_offset_x",
-                                ClientConfig.INSTANCE.harbingerOverloadHudOffsetX, 0, -2000, 2000);
-                addInt(category::addEntry, entries, "harbinger_overload_hud_offset_y",
-                                ClientConfig.INSTANCE.harbingerOverloadHudOffsetY, 32, -2000, 2000);
-                addHudClientEntries(category, entries, "tidal_pistol_hud", ClientConfig.INSTANCE.tidalPistolHudEnabled,
-                                ClientConfig.INSTANCE.tidalPistolHudOffsetX,
-                                ClientConfig.INSTANCE.tidalPistolHudOffsetY, 42);
-                addHudClientEntries(category, entries, "ceraunus_burst_hud",
-                                ClientConfig.INSTANCE.ceraunusBurstHudEnabled,
-                                ClientConfig.INSTANCE.ceraunusBurstHudOffsetX,
-                                ClientConfig.INSTANCE.ceraunusBurstHudOffsetY, 18);
-                addHudClientEntries(category, entries, "remnant_fangshot_hud",
-                                ClientConfig.INSTANCE.remnantFangshotHudEnabled,
-                                ClientConfig.INSTANCE.remnantFangshotHudOffsetX,
-                                ClientConfig.INSTANCE.remnantFangshotHudOffsetY, 13);
-                addHudClientEntries(category, entries, "cursium_sniper_hud",
-                                ClientConfig.INSTANCE.cursiumSniperHudEnabled,
-                                ClientConfig.INSTANCE.cursiumSniperHudOffsetX,
-                                ClientConfig.INSTANCE.cursiumSniperHudOffsetY, 23);
+                if (isLoaded(CompatModids.BOMD)) {
+                        category.addEntry(
+                                        entries.startBooleanToggle(text("coin_counter_enabled"),
+                                                        ClientConfig.INSTANCE.coinCounterEnabled.get())
+                                                        .setDefaultValue(ClientConfig.INSTANCE.coinCounterEnabled.getDefault())
+                                                        .setSaveConsumer(ClientConfig.INSTANCE.coinCounterEnabled::set)
+                                                        .build());
+                        category.addEntry(entries.startEnumSelector(text("coin_counter_position"),
+                                        ClientConfig.CoinCounterPosition.class, ClientConfig.INSTANCE.coinCounterPosition.get())
+                                        .setEnumNameProvider(
+                                                        value -> text("coin_counter_position." + value.name().toLowerCase()))
+                                        .setDefaultValue(ClientConfig.INSTANCE.coinCounterPosition.getDefault())
+                                        .setSaveConsumer(ClientConfig.INSTANCE.coinCounterPosition::set)
+                                        .build());
+                        addInt(category::addEntry, entries, "coin_counter_offset_x", ClientConfig.INSTANCE.coinCounterOffsetX,
+                                        0, -2000,
+                                        2000);
+                        addInt(category::addEntry, entries, "coin_counter_offset_y", ClientConfig.INSTANCE.coinCounterOffsetY,
+                                        8, -2000,
+                                        2000);
+                        addInt(category::addEntry, entries, "coin_counter_background_alpha",
+                                        ClientConfig.INSTANCE.coinCounterBackgroundAlpha, 0, 0, 255);
+                        addInt(category::addEntry, entries, "coin_counter_scale", ClientConfig.INSTANCE.coinCounterScale, 100,
+                                        50, 200);
+                        category.addEntry(entries
+                                        .startBooleanToggle(text("coin_counter_show_progress"),
+                                                        ClientConfig.INSTANCE.coinCounterShowProgress.get())
+                                        .setDefaultValue(ClientConfig.INSTANCE.coinCounterShowProgress.getDefault())
+                                        .setSaveConsumer(ClientConfig.INSTANCE.coinCounterShowProgress::set)
+                                        .build());
+                }
+                if (isLoaded(CompatModids.CATACLYSM)) {
+                        addBoolean(category::addEntry, entries, "harbinger_overload_hud_enabled",
+                                        ClientConfig.INSTANCE.harbingerOverloadHudEnabled, true);
+                        addInt(category::addEntry, entries, "harbinger_overload_hud_offset_x",
+                                        ClientConfig.INSTANCE.harbingerOverloadHudOffsetX, 0, -2000, 2000);
+                        addInt(category::addEntry, entries, "harbinger_overload_hud_offset_y",
+                                        ClientConfig.INSTANCE.harbingerOverloadHudOffsetY, 32, -2000, 2000);
+                        addHudClientEntries(category, entries, "tidal_pistol_hud", ClientConfig.INSTANCE.tidalPistolHudEnabled,
+                                        ClientConfig.INSTANCE.tidalPistolHudOffsetX,
+                                        ClientConfig.INSTANCE.tidalPistolHudOffsetY, 42);
+                        addHudClientEntries(category, entries, "ceraunus_burst_hud",
+                                        ClientConfig.INSTANCE.ceraunusBurstHudEnabled,
+                                        ClientConfig.INSTANCE.ceraunusBurstHudOffsetX,
+                                        ClientConfig.INSTANCE.ceraunusBurstHudOffsetY, 18);
+                        addHudClientEntries(category, entries, "remnant_fangshot_hud",
+                                        ClientConfig.INSTANCE.remnantFangshotHudEnabled,
+                                        ClientConfig.INSTANCE.remnantFangshotHudOffsetX,
+                                        ClientConfig.INSTANCE.remnantFangshotHudOffsetY, 13);
+                        addHudClientEntries(category, entries, "cursium_sniper_hud",
+                                        ClientConfig.INSTANCE.cursiumSniperHudEnabled,
+                                        ClientConfig.INSTANCE.cursiumSniperHudOffsetX,
+                                        ClientConfig.INSTANCE.cursiumSniperHudOffsetY, 23);
+                }
                 addHudClientEntries(category, entries, "super_shotgun_hud",
                                 ClientConfig.INSTANCE.superShotgunHudEnabled,
                                 ClientConfig.INSTANCE.superShotgunHudOffsetX,
                                 ClientConfig.INSTANCE.superShotgunHudOffsetY, 10);
-                addHudClientEntries(category, entries, "skullcrusher_hud", ClientConfig.INSTANCE.skullcrusherHudEnabled,
-                                ClientConfig.INSTANCE.skullcrusherHudOffsetX,
-                                ClientConfig.INSTANCE.skullcrusherHudOffsetY, 10);
-                addHudClientEntries(category, entries, "obsidian_launcher_hud",
-                                ClientConfig.INSTANCE.obsidianLauncherHudEnabled,
-                                ClientConfig.INSTANCE.obsidianLauncherHudOffsetX,
-                                ClientConfig.INSTANCE.obsidianLauncherHudOffsetY, 10);
+                if (isLoaded(CompatModids.BOMD)) {
+                        addHudClientEntries(category, entries, "skullcrusher_hud", ClientConfig.INSTANCE.skullcrusherHudEnabled,
+                                        ClientConfig.INSTANCE.skullcrusherHudOffsetX,
+                                        ClientConfig.INSTANCE.skullcrusherHudOffsetY, 10);
+                        addHudClientEntries(category, entries, "obsidian_launcher_hud",
+                                        ClientConfig.INSTANCE.obsidianLauncherHudEnabled,
+                                        ClientConfig.INSTANCE.obsidianLauncherHudOffsetX,
+                                        ClientConfig.INSTANCE.obsidianLauncherHudOffsetY, 10);
+                }
         }
 
         private static void addHudClientEntries(ConfigCategory category, ConfigEntryBuilder entries, String key,
@@ -652,6 +708,10 @@ public class GWREConfigScreen {
 
         private static Component text(String key) {
                 return Component.translatable("config.gwrexpansions." + key);
+        }
+
+        private static boolean isLoaded(String modid) {
+                return ModList.get().isLoaded(modid);
         }
 
         private static List<String> copyStrings(List<? extends String> values) {

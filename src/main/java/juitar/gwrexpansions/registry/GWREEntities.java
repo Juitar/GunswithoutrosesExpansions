@@ -19,6 +19,7 @@ import juitar.gwrexpansions.entity.iceandfire.IceDragonSteelBulletEntity;
 import juitar.gwrexpansions.entity.iceandfire.LightningDragonSteelBulletEntity;
 import juitar.gwrexpansions.entity.meetyourfight.DuskfallPiercingBulletEntity;
 import juitar.gwrexpansions.entity.meetyourfight.DuskRoseSpiritEntity;
+import juitar.gwrexpansions.entity.meetyourfight.MirecallerBombBulletEntity;
 import juitar.gwrexpansions.entity.meetyourfight.MirecallerSwampMineEntity;
 import juitar.gwrexpansions.entity.vanilla.SlimeBulletEntity;
 import juitar.gwrexpansions.entity.vanilla.MeatHookEntity;
@@ -67,6 +68,7 @@ public class GWREEntities {
     public static RegistryObject<EntityType<MagneticBulletEntity>> MAGNETIC_BULLET;
     public static RegistryObject<EntityType<DuskfallPiercingBulletEntity>> DUSKFALL_PIERCING_BULLET;
     public static RegistryObject<EntityType<DuskRoseSpiritEntity>> DUSK_ROSE_SPIRIT;
+    public static RegistryObject<EntityType<MirecallerBombBulletEntity>> MIRECALLER_BOMB_BULLET;
     public static RegistryObject<EntityType<MirecallerSwampMineEntity>> MIRECALLER_SWAMP_MINE;
 
     public static final DeferredRegister<EntityType<?>> REG = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, GWRexpansions.MODID);
@@ -205,6 +207,13 @@ public class GWREEntities {
                     .setTrackingRange(64)
                     .setShouldReceiveVelocityUpdates(true)
                     .build(GWRexpansions.MODID + ":dusk_rose_spirit"));
+            MIRECALLER_BOMB_BULLET = REG.register("mirecaller_bomb_bullet", () -> EntityType.Builder
+                    .<MirecallerBombBulletEntity>of(MirecallerBombBulletEntity::new, MobCategory.MISC)
+                    .sized(0.3125F, 0.3125F)
+                    .setUpdateInterval(2)
+                    .setTrackingRange(64)
+                    .setShouldReceiveVelocityUpdates(true)
+                    .build(GWRexpansions.MODID + ":mirecaller_bomb_bullet"));
             MIRECALLER_SWAMP_MINE = REG.register("mirecaller_swamp_mine", () -> EntityType.Builder
                     .<MirecallerSwampMineEntity>of(MirecallerSwampMineEntity::new, MobCategory.MISC)
                     .sized(0.98F, 0.98F)
