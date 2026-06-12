@@ -1,7 +1,6 @@
 package juitar.gwrexpansions.advancement.BOMD;
 
 
-import juitar.gwrexpansions.entity.BOMD.ObsidianCoreEntity;
 import juitar.gwrexpansions.CompatModids;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import net.minecraft.server.level.ServerPlayer;
@@ -39,19 +38,37 @@ public class BOMDGameplayEventHandler {
             return;
         }
 
-        LivingEntity killed = event.getEntity();
         Entity killer = event.getSource().getDirectEntity();
 
-        // 检查是否是黑曜石核心击杀
-        if (killer instanceof ObsidianCoreEntity core) {
-            // 检查黑曜石核心是否处于回归状态（只有回归时的击杀才触发成就）
-            if (core.isReturning()) {
-                Entity owner = core.getOwner();
-                if (owner instanceof ServerPlayer player) {
-                    // 触发黑曜石核心击杀成就
-                    ObsidianCakeTrigger.onObsidianCoreKill(player);
-                }
-            }
+        if (!isObsidianCoreEntity(killer) || !isReturningObsidianCore(killer)) {
+            return;
+        }
+
+        Entity owner = getObsidianCoreOwner(killer);
+        if (owner instanceof ServerPlayer player) {
+            ObsidianCakeTrigger.onObsidianCoreKill(player);
+        }
+    }
+
+    private static boolean isObsidianCoreEntity(Entity entity) {
+        return entity != null && entity.getClass().getName().equals("juitar.gwrexpansions.entity.BOMD.ObsidianCoreEntity");
+    }
+
+    private static boolean isReturningObsidianCore(Entity entity) {
+        try {
+            Object returning = entity.getClass().getMethod("isReturning").invoke(entity);
+            return returning instanceof Boolean value && value;
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            return false;
+        }
+    }
+
+    private static Entity getObsidianCoreOwner(Entity entity) {
+        try {
+            Object owner = entity.getClass().getMethod("getOwner").invoke(entity);
+            return owner instanceof Entity ownerEntity ? ownerEntity : null;
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            return null;
         }
     }
 

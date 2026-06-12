@@ -2,7 +2,6 @@ package juitar.gwrexpansions.advancement;
 
 import com.google.gson.JsonObject;
 import juitar.gwrexpansions.GWRexpansions;
-import juitar.gwrexpansions.item.cataclysm.HarbingerRaycasterItem;
 import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
 import net.minecraft.advancements.critereon.ContextAwarePredicate;
 import net.minecraft.advancements.critereon.DeserializationContext;
@@ -25,6 +24,8 @@ import java.util.UUID;
 public class HarbingerOverloadProtocolTrigger extends SimpleCriterionTrigger<HarbingerOverloadProtocolTrigger.TriggerInstance> {
 
     private static final ResourceLocation ID = new ResourceLocation(GWRexpansions.MODID, "harbinger_overload_protocol");
+    private static final String HARBINGER_OVERLOAD_WEAPON_TAG = "GWREHarbingerOverload";
+    private static final String HARBINGER_OVERLOAD_OWNER_TAG = "GWREHarbingerOverloadOwner";
 
     @Override
     public ResourceLocation getId() {
@@ -68,12 +69,12 @@ public class HarbingerOverloadProtocolTrigger extends SimpleCriterionTrigger<Har
         }
 
         CompoundTag data = entity.getPersistentData();
-        if (!data.getBoolean(HarbingerRaycasterItem.HARBINGER_OVERLOAD_WEAPON_TAG)
-                || !data.hasUUID(HarbingerRaycasterItem.HARBINGER_OVERLOAD_OWNER_TAG)) {
+        if (!data.getBoolean(HARBINGER_OVERLOAD_WEAPON_TAG)
+                || !data.hasUUID(HARBINGER_OVERLOAD_OWNER_TAG)) {
             return null;
         }
 
-        UUID ownerId = data.getUUID(HarbingerRaycasterItem.HARBINGER_OVERLOAD_OWNER_TAG);
+        UUID ownerId = data.getUUID(HARBINGER_OVERLOAD_OWNER_TAG);
         Player player = level.getPlayerByUUID(ownerId);
         return player instanceof ServerPlayer serverPlayer ? serverPlayer : null;
     }

@@ -1,7 +1,7 @@
 package juitar.gwrexpansions.item.vanilla;
 
+import juitar.gwrexpansions.CompatModids;
 import juitar.gwrexpansions.entity.vanilla.RedstoneBulletEntity;
-import juitar.gwrexpansions.item.cataclysm.HarbingerRaycasterItem;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.item.BulletItem;
 import net.minecraft.ChatFormatting;
@@ -21,6 +21,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.ModList;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -48,8 +49,8 @@ public class RedstoneBulletItem extends BulletItem {
     @Override
     public void onLivingEntityHit(BulletEntity bullet, LivingEntity target, @Nullable Entity shooter, Level world,
                                   boolean headshot) {
-        if (headshot) {
-            HarbingerRaycasterItem.onRedstoneBulletHeadshot(bullet, target, shooter, world);
+        if (headshot && ModList.get().isLoaded(CompatModids.CATACLYSM)) {
+            juitar.gwrexpansions.compat.CataclysmHooks.onRedstoneBulletHeadshot(bullet, target, shooter, world);
         }
     }
 

@@ -1,11 +1,12 @@
 package juitar.gwrexpansions.mixin;
 
-import juitar.gwrexpansions.item.cataclysm.CursiumGunItem;
+import juitar.gwrexpansions.CompatModids;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.item.IBullet;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.fml.ModList;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -20,7 +21,9 @@ public abstract class BulletEntityMixin {
             remap = false)
     private void gwrexpansions$onLivingEntityHit(IBullet bulletItem, BulletEntity bullet, LivingEntity target,
             Entity shooter, Level level, boolean headshot) {
-        CursiumGunItem.onBulletHeadshot(bullet, shooter, headshot);
+        if (ModList.get().isLoaded(CompatModids.CATACLYSM)) {
+            juitar.gwrexpansions.compat.CataclysmHooks.onBulletHeadshot(bullet, shooter, headshot);
+        }
         bulletItem.onLivingEntityHit(bullet, target, shooter, level, headshot);
     }
 }

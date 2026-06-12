@@ -2,7 +2,6 @@ package juitar.gwrexpansions.item.iceandfire;
 
 
 import juitar.gwrexpansions.config.GWREConfig;
-import juitar.gwrexpansions.entity.cataclysm.LavapowerBulletEntity;
 import juitar.gwrexpansions.entity.iceandfire.FireDragonSteelBulletEntity;
 import juitar.gwrexpansions.item.ConfigurableGunItem;
 import juitar.gwrexpansions.registry.CompatIceandfire;

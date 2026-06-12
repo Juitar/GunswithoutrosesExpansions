@@ -1,14 +1,15 @@
 package juitar.gwrexpansions.entity.meetyourfight;
 
-import com.github.L_Ender.cataclysm.init.ModParticle;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
-import juitar.gwrexpansions.registry.CompatCataclysm;
-import juitar.gwrexpansions.registry.CompatIceandfire;
+import juitar.gwrexpansions.CompatModids;
+import juitar.gwrexpansions.GWRexpansions;
 import juitar.gwrexpansions.registry.GWREEntities;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.entity.PiercingBulletEntity;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.particles.ParticleType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,6 +18,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 
@@ -92,35 +95,43 @@ public class DuskfallPiercingBulletEntity extends PiercingBulletEntity {
         if (ammo.isEmpty()) {
             return null;
         }
-        if (CompatCataclysm.lavapower_bullet != null && CompatCataclysm.lavapower_bullet.isPresent()
-                && ammo.is(CompatCataclysm.lavapower_bullet.get())) {
+        if (isAmmo(ammo, GWRexpansions.MODID, "lavapower_bullet")) {
             return ParticleTypes.LAVA;
         }
-        if (CompatCataclysm.ignitium_bullet != null && CompatCataclysm.ignitium_bullet.isPresent()
-                && ammo.is(CompatCataclysm.ignitium_bullet.get())) {
+        if (isAmmo(ammo, GWRexpansions.MODID, "ignitium_bullet")) {
             return ParticleTypes.FLAME;
         }
-        if (CompatCataclysm.tidal_bullet != null && CompatCataclysm.tidal_bullet.isPresent()
-                && ammo.is(CompatCataclysm.tidal_bullet.get())) {
+        if (isAmmo(ammo, GWRexpansions.MODID, "tidal_bullet")) {
             return ParticleTypes.REVERSE_PORTAL;
         }
-        if (CompatCataclysm.cursium_bullet != null && CompatCataclysm.cursium_bullet.isPresent()
-                && ammo.is(CompatCataclysm.cursium_bullet.get())) {
-            return ModParticle.PHANTOM_WING_FLAME.get();
+        if (isAmmo(ammo, GWRexpansions.MODID, "cursium_bullet")) {
+            ParticleOptions particle = getCataclysmParticle("phantom_wing_flame");
+            return particle != null ? particle : ParticleTypes.FLAME;
         }
-        if (CompatIceandfire.dragonsteel_fire_bullet != null && CompatIceandfire.dragonsteel_fire_bullet.isPresent()
-                && ammo.is(CompatIceandfire.dragonsteel_fire_bullet.get())) {
+        if (isAmmo(ammo, GWRexpansions.MODID, "dragonsteel_fire_bullet")) {
             return ParticleTypes.FLAME;
         }
-        if (CompatIceandfire.dragonsteel_ice_bullet != null && CompatIceandfire.dragonsteel_ice_bullet.isPresent()
-                && ammo.is(CompatIceandfire.dragonsteel_ice_bullet.get())) {
+        if (isAmmo(ammo, GWRexpansions.MODID, "dragonsteel_ice_bullet")) {
             return ParticleTypes.SNOWFLAKE;
         }
-        if (CompatIceandfire.dragonsteel_lightning_bullet != null && CompatIceandfire.dragonsteel_lightning_bullet.isPresent()
-                && ammo.is(CompatIceandfire.dragonsteel_lightning_bullet.get())) {
+        if (isAmmo(ammo, GWRexpansions.MODID, "dragonsteel_lightning_bullet")) {
             return ParticleTypes.ELECTRIC_SPARK;
         }
         return null;
+    }
+
+    private static boolean isAmmo(ItemStack stack, String namespace, String path) {
+        return new ResourceLocation(namespace, path).equals(ForgeRegistries.ITEMS.getKey(stack.getItem()));
+    }
+
+    @Nullable
+    private static ParticleOptions getCataclysmParticle(String name) {
+        if (!ModList.get().isLoaded(CompatModids.CATACLYSM)) {
+            return null;
+        }
+
+        ParticleType<?> particle = ForgeRegistries.PARTICLE_TYPES.getValue(new ResourceLocation(CompatModids.CATACLYSM, name));
+        return particle instanceof ParticleOptions options ? options : null;
     }
 
     @Override

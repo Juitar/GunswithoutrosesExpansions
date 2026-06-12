@@ -4,7 +4,6 @@ import com.github.L_Ender.cataclysm.entity.projectile.Tidal_Tentacle_Entity;
 import com.github.L_Ender.cataclysm.entity.util.TidalTentacleUtil;
 import com.github.L_Ender.cataclysm.init.ModEntities;
 import com.github.L_Ender.cataclysm.init.ModSounds;
-import juitar.gwrexpansions.GWRexpansions;
 import juitar.gwrexpansions.config.GWREConfig;
 import juitar.gwrexpansions.item.cataclysm.TidalGunItem;
 import net.minecraft.sounds.SoundSource;
@@ -16,13 +15,11 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
 public final class CataclysmCombatEventHandler {
     private CataclysmCombatEventHandler() {
     }
 
-    @Mod.EventBusSubscriber(modid = GWRexpansions.MODID)
     public static final class CommonEvents {
         private CommonEvents() {
         }
