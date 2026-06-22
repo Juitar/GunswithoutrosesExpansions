@@ -7,7 +7,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGuiEvent;
@@ -20,9 +19,6 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = "gwrexpansions", value = Dist.CLIENT)
 public class CoinCounterOverlay {
     
-    // 硬币图标纹理路径
-    private static final ResourceLocation COIN_ICON = new ResourceLocation("gwrexpansions", "textures/gui/coin_icon.png");
-
     @SubscribeEvent
     public static void onRenderGui(RenderGuiEvent.Post event) {
         // 检查配置是否启用硬币计数器
@@ -65,13 +61,12 @@ public class CoinCounterOverlay {
 
         // 获取硬币数据
         CompoundTag tag = hellforgStack.getOrCreateTag();
-        int coins = tag.getInt("Coins");
-        int shotTimes = tag.getInt("ShotTimes");
-        int maxCoins = 4; // 硬币上限
-        int coinTime = 6; // 连击阈值
+        int coins = tag.getInt(Hellforge.NBT_COINS);
+        int rechargeTimer = tag.getInt(Hellforge.NBT_COIN_RECHARGE_TIMER);
+        int maxCoins = Hellforge.MAX_COINS;
 
         // 渲染硬币阵列
-        renderCoinArray(guiGraphics, screenWidth, screenHeight, coins, maxCoins, shotTimes, coinTime);
+        renderCoinArray(guiGraphics, screenWidth, screenHeight, coins, maxCoins, rechargeTimer);
     }
     
 
@@ -80,7 +75,7 @@ public class CoinCounterOverlay {
      * 渲染硬币阵列（显示每个硬币的状态）
      */
     private static void renderCoinArray(GuiGraphics guiGraphics, int screenWidth, int screenHeight,
-                                      int coins, int maxCoins, int shotTimes, int coinTime) {
+                                      int coins, int maxCoins, int rechargeTimer) {
         // 设置渲染状态
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
@@ -88,17 +83,14 @@ public class CoinCounterOverlay {
         // 从配置获取参数
         int scale;
         int backgroundAlpha;
-        boolean showProgress;
 
         try {
             scale = ClientConfig.INSTANCE.coinCounterScale.get();
             backgroundAlpha = ClientConfig.INSTANCE.coinCounterBackgroundAlpha.get();
-            showProgress = ClientConfig.INSTANCE.coinCounterShowProgress.get();
         } catch (IllegalStateException e) {
             // 配置尚未加载，使用默认值
             scale = 100;
             backgroundAlpha = 0;
-            showProgress = true;
         }
 
         // 计算缩放后的大小（需要在获取位置之前计算）
@@ -118,16 +110,12 @@ public class CoinCounterOverlay {
             int bgWidth = totalWidth + bgPadding * 2;
             int bgHeight = iconSize + bgPadding * 2;
 
-            if (showProgress) {
-                // 为下方的进度文本增加高度
-                bgHeight += (12 * scale) / 100; // 为进度文本预留高度空间
-            }
-
             guiGraphics.fill(startX - bgPadding, y - bgPadding,
                            startX + bgWidth - bgPadding, y + bgHeight - bgPadding, bgColor);
         }
 
         // 渲染4个硬币图标
+        float rechargeProgress = Math.min(1.0F, Math.max(0.0F, rechargeTimer / (float) Hellforge.COIN_RECHARGE_TICKS));
         for (int i = 0; i < maxCoins; i++) {
             int iconX = startX + i * spacing;
             int iconY = y;
@@ -135,25 +123,12 @@ public class CoinCounterOverlay {
             if (i < coins) {
                 // 有硬币：金色实心圆
                 renderCoin(guiGraphics, iconX, iconY, iconSize, 0xFFFFD700, 0xFFFFA500);
+            } else if (i == coins && rechargeProgress > 0.0F) {
+                renderRechargeClock(guiGraphics, iconX, iconY, iconSize, rechargeProgress);
             } else {
                 // 无硬币：灰色边框圆
                 renderCoinOutline(guiGraphics, iconX, iconY, iconSize, 0xFF666666);
             }
-        }
-
-        // 在硬币阵列正下方显示连击进度（如果启用）
-        if (showProgress) {
-            String progressText = "(" + shotTimes + "/" + coinTime + ")";
-            int progressColor = shotTimes >= coinTime ? 0xFFFFD700 : 0xFFAAAAAA; // 金色或灰色
-
-            // 计算文本宽度以便居中对齐
-            int textWidth = Minecraft.getInstance().font.width(progressText);
-
-            // 从硬币阵列1/4长度开始，在正下方绘制
-            int textX = startX + totalWidth / 4; // 从硬币阵列1/4长度开始
-            int textY = y + iconSize + (4 * scale) / 100; // 硬币阵列正下方，留一点间距
-
-            guiGraphics.drawString(Minecraft.getInstance().font, progressText, textX, textY, progressColor, true);
         }
 
         RenderSystem.disableBlend();
@@ -247,6 +222,31 @@ public class CoinCounterOverlay {
         guiGraphics.fill(x + size - 2, y + 1, x + size - 1, y + 2, color); // 右上
         guiGraphics.fill(x + 1, y + size - 2, x + 2, y + size - 1, color); // 左下
         guiGraphics.fill(x + size - 2, y + size - 2, x + size - 1, y + size - 1, color); // 右下
+    }
+
+    private static void renderRechargeClock(GuiGraphics guiGraphics, int x, int y, int size, float progress) {
+        renderCoinOutline(guiGraphics, x, y, size, 0xFF777777);
+
+        int filledRows = Math.max(0, Math.min(size, Math.round(size * progress)));
+        int fillTop = y + size - filledRows;
+        int outerColor = 0xFFFFD700;
+        int innerColor = 0xFFFFA500;
+
+        fillMaskedCoin(guiGraphics, x, y, size, fillTop, outerColor, innerColor);
+    }
+
+    private static void fillMaskedCoin(GuiGraphics guiGraphics, int x, int y, int size, int fillTop, int outerColor, int innerColor) {
+        fillMaskedRect(guiGraphics, x + 2, y + 1, x + size - 2, y + size - 1, fillTop, outerColor);
+        fillMaskedRect(guiGraphics, x + 1, y + 2, x + size - 1, y + size - 2, fillTop, outerColor);
+        fillMaskedRect(guiGraphics, x + 3, y + 2, x + size - 3, y + size - 2, fillTop, innerColor);
+        fillMaskedRect(guiGraphics, x + 2, y + 3, x + size - 2, y + size - 3, fillTop, innerColor);
+    }
+
+    private static void fillMaskedRect(GuiGraphics guiGraphics, int minX, int minY, int maxX, int maxY, int fillTop, int color) {
+        int clippedMinY = Math.max(minY, fillTop);
+        if (clippedMinY < maxY) {
+            guiGraphics.fill(minX, clippedMinY, maxX, maxY, color);
+        }
     }
 
 }

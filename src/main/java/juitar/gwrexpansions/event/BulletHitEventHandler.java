@@ -106,8 +106,7 @@ public class BulletHitEventHandler {
 
                 // 检查子弹是否有HellforgeShot标记
                 if (isHellforgeShot) {
-                    // 处理aimed效果
-                    handleAimedEffect(bullet, target, shooter);
+                    handleHellforgeCoinDamage(bullet, target, shooter);
 
                     // 检查是否需要进行硬币连锁反弹
                     checkCoinChaining(bullet, target, shooter);
@@ -120,6 +119,50 @@ public class BulletHitEventHandler {
         } finally {
             // 确保标记被重置
             PROCESSING.set(false);
+        }
+    }
+
+    private static void handleHellforgeCoinDamage(BulletEntity bullet, LivingEntity target, Entity shooter) {
+        try {
+            CompoundTag bulletData = bullet.getPersistentData();
+            int chainHits = bulletData.getInt("HellforgeCoinChainHits");
+            if (chainHits <= 0) {
+                return;
+            }
+
+            if (bulletData.getBoolean("HellforgeCoinPierceArmor")) {
+                float percent = chainHits >= 5 ? 0.06F : 0.04F;
+                float extraDamage = target.getMaxHealth() * percent;
+                int originalInvulnerableTime = target.invulnerableTime;
+                target.invulnerableTime = 0;
+                if (shooter instanceof LivingEntity livingShooter) {
+                    target.hurt(bullet.level().damageSources().indirectMagic(bullet, livingShooter), extraDamage);
+                } else {
+                    target.hurt(bullet.level().damageSources().magic(), extraDamage);
+                }
+                target.invulnerableTime = originalInvulnerableTime;
+            }
+
+            if (bulletData.getBoolean("HellforgeCoinSplash")) {
+                double radius = chainHits >= 5 ? 4.0D : 3.0D;
+                float splashDamage = (float) Math.max(2.0D, bullet.getDamage() * 0.35D);
+                target.level().getEntitiesOfClass(LivingEntity.class,
+                    target.getBoundingBox().inflate(radius),
+                    entity -> entity != target && entity.isAlive() && entity != shooter
+                ).forEach(entity -> {
+                    int originalInvulnerableTime = entity.invulnerableTime;
+                    entity.invulnerableTime = 0;
+                    if (shooter instanceof LivingEntity livingShooter) {
+                        entity.hurt(bullet.level().damageSources().indirectMagic(bullet, livingShooter), splashDamage);
+                    } else {
+                        entity.hurt(bullet.level().damageSources().magic(), splashDamage);
+                    }
+                    entity.invulnerableTime = originalInvulnerableTime;
+                });
+                bulletData.putBoolean("HellforgeCoinSplash", false);
+            }
+        } catch (Exception e) {
+            GWRexpansions.LOG.error("Error in handleHellforgeCoinDamage", e);
         }
     }
 

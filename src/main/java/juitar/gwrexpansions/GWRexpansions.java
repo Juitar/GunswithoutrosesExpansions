@@ -2,6 +2,7 @@ package juitar.gwrexpansions;
 import juitar.gwrexpansions.config.ClientConfig;
 import juitar.gwrexpansions.config.GWREConfig;
 import juitar.gwrexpansions.loot.GWRELootModifiers;
+import juitar.gwrexpansions.network.GWRENetwork;
 import juitar.gwrexpansions.registry.GWREEffects;
 import juitar.gwrexpansions.registry.GWRECataclysmEnchantments;
 import juitar.gwrexpansions.registry.GWREEntities;
@@ -26,6 +27,7 @@ public class GWRexpansions {
     public GWRexpansions() {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         GWREConfig.register();
+        GWRENetwork.register();
 
         // 只在客户端注册客户端配置和配置界面
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
