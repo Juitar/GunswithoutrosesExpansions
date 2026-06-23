@@ -16,6 +16,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -24,6 +25,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -133,23 +135,42 @@ public class CoinEntity extends ThrowableItemProjectile {
     
     @Override
     protected void onHit(HitResult result) {
+        if (result.getType() == HitResult.Type.BLOCK) {
+            if (shouldDisappearOnBlockHit(result)) {
+                playLandingEffects();
+                this.discard();
+            }
+            return;
+        }
+
         super.onHit(result);
         
         if (!this.level().isClientSide) {
-            // 播放硬币击中音效
-            this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
-                SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.NEUTRAL, 1.0F, 1.5F);
-            
-            // 生成金色粒子爆炸效果
-            for (int i = 0; i < 10; i++) {
-                this.level().addParticle(ParticleTypes.CRIT,
-                    this.getX(), this.getY(), this.getZ(),
-                    (this.random.nextDouble() - 0.5) * 0.5,
-                    (this.random.nextDouble() - 0.5) * 0.5,
-                    (this.random.nextDouble() - 0.5) * 0.5);
-            }
-            
+            playLandingEffects();
             this.discard();
+        }
+    }
+
+    private boolean shouldDisappearOnBlockHit(HitResult result) {
+        if (!(result instanceof BlockHitResult blockHit)) {
+            return false;
+        }
+        return this.getDeltaMovement().y < 0.0D && blockHit.getDirection() == Direction.UP;
+    }
+
+    private void playLandingEffects() {
+        if (this.level().isClientSide) {
+            return;
+        }
+        this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
+            SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.NEUTRAL, 1.0F, 1.5F);
+
+        for (int i = 0; i < 10; i++) {
+            this.level().addParticle(ParticleTypes.CRIT,
+                this.getX(), this.getY(), this.getZ(),
+                (this.random.nextDouble() - 0.5) * 0.5,
+                (this.random.nextDouble() - 0.5) * 0.5,
+                (this.random.nextDouble() - 0.5) * 0.5);
         }
     }
     
@@ -278,16 +299,25 @@ public class CoinEntity extends ThrowableItemProjectile {
                 bullet.setPos(this.getX(), this.getY(), this.getZ());
 
                 boolean isClone = bulletData.getBoolean("HellforgeCoinClone");
-                boolean canAwardCoin = !isClone && !bulletData.getBoolean("HellforgeCoinReturned");
                 boolean canResetCooldown = !isClone && !bulletData.getBoolean("HellforgeCoinCooldownReset");
-                int previewHits = getPreviewChainHits(livingOwner);
-                boolean shouldReturnCoin = canAwardCoin && previewHits >= 3;
+                boolean shouldResetCooldown = canResetCooldown && coinLinkHits >= 3;
                 int chainHits = isClone ? Math.max(1, bulletData.getInt("HellforgeCoinChainHits"))
-                    : Hellforge.recordCoinHit(livingOwner, shouldReturnCoin, canResetCooldown);
-                if (shouldReturnCoin) {
+                    : Hellforge.recordCoinHit(livingOwner, false, shouldResetCooldown);
+                if (!isClone) {
+                    ItemStack hellforge = Hellforge.findHellforgeStack(livingOwner);
+                    Hellforge.advanceCoinRecharge(hellforge, Hellforge.getCoinRechargeAdvanceForLink(coinLinkHits));
+                    int previousReturned = bulletData.getInt("HellforgeCoinReturnedAmount");
+                    int targetReturned = Hellforge.getCoinReturnAmount(chainHits, coinLinkHits);
+                    int coinsToReturn = Math.max(0, targetReturned - previousReturned);
+                    if (coinsToReturn > 0) {
+                        Hellforge.addCoins(hellforge, coinsToReturn);
+                        bulletData.putInt("HellforgeCoinReturnedAmount", previousReturned + coinsToReturn);
+                    }
+                }
+                if (bulletData.getInt("HellforgeCoinReturnedAmount") > 0) {
                     bulletData.putBoolean("HellforgeCoinReturned", true);
                 }
-                if (canResetCooldown) {
+                if (shouldResetCooldown) {
                     bulletData.putBoolean("HellforgeCoinCooldownReset", true);
                 }
                 bulletData.putInt("HellforgeCoinChainHits", chainHits);
@@ -333,10 +363,10 @@ public class CoinEntity extends ThrowableItemProjectile {
                     } else {
                         bulletData.putBoolean("SeekingCoinChain", false);
                         bulletData.remove("TargetCoinId");
-                    }
 
-                    if (shouldSpawnCopyBullet(bulletData, chainHits)) {
-                        spawnExtraBouncedBullet(bullet, livingOwner);
+                        if (shouldSpawnCopyBullet(bulletData, chainHits)) {
+                            spawnExtraBouncedBullet(bullet, livingOwner);
+                        }
                     }
 
                     // 播放硬币击中音效（连锁反弹音效更响亮）
@@ -412,10 +442,9 @@ public class CoinEntity extends ThrowableItemProjectile {
         extraBullet.setDeltaMovement(source.getDeltaMovement());
         extraBullet.setXRot(source.getXRot());
         extraBullet.setYRot(source.getYRot());
-        double baseDamage = getOrStoreBaseDamage(source);
-        extraBullet.setDamage(baseDamage * 0.5D);
+        extraBullet.setDamage(source.getDamage() * 0.5D);
         extraBullet.setKnockbackStrength(source.getKnockbackStrength());
-        extraBullet.setHeadshotMultiplier(source.getHeadshotMultiplier());
+        extraBullet.setHeadshotMultiplier(1.0D);
         extraBullet.setWaterInertia(source.getWaterInertia());
         extraBullet.setItem(source.getItem().copy());
         extraBullet.getPersistentData().merge(source.getPersistentData().copy());

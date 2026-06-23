@@ -11,11 +11,14 @@ import juitar.gwrexpansions.registry.VanillaItem;
 import juitar.gwrexpansions.util.CoinTargetUtils;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
@@ -38,8 +41,18 @@ public class BulletHitEventHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onProjectileImpact(ProjectileImpactEvent event) {
-        if (!(event.getProjectile() instanceof BulletEntity bullet)
-                || !(event.getRayTraceResult() instanceof EntityHitResult entityHit)) {
+        if (!(event.getProjectile() instanceof BulletEntity bullet)) {
+            return;
+        }
+
+        CompoundTag bulletData = bullet.getPersistentData();
+        if (bulletData.getBoolean("HellforgeShot")
+                && bulletData.getInt("HellforgeCoinChainHits") <= 0
+                && shouldBreakHellforgeCoinChainOnImpact(event.getRayTraceResult())) {
+            breakHellforgeCoinChainForBullet(bullet, bulletData);
+        }
+
+        if (!(event.getRayTraceResult() instanceof EntityHitResult entityHit)) {
             return;
         }
 
@@ -61,6 +74,16 @@ public class BulletHitEventHandler {
             return;
         }
 
+    }
+
+    private static boolean shouldBreakHellforgeCoinChainOnImpact(HitResult result) {
+        if (result == null) {
+            return false;
+        }
+        if (result instanceof EntityHitResult entityHit && entityHit.getEntity() instanceof CoinEntity) {
+            return false;
+        }
+        return result.getType() == HitResult.Type.BLOCK || result.getType() == HitResult.Type.ENTITY;
     }
 
     private static boolean isConfigurableShooterSelfDamageBullet(BulletEntity bullet) {
@@ -106,6 +129,12 @@ public class BulletHitEventHandler {
 
                 // 检查子弹是否有HellforgeShot标记
                 if (isHellforgeShot) {
+                    if (bulletData.getInt("HellforgeCoinChainHits") <= 0 && shooter instanceof LivingEntity livingShooter) {
+                        Hellforge.breakCoinChain(livingShooter);
+                    } else if (bulletData.getInt("HellforgeCoinChainHits") <= 0) {
+                        breakHellforgeCoinChainForBullet(bullet, bulletData);
+                    }
+
                     handleHellforgeCoinDamage(bullet, target, shooter);
 
                     // 检查是否需要进行硬币连锁反弹
@@ -353,6 +382,8 @@ public class BulletHitEventHandler {
                     if (entity instanceof BulletEntity bullet) {
                         CompoundTag bulletData = bullet.getPersistentData();
 
+                        tickHellforgeCoinMissGrace(bullet, bulletData);
+
                         if (bulletData.getBoolean("SeekingCoinChain")) {
                             handleCoinChainSeeking(bullet);
                         }
@@ -365,6 +396,43 @@ public class BulletHitEventHandler {
                     }
                 });
             });
+        }
+    }
+
+    private static void tickHellforgeCoinMissGrace(BulletEntity bullet, CompoundTag bulletData) {
+        if (!bulletData.getBoolean("HellforgeShot") || !bulletData.contains(Hellforge.BULLET_COIN_MISS_GRACE)) {
+            return;
+        }
+        if (bulletData.getInt("HellforgeCoinChainHits") > 0) {
+            bulletData.remove(Hellforge.BULLET_COIN_MISS_GRACE);
+            return;
+        }
+
+        int grace = bulletData.getInt(Hellforge.BULLET_COIN_MISS_GRACE) - 1;
+        if (grace > 0) {
+            bulletData.putInt(Hellforge.BULLET_COIN_MISS_GRACE, grace);
+            return;
+        }
+
+        if (bullet.getOwner() instanceof LivingEntity livingOwner) {
+            Hellforge.breakCoinChain(livingOwner);
+        } else {
+            breakHellforgeCoinChainForBullet(bullet, bulletData);
+        }
+        bulletData.remove(Hellforge.BULLET_COIN_MISS_GRACE);
+    }
+
+    private static void breakHellforgeCoinChainForBullet(BulletEntity bullet, CompoundTag bulletData) {
+        if (bullet.getOwner() instanceof LivingEntity livingOwner) {
+            Hellforge.breakCoinChain(livingOwner);
+            return;
+        }
+        if (!bulletData.hasUUID(Hellforge.BULLET_SHOOTER_UUID) || !(bullet.level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        ServerPlayer player = serverLevel.getServer().getPlayerList().getPlayer(bulletData.getUUID(Hellforge.BULLET_SHOOTER_UUID));
+        if (player != null) {
+            Hellforge.breakCoinChain(player);
         }
     }
 

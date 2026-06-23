@@ -10,6 +10,7 @@ public class CoinHitFeedbackClient {
     private static int currentHits;
     private static int chainTimer;
     private static int flashTicks;
+    private static int clearSuppressTicks;
 
     public static void onCoinHit(int hits, int timer) {
         Minecraft mc = Minecraft.getInstance();
@@ -18,6 +19,16 @@ public class CoinHitFeedbackClient {
             return;
         }
 
+        if (hits <= 0 || timer <= 0) {
+            currentHits = 0;
+            chainTimer = 0;
+            feedbackTicks = 0;
+            flashTicks = 0;
+            clearSuppressTicks = 20;
+            return;
+        }
+
+        clearSuppressTicks = 0;
         currentHits = hits;
         chainTimer = timer;
         feedbackTicks = Math.min(7, 3 + Math.max(0, hits / 2));
@@ -48,6 +59,9 @@ public class CoinHitFeedbackClient {
         if (flashTicks > 0) {
             flashTicks--;
         }
+        if (clearSuppressTicks > 0) {
+            clearSuppressTicks--;
+        }
         if (chainTimer <= 0) {
             currentHits = 0;
         }
@@ -63,5 +77,9 @@ public class CoinHitFeedbackClient {
 
     public static int getFlashTicks() {
         return flashTicks;
+    }
+
+    public static boolean isClearSuppressed() {
+        return clearSuppressTicks > 0;
     }
 }

@@ -31,6 +31,9 @@ public class CoinChainHudOverlay {
         if (stack.isEmpty()) {
             return;
         }
+        if (CoinHitFeedbackClient.isClearSuppressed()) {
+            return;
+        }
 
         CompoundTag tag = stack.getOrCreateTag();
         int hits = Math.max(tag.getInt("CoinChainHits"), CoinHitFeedbackClient.getCurrentHits());

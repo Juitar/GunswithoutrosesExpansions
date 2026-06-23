@@ -4,6 +4,8 @@ import juitar.gwrexpansions.config.GWREConfig;
 import juitar.gwrexpansions.entity.BOMD.CoinEntity;
 import juitar.gwrexpansions.item.ConfigurableGunItem;
 import juitar.gwrexpansions.item.GunSkillItem;
+import juitar.gwrexpansions.network.CoinHitFeedbackPacket;
+import juitar.gwrexpansions.network.GWRENetwork;
 import juitar.gwrexpansions.registry.GWRESounds;
 import net.minecraft.server.level.ServerPlayer;
 import lykrast.gunswithoutroses.entity.BulletEntity;
@@ -22,6 +24,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.util.List;
 
@@ -37,10 +40,14 @@ public class Hellforge extends ConfigurableGunItem implements GunSkillItem {
     public static final String NBT_COIN_THROW_COOLDOWN = "CoinThrowCooldown";
     public static final String NBT_PRIORITY_TARGET_ID = "PriorityTargetId";
     public static final String NBT_PRIORITY_TARGET_TIMER = "PriorityTargetTimer";
+    public static final String BULLET_COIN_MISS_GRACE = "HellforgeCoinMissGrace";
+    public static final String BULLET_SHOOTER_UUID = "HellforgeShooterUuid";
     public static final int MAX_COINS = 4;
     public static final int COIN_RECHARGE_TICKS = 60;
     public static final int COIN_CHAIN_WINDOW_TICKS = 40;
     public static final int PRIORITY_TARGET_TICKS = 100;
+    public static final int COIN_HIT_RECHARGE_ADVANCE_TICKS = 12;
+    public static final int COIN_LINK_RECHARGE_ADVANCE_TICKS = 8;
     private static final int BASE_THROW_COOLDOWN_TICKS = 4;
     private static final int CHAIN_THROW_COOLDOWN_TICKS = 3;
     private static final int MAX_THROW_QUEUE = 2;
@@ -64,6 +71,11 @@ public class Hellforge extends ConfigurableGunItem implements GunSkillItem {
     @Override
     protected void shoot(Level level, Player player, ItemStack gun, ItemStack ammo, IBullet bulletItem, boolean bulletFree) {
         super.shoot(level, player, gun, ammo, bulletItem, bulletFree);
+    }
+
+    @Override
+    public double getHeadshotMultiplier(ItemStack stack, @Nullable LivingEntity shooter) {
+        return 1.0D;
     }
 
     @Override
@@ -226,6 +238,20 @@ public class Hellforge extends ConfigurableGunItem implements GunSkillItem {
         return hits;
     }
 
+    public static void breakCoinChain(LivingEntity owner) {
+        ItemStack stack = findHellforgeStack(owner);
+        if (stack.isEmpty()) {
+            return;
+        }
+        CompoundTag tag = stack.getOrCreateTag();
+        tag.putInt(NBT_COIN_CHAIN_HITS, 0);
+        tag.putInt(NBT_COIN_CHAIN_TIMER, 0);
+        if (owner instanceof ServerPlayer player) {
+            GWRENetwork.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player),
+                new CoinHitFeedbackPacket(0, 0));
+        }
+    }
+
     public static void addCoins(ItemStack stack, int amount) {
         if (stack.isEmpty()) {
             return;
@@ -237,6 +263,26 @@ public class Hellforge extends ConfigurableGunItem implements GunSkillItem {
         }
     }
 
+    public static void advanceCoinRecharge(ItemStack stack, int ticks) {
+        if (stack.isEmpty() || ticks <= 0) {
+            return;
+        }
+        CompoundTag tag = stack.getOrCreateTag();
+        int coins = tag.getInt(NBT_COINS);
+        if (coins >= MAX_COINS) {
+            tag.putInt(NBT_COIN_RECHARGE_TIMER, 0);
+            return;
+        }
+
+        int rechargeTimer = tag.getInt(NBT_COIN_RECHARGE_TIMER) + ticks;
+        while (coins < MAX_COINS && rechargeTimer >= COIN_RECHARGE_TICKS) {
+            coins++;
+            rechargeTimer -= COIN_RECHARGE_TICKS;
+        }
+        tag.putInt(NBT_COINS, coins);
+        tag.putInt(NBT_COIN_RECHARGE_TIMER, coins >= MAX_COINS ? 0 : rechargeTimer);
+    }
+
     public static String getCoinChainGrade(int hits) {
         if (hits >= 5) return "S";
         if (hits == 4) return "A";
@@ -246,16 +292,52 @@ public class Hellforge extends ConfigurableGunItem implements GunSkillItem {
     }
 
     public static double getCoinDamageMultiplier(int hits) {
-        if (hits >= 5) return 3.0;
-        if (hits == 4) return 2.6;
-        if (hits == 3) return 2.2;
-        if (hits == 2) return 1.9;
-        return 1.6;
+        if (hits >= 5) return 2.3;
+        if (hits == 4) return 2.05;
+        if (hits == 3) return 1.8;
+        if (hits == 2) return 1.55;
+        return 1.35;
     }
 
     public static double getCoinLinkDamageMultiplier(int chainHits, int coinLinkHits) {
+        return getCoinDamageMultiplier(chainHits) * getCoinLinkMultiplier(coinLinkHits);
+    }
+
+    public static double getCoinLinkMultiplier(int coinLinkHits) {
         int cappedLinkHits = Math.max(1, Math.min(coinLinkHits, 4));
-        return getCoinDamageMultiplier(chainHits) + ((cappedLinkHits - 1) * 0.25D);
+        return switch (cappedLinkHits) {
+            case 4 -> 2.25D;
+            case 3 -> 1.75D;
+            case 2 -> 1.35D;
+            default -> 1.0D;
+        };
+    }
+
+    public static int getCoinReturnAmount(int chainHits, int coinLinkHits) {
+        int cappedLinkHits = Math.max(1, Math.min(coinLinkHits, 4));
+        if (chainHits >= 5) {
+            if (cappedLinkHits >= 3) return 3;
+            if (cappedLinkHits == 2) return 2;
+            return 1;
+        }
+        if (chainHits == 4) {
+            if (cappedLinkHits >= 4) return 3;
+            if (cappedLinkHits >= 2) return 2;
+            return 1;
+        }
+        if (chainHits == 3) {
+            return cappedLinkHits >= 3 ? 2 : 1;
+        }
+        if (chainHits == 2) {
+            if (cappedLinkHits >= 4) return 2;
+            return cappedLinkHits >= 2 ? 1 : 0;
+        }
+        return cappedLinkHits >= 3 ? 1 : 0;
+    }
+
+    public static int getCoinRechargeAdvanceForLink(int coinLinkHits) {
+        int cappedLinkHits = Math.max(1, Math.min(coinLinkHits, 4));
+        return cappedLinkHits <= 1 ? COIN_HIT_RECHARGE_ADVANCE_TICKS : COIN_LINK_RECHARGE_ADVANCE_TICKS;
     }
 
     public static int getPriorityTargetId(LivingEntity owner) {
@@ -282,7 +364,13 @@ public class Hellforge extends ConfigurableGunItem implements GunSkillItem {
         super.affectBulletEntity(shooter, gun, bullet, bulletFree);
 
         // 为子弹添加特殊标记，用于识别是Hellforge发射的子弹
-        bullet.getPersistentData().putBoolean("HellforgeShot", true);
+        CompoundTag bulletData = bullet.getPersistentData();
+        bulletData.putBoolean("HellforgeShot", true);
+        bulletData.putUUID(BULLET_SHOOTER_UUID, shooter.getUUID());
+        if (gun.getOrCreateTag().getInt(NBT_COIN_CHAIN_HITS) > 0) {
+            bulletData.putInt(BULLET_COIN_MISS_GRACE, 10);
+        }
+        bullet.setHeadshotMultiplier(1.0D);
     }
 
     /**
