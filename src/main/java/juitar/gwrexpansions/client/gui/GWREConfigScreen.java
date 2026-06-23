@@ -177,11 +177,53 @@ public class GWREConfigScreen {
                         addTidalPistolSubCategory(category, entries);
                 }
                 if (isLoaded(CompatModids.BOMD)) {
-                        addGunSubCategory(category, entries, "item.gwrexpansions.hellforge_revolver",
-                                        GWREConfig.PISTOL.hellforge, 0, 1.0D, 1.2D, 60, 1.0D);
+                        addHellforgeSubCategory(category, entries);
                 }
         }
 
+        private static void addHellforgeSubCategory(ConfigCategory category, ConfigEntryBuilder entries) {
+                GWREConfig.HellforgeConfig config = GWREConfig.PISTOL.hellforge;
+                SubCategoryBuilder subCategory = entries.startSubCategory(
+                                Component.translatable("item.gwrexpansions.hellforge_revolver"))
+                                .setExpanded(false);
+
+                addGunEntries(subCategory::add, entries, config, 0, 1.0D, 1.2D, 18, 1.0D);
+                addInt(subCategory::add, entries, "hellforge_max_coins", config.maxCoins, 4, 1, 16);
+                addInt(subCategory::add, entries, "hellforge_coin_recharge_ticks", config.coinRechargeTicks, 60, 1, 72000);
+                addInt(subCategory::add, entries, "hellforge_coin_chain_window_ticks", config.coinChainWindowTicks, 40, 1, 72000);
+                addInt(subCategory::add, entries, "hellforge_coin_hit_recharge_advance_ticks", config.coinHitRechargeAdvanceTicks, 12, 0, 72000);
+                addInt(subCategory::add, entries, "hellforge_coin_link_recharge_advance_ticks", config.coinLinkRechargeAdvanceTicks, 8, 0, 72000);
+                addInt(subCategory::add, entries, "hellforge_coin_overheat_ticks", config.coinOverheatTicks, 100, 1, 72000);
+                addInt(subCategory::add, entries, "hellforge_coin_strong_overheat_ticks", config.coinStrongOverheatTicks, 100, 1, 72000);
+                addInt(subCategory::add, entries, "hellforge_coin_strong_overheat_recharge_advance_ticks", config.coinStrongOverheatRechargeAdvanceTicks, 60, 0, 72000);
+                addInt(subCategory::add, entries, "hellforge_base_throw_cooldown_ticks", config.baseThrowCooldownTicks, 4, 0, 100);
+                addInt(subCategory::add, entries, "hellforge_chain_throw_cooldown_ticks", config.chainThrowCooldownTicks, 3, 0, 100);
+                addInt(subCategory::add, entries, "hellforge_max_throw_queue", config.maxThrowQueue, 2, 0, 16);
+                addDouble(subCategory::add, entries, "hellforge_overheat_headshot_multiplier", config.overheatHeadshotMultiplier, 1.5D, 1.0D, 10.0D);
+                addDouble(subCategory::add, entries, "hellforge_overheat_damage_multiplier", config.overheatDamageMultiplier, 1.2D, 0.0D, 10.0D);
+                addDouble(subCategory::add, entries, "hellforge_overheat_fire_delay_multiplier", config.overheatFireDelayMultiplier, 0.7D, 0.01D, 10.0D);
+                addDouble(subCategory::add, entries, "hellforge_coin_fire_delay_d", config.coinFireDelayD, 1.0D, 0.01D, 10.0D);
+                addDouble(subCategory::add, entries, "hellforge_coin_fire_delay_c", config.coinFireDelayC, 0.9D, 0.01D, 10.0D);
+                addDouble(subCategory::add, entries, "hellforge_coin_fire_delay_b", config.coinFireDelayB, 0.8D, 0.01D, 10.0D);
+                addDouble(subCategory::add, entries, "hellforge_coin_fire_delay_a", config.coinFireDelayA, 0.65D, 0.01D, 10.0D);
+                addDouble(subCategory::add, entries, "hellforge_coin_fire_delay_s", config.coinFireDelayS, 0.5D, 0.01D, 10.0D);
+                addDouble(subCategory::add, entries, "hellforge_coin_damage_d", config.coinDamageD, 1.35D, 0.0D, 100.0D);
+                addDouble(subCategory::add, entries, "hellforge_coin_damage_c", config.coinDamageC, 1.55D, 0.0D, 100.0D);
+                addDouble(subCategory::add, entries, "hellforge_coin_damage_b", config.coinDamageB, 1.8D, 0.0D, 100.0D);
+                addDouble(subCategory::add, entries, "hellforge_coin_damage_a", config.coinDamageA, 2.05D, 0.0D, 100.0D);
+                addDouble(subCategory::add, entries, "hellforge_coin_damage_s", config.coinDamageS, 2.3D, 0.0D, 100.0D);
+                addDouble(subCategory::add, entries, "hellforge_coin_link_multiplier_2", config.coinLinkMultiplier2, 1.5D, 0.0D, 100.0D);
+                addDouble(subCategory::add, entries, "hellforge_coin_link_multiplier_3", config.coinLinkMultiplier3, 2.1D, 0.0D, 100.0D);
+                addDouble(subCategory::add, entries, "hellforge_coin_link_multiplier_4", config.coinLinkMultiplier4, 3.0D, 0.0D, 100.0D);
+                addInt(subCategory::add, entries, "hellforge_coin_return_grade_hits", config.coinReturnGradeHits, 3, 1, 100);
+                addInt(subCategory::add, entries, "hellforge_coin_return_link_2", config.coinReturnLink2, 1, 0, 16);
+                addInt(subCategory::add, entries, "hellforge_coin_return_link_3", config.coinReturnLink3, 2, 0, 16);
+                addInt(subCategory::add, entries, "hellforge_coin_return_link_4", config.coinReturnLink4, 3, 0, 16);
+                addDouble(subCategory::add, entries, "hellforge_coin_copy_damage_ratio_default", config.coinCopyDamageRatioDefault, 0.5D, 0.0D, 10.0D);
+                addDouble(subCategory::add, entries, "hellforge_coin_copy_damage_ratio_3", config.coinCopyDamageRatio3, 0.6D, 0.0D, 10.0D);
+                addDouble(subCategory::add, entries, "hellforge_coin_copy_damage_ratio_4", config.coinCopyDamageRatio4, 0.75D, 0.0D, 10.0D);
+                category.addEntry(subCategory.build());
+        }
         private static void addTidalPistolSubCategory(ConfigCategory category, ConfigEntryBuilder entries) {
                 GWREConfig.TidalPistolConfig config = GWREConfig.PISTOL.tidal;
                 SubCategoryBuilder subCategory = entries.startSubCategory(
@@ -637,6 +679,24 @@ public class GWREConfigScreen {
                                         ClientConfig.INSTANCE.obsidianLauncherHudEnabled,
                                         ClientConfig.INSTANCE.obsidianLauncherHudOffsetX,
                                         ClientConfig.INSTANCE.obsidianLauncherHudOffsetY, 10);
+                        addHudClientEntries(category, entries, "hellforge_chain_hud",
+                                        ClientConfig.INSTANCE.hellforgeChainHudEnabled,
+                                        ClientConfig.INSTANCE.hellforgeChainHudOffsetX,
+                                        ClientConfig.INSTANCE.hellforgeChainHudOffsetY, 30);
+                        addInt(category::addEntry, entries, "hellforge_chain_hud_scale",
+                                        ClientConfig.INSTANCE.hellforgeChainHudScale, 100, 50, 200);
+                        addBoolean(category::addEntry, entries, "hellforge_coin_hit_shock_enabled",
+                                        ClientConfig.INSTANCE.hellforgeCoinHitShockEnabled, true);
+                        addInt(category::addEntry, entries, "hellforge_coin_hit_shock_strength",
+                                        ClientConfig.INSTANCE.hellforgeCoinHitShockStrength, 100, 0, 300);
+                        addBoolean(category::addEntry, entries, "hellforge_coin_hit_fov_punch_enabled",
+                                        ClientConfig.INSTANCE.hellforgeCoinHitFovPunchEnabled, true);
+                        addBoolean(category::addEntry, entries, "hellforge_coin_hit_hud_flash_enabled",
+                                        ClientConfig.INSTANCE.hellforgeCoinHitHudFlashEnabled, true);
+                        addBoolean(category::addEntry, entries, "hellforge_overheat_voice_enabled",
+                                        ClientConfig.INSTANCE.hellforgeOverheatVoiceEnabled, true);
+                        addBoolean(category::addEntry, entries, "hellforge_overheat_music_enabled",
+                                        ClientConfig.INSTANCE.hellforgeOverheatMusicEnabled, true);
                 }
         }
 

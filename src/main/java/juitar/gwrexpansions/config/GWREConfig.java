@@ -700,16 +700,93 @@ public class GWREConfig {
         // 手枪配置
         public static class PistolConfigs {
                 public final TidalPistolConfig tidal;
-                public final GunConfig hellforge;
+                public final HellforgeConfig hellforge;
 
                 public PistolConfigs(ForgeConfigSpec.Builder builder) {
                         builder.push("Pistol");
                         tidal = new TidalPistolConfig(builder);
-                        hellforge = new GunConfig(builder, "Hellforge", 0, 1.0, 1.2, 60, 1.0);
+                        hellforge = new HellforgeConfig(builder);
                         builder.pop();
                 }
         }
 
+
+        public static class HellforgeConfig extends GunConfig {
+                public final ForgeConfigSpec.IntValue maxCoins;
+                public final ForgeConfigSpec.IntValue coinRechargeTicks;
+                public final ForgeConfigSpec.IntValue coinChainWindowTicks;
+                public final ForgeConfigSpec.IntValue coinHitRechargeAdvanceTicks;
+                public final ForgeConfigSpec.IntValue coinLinkRechargeAdvanceTicks;
+                public final ForgeConfigSpec.IntValue coinOverheatTicks;
+                public final ForgeConfigSpec.IntValue coinStrongOverheatTicks;
+                public final ForgeConfigSpec.IntValue coinStrongOverheatRechargeAdvanceTicks;
+                public final ForgeConfigSpec.IntValue baseThrowCooldownTicks;
+                public final ForgeConfigSpec.IntValue chainThrowCooldownTicks;
+                public final ForgeConfigSpec.IntValue maxThrowQueue;
+                public final ForgeConfigSpec.DoubleValue overheatHeadshotMultiplier;
+                public final ForgeConfigSpec.DoubleValue overheatDamageMultiplier;
+                public final ForgeConfigSpec.DoubleValue overheatFireDelayMultiplier;
+                public final ForgeConfigSpec.DoubleValue coinFireDelayD;
+                public final ForgeConfigSpec.DoubleValue coinFireDelayC;
+                public final ForgeConfigSpec.DoubleValue coinFireDelayB;
+                public final ForgeConfigSpec.DoubleValue coinFireDelayA;
+                public final ForgeConfigSpec.DoubleValue coinFireDelayS;
+                public final ForgeConfigSpec.DoubleValue coinDamageD;
+                public final ForgeConfigSpec.DoubleValue coinDamageC;
+                public final ForgeConfigSpec.DoubleValue coinDamageB;
+                public final ForgeConfigSpec.DoubleValue coinDamageA;
+                public final ForgeConfigSpec.DoubleValue coinDamageS;
+                public final ForgeConfigSpec.DoubleValue coinLinkMultiplier2;
+                public final ForgeConfigSpec.DoubleValue coinLinkMultiplier3;
+                public final ForgeConfigSpec.DoubleValue coinLinkMultiplier4;
+                public final ForgeConfigSpec.IntValue coinReturnGradeHits;
+                public final ForgeConfigSpec.IntValue coinReturnLink2;
+                public final ForgeConfigSpec.IntValue coinReturnLink3;
+                public final ForgeConfigSpec.IntValue coinReturnLink4;
+                public final ForgeConfigSpec.DoubleValue coinCopyDamageRatioDefault;
+                public final ForgeConfigSpec.DoubleValue coinCopyDamageRatio3;
+                public final ForgeConfigSpec.DoubleValue coinCopyDamageRatio4;
+
+                public HellforgeConfig(ForgeConfigSpec.Builder builder) {
+                        super(builder, "Hellforge", 0, 1.0, 1.2, 18, 1.0);
+                        builder.push("Hellforge_Mechanics");
+                        maxCoins = builder.comment("Maximum Hellforge coins stored.").defineInRange("maxCoins", 4, 1, 16);
+                        coinRechargeTicks = builder.comment("Ticks required to regenerate one coin.").defineInRange("coinRechargeTicks", 60, 1, 72000);
+                        coinChainWindowTicks = builder.comment("Ticks before the coin chain grade expires.").defineInRange("coinChainWindowTicks", 40, 1, 72000);
+                        coinHitRechargeAdvanceTicks = builder.comment("Recharge progress advanced when one coin is hit.").defineInRange("coinHitRechargeAdvanceTicks", 12, 0, 72000);
+                        coinLinkRechargeAdvanceTicks = builder.comment("Recharge progress advanced by multi-coin links.").defineInRange("coinLinkRechargeAdvanceTicks", 8, 0, 72000);
+                        coinOverheatTicks = builder.comment("Overheat duration in ticks.").defineInRange("coinOverheatTicks", 100, 1, 72000);
+                        coinStrongOverheatTicks = builder.comment("Overheat duration for 4-coin chains.").defineInRange("coinStrongOverheatTicks", 100, 1, 72000);
+                        coinStrongOverheatRechargeAdvanceTicks = builder.comment("Recharge progress advanced by 4-coin overheat.").defineInRange("coinStrongOverheatRechargeAdvanceTicks", 60, 0, 72000);
+                        baseThrowCooldownTicks = builder.comment("Base coin throw cooldown in ticks.").defineInRange("baseThrowCooldownTicks", 4, 0, 100);
+                        chainThrowCooldownTicks = builder.comment("Coin throw cooldown while at S rank.").defineInRange("chainThrowCooldownTicks", 3, 0, 100);
+                        maxThrowQueue = builder.comment("Maximum queued coin throws.").defineInRange("maxThrowQueue", 2, 0, 16);
+                        overheatHeadshotMultiplier = builder.comment("Hellforge headshot multiplier while overheated.").defineInRange("overheatHeadshotMultiplier", 1.5, 1.0, 10.0);
+                        overheatDamageMultiplier = builder.comment("Normal bullet damage multiplier while overheated.").defineInRange("overheatDamageMultiplier", 1.2, 0.0, 10.0);
+                        overheatFireDelayMultiplier = builder.comment("Fire delay multiplier while overheated.").defineInRange("overheatFireDelayMultiplier", 0.7, 0.01, 10.0);
+                        coinFireDelayD = builder.comment("Fire delay multiplier while Hellforge coin chain is D rank.").defineInRange("coinFireDelayD", 1.0, 0.01, 10.0);
+                        coinFireDelayC = builder.comment("Fire delay multiplier while Hellforge coin chain is C rank.").defineInRange("coinFireDelayC", 0.9, 0.01, 10.0);
+                        coinFireDelayB = builder.comment("Fire delay multiplier while Hellforge coin chain is B rank.").defineInRange("coinFireDelayB", 0.8, 0.01, 10.0);
+                        coinFireDelayA = builder.comment("Fire delay multiplier while Hellforge coin chain is A rank.").defineInRange("coinFireDelayA", 0.65, 0.01, 10.0);
+                        coinFireDelayS = builder.comment("Fire delay multiplier while Hellforge coin chain is S rank.").defineInRange("coinFireDelayS", 0.5, 0.01, 10.0);
+                        coinDamageD = builder.defineInRange("coinDamageD", 1.35, 0.0, 100.0);
+                        coinDamageC = builder.defineInRange("coinDamageC", 1.55, 0.0, 100.0);
+                        coinDamageB = builder.defineInRange("coinDamageB", 1.8, 0.0, 100.0);
+                        coinDamageA = builder.defineInRange("coinDamageA", 2.05, 0.0, 100.0);
+                        coinDamageS = builder.defineInRange("coinDamageS", 2.3, 0.0, 100.0);
+                        coinLinkMultiplier2 = builder.defineInRange("coinLinkMultiplier2", 1.5, 0.0, 100.0);
+                        coinLinkMultiplier3 = builder.defineInRange("coinLinkMultiplier3", 2.1, 0.0, 100.0);
+                        coinLinkMultiplier4 = builder.defineInRange("coinLinkMultiplier4", 3.0, 0.0, 100.0);
+                        coinReturnGradeHits = builder.comment("Minimum chain hits required for the grade-based 1 coin refund.").defineInRange("coinReturnGradeHits", 3, 1, 100);
+                        coinReturnLink2 = builder.defineInRange("coinReturnLink2", 1, 0, 16);
+                        coinReturnLink3 = builder.defineInRange("coinReturnLink3", 2, 0, 16);
+                        coinReturnLink4 = builder.defineInRange("coinReturnLink4", 3, 0, 16);
+                        coinCopyDamageRatioDefault = builder.defineInRange("coinCopyDamageRatioDefault", 0.5, 0.0, 10.0);
+                        coinCopyDamageRatio3 = builder.defineInRange("coinCopyDamageRatio3", 0.6, 0.0, 10.0);
+                        coinCopyDamageRatio4 = builder.defineInRange("coinCopyDamageRatio4", 0.75, 0.0, 10.0);
+                        builder.pop();
+                }
+        }
         public static class LauncherConfigs {
                 public final GunConfig Obisidian;
 

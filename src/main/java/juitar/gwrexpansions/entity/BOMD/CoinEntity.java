@@ -274,9 +274,12 @@ public class CoinEntity extends ThrowableItemProjectile {
 
                 boolean isClone = bulletData.getBoolean("HellforgeCoinClone");
                 boolean canResetCooldown = !isClone && !bulletData.getBoolean("HellforgeCoinCooldownReset");
-                boolean shouldResetCooldown = canResetCooldown && coinLinkHits >= 3;
                 int chainHits = isClone ? Math.max(1, bulletData.getInt("HellforgeCoinChainHits"))
-                    : Hellforge.recordCoinHit(livingOwner, false, shouldResetCooldown);
+                    : Hellforge.recordCoinHit(livingOwner, false, false);
+                boolean shouldResetCooldown = canResetCooldown && chainHits >= 4;
+                if (shouldResetCooldown) {
+                    Hellforge.clearFireCooldown(livingOwner);
+                }
                 if (!isClone) {
                     ItemStack hellforge = Hellforge.findHellforgeStack(livingOwner);
                     Hellforge.advanceCoinRecharge(hellforge, Hellforge.getCoinRechargeAdvanceForLink(coinLinkHits));
@@ -304,7 +307,7 @@ public class CoinEntity extends ThrowableItemProjectile {
 
                 if (!isClone && owner instanceof ServerPlayer player) {
                     GWRENetwork.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player),
-                        new CoinHitFeedbackPacket(chainHits, Hellforge.COIN_CHAIN_WINDOW_TICKS, Hellforge.findHellforgeStack(livingOwner).getOrCreateTag().getInt(Hellforge.NBT_COIN_OVERHEAT_TIMER)));
+                        new CoinHitFeedbackPacket(chainHits, Hellforge.getCoinChainWindowTicks(), Hellforge.findHellforgeStack(livingOwner).getOrCreateTag().getInt(Hellforge.NBT_COIN_OVERHEAT_TIMER)));
                 }
 
                 double baseDamage = getOrStoreBaseDamage(bullet);

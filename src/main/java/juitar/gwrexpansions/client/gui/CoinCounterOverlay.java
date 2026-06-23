@@ -63,7 +63,7 @@ public class CoinCounterOverlay {
         CompoundTag tag = hellforgStack.getOrCreateTag();
         int coins = tag.getInt(Hellforge.NBT_COINS);
         int rechargeTimer = tag.getInt(Hellforge.NBT_COIN_RECHARGE_TIMER);
-        int maxCoins = Hellforge.MAX_COINS;
+        int maxCoins = Hellforge.getMaxCoins();
 
         // 渲染硬币阵列
         renderCoinArray(guiGraphics, screenWidth, screenHeight, coins, maxCoins, rechargeTimer);
@@ -115,7 +115,7 @@ public class CoinCounterOverlay {
         }
 
         // 渲染4个硬币图标
-        float rechargeProgress = Math.min(1.0F, Math.max(0.0F, rechargeTimer / (float) Hellforge.COIN_RECHARGE_TICKS));
+        float rechargeProgress = Math.min(1.0F, Math.max(0.0F, rechargeTimer / (float) Hellforge.getCoinRechargeTicks()));
         for (int i = 0; i < maxCoins; i++) {
             int iconX = startX + i * spacing;
             int iconY = y;

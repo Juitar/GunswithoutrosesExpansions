@@ -82,6 +82,16 @@ public class ClientConfig {
     public final ForgeConfigSpec.BooleanValue obsidianLauncherHudEnabled;
     public final ForgeConfigSpec.IntValue obsidianLauncherHudOffsetX;
     public final ForgeConfigSpec.IntValue obsidianLauncherHudOffsetY;
+    public final ForgeConfigSpec.BooleanValue hellforgeChainHudEnabled;
+    public final ForgeConfigSpec.IntValue hellforgeChainHudOffsetX;
+    public final ForgeConfigSpec.IntValue hellforgeChainHudOffsetY;
+    public final ForgeConfigSpec.IntValue hellforgeChainHudScale;
+    public final ForgeConfigSpec.BooleanValue hellforgeCoinHitShockEnabled;
+    public final ForgeConfigSpec.IntValue hellforgeCoinHitShockStrength;
+    public final ForgeConfigSpec.BooleanValue hellforgeCoinHitFovPunchEnabled;
+    public final ForgeConfigSpec.BooleanValue hellforgeCoinHitHudFlashEnabled;
+    public final ForgeConfigSpec.BooleanValue hellforgeOverheatVoiceEnabled;
+    public final ForgeConfigSpec.BooleanValue hellforgeOverheatMusicEnabled;
 
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
@@ -178,6 +188,24 @@ public class ClientConfig {
         obsidianLauncherHudEnabled = defineHudEnabled(builder, "obsidian_launcher", "黑曜石发射器 / Obsidian Launcher");
         obsidianLauncherHudOffsetX = defineHudOffsetX(builder, "obsidian_launcher");
         obsidianLauncherHudOffsetY = defineHudOffsetY(builder, "obsidian_launcher", 10);
+
+        hellforgeChainHudEnabled = defineHudEnabled(builder, "hellforge_chain", "Hellforge Coin Chain");
+        hellforgeChainHudOffsetX = defineHudOffsetX(builder, "hellforge_chain");
+        hellforgeChainHudOffsetY = defineHudOffsetY(builder, "hellforge_chain", 30);
+        hellforgeChainHudScale = builder.comment("Hellforge coin chain HUD scale percentage")
+                .defineInRange("hellforge_chain_scale", 100, 50, 200);
+        hellforgeCoinHitShockEnabled = builder.comment("Enable Hellforge coin-hit SHOCK camera kick")
+                .define("hellforge_coin_hit_shock_enabled", true);
+        hellforgeCoinHitShockStrength = builder.comment("Hellforge coin-hit SHOCK strength percentage")
+                .defineInRange("hellforge_coin_hit_shock_strength", 100, 0, 300);
+        hellforgeCoinHitFovPunchEnabled = builder.comment("Enable Hellforge coin-hit FOV punch")
+                .define("hellforge_coin_hit_fov_punch_enabled", true);
+        hellforgeCoinHitHudFlashEnabled = builder.comment("Enable Hellforge coin-hit HUD flash")
+                .define("hellforge_coin_hit_hud_flash_enabled", true);
+        hellforgeOverheatVoiceEnabled = builder.comment("Enable Hellforge overheat voice callout")
+                .define("hellforge_overheat_voice_enabled", true);
+        hellforgeOverheatMusicEnabled = builder.comment("Enable Hellforge overheat heating music")
+                .define("hellforge_overheat_music_enabled", true);
 
         builder.pop();
     }

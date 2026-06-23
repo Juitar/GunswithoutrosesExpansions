@@ -29,7 +29,7 @@ public class CompatBOMD {
                 "skullcrusher_pulverizer");
         obsidian_launcher = GWREItems.initItem(()->new ObsidianLauncher(GWREItems.defP().rarity(Rarity.EPIC).durability(10000).fireResistant(), 10, 1.0, 20, 0.0, 1,  () -> GWREConfig.LAUNCHER.Obisidian).fireSound(GWRESounds.OBSIDIAN_LAUNCHER_FIRE).repair(() -> Ingredient.of(ForgeRegistries.ITEMS.getValue(new ResourceLocation("bosses_of_mass_destruction", "obsidian_heart")))), "obsidian_launcher");
         hellforge = GWREItems.initItem(() -> new Hellforge(GWREItems.defP().rarity(Rarity.EPIC).durability(8000).fireResistant(),
-                0, 1.2, 15, 1.0, 20, 6,
+                0, 1.2, 18, 1.0, 20, 6,
                 () -> GWREConfig.PISTOL.hellforge).projectileSpeed(3).fireSound(GWRESounds.HELLFORGE_REVOLVER_SHOOT).repair(() -> Ingredient.of(ForgeRegistries.ITEMS.getValue(new ResourceLocation("bosses_of_mass_destruction", "blazing_eye")))), "hellforge_revolver");
         voidspike = GWREItems.initItem(() -> new Voidflower(GWREItems.defP().rarity(Rarity.RARE).durability(5000).fireResistant(),
                 0, 1.0, 12, 0.0, 15,0,0,() -> GWREConfig.BURSTGUN.voidBurst).repair(() -> Ingredient.of(ForgeRegistries.ITEMS.getValue(new ResourceLocation("bosses_of_mass_destruction", "void_thorn")))), "voidspike");

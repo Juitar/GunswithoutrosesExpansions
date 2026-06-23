@@ -1,6 +1,7 @@
 package juitar.gwrexpansions.client;
 
 import juitar.gwrexpansions.item.BOMD.Hellforge;
+import juitar.gwrexpansions.config.ClientConfig;
 import juitar.gwrexpansions.registry.GWRESounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -28,9 +29,15 @@ public class HellforgeOverheatMusicClient {
         if (shouldPlay) {
             if (!wasOverheated) {
                 wasOverheated = true;
-                musicStartDelay = 16;
-                player.level().playLocalSound(player.getX(), player.getY(), player.getZ(),
-                        GWRESounds.HELLFORGE_REVOLVER_OVERHEAT.get(), SoundSource.PLAYERS, 2.5F, 1.0F, false);
+                musicStartDelay = ClientConfig.getBoolean(ClientConfig.INSTANCE.hellforgeOverheatMusicEnabled, true) ? 16 : 0;
+                if (ClientConfig.getBoolean(ClientConfig.INSTANCE.hellforgeOverheatVoiceEnabled, true)) {
+                    player.level().playLocalSound(player.getX(), player.getY(), player.getZ(),
+                            GWRESounds.HELLFORGE_REVOLVER_OVERHEAT.get(), SoundSource.PLAYERS, 2.5F, 1.0F, false);
+                }
+            }
+            if (!ClientConfig.getBoolean(ClientConfig.INSTANCE.hellforgeOverheatMusicEnabled, true)) {
+                stop(mc);
+                return;
             }
             if ((currentSound == null || currentSound.isStopped()) && musicStartDelay > 0) {
                 musicStartDelay--;
@@ -81,6 +88,7 @@ public class HellforgeOverheatMusicClient {
         @Override
         public void tick() {
             if (player.isRemoved()
+                    || !ClientConfig.getBoolean(ClientConfig.INSTANCE.hellforgeOverheatMusicEnabled, true)
                     || getHeldHellforge(player).getOrCreateTag().getInt(Hellforge.NBT_COIN_OVERHEAT_TIMER) <= 0) {
                 stopSound();
                 return;

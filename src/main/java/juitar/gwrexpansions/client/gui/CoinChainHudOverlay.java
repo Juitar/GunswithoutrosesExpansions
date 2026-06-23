@@ -3,6 +3,7 @@ package juitar.gwrexpansions.client.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import juitar.gwrexpansions.GWRexpansions;
 import juitar.gwrexpansions.client.CoinHitFeedbackClient;
+import juitar.gwrexpansions.config.ClientConfig;
 import juitar.gwrexpansions.item.BOMD.Hellforge;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -18,8 +19,6 @@ import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = GWRexpansions.MODID, value = Dist.CLIENT)
 public class CoinChainHudOverlay {
-    private static final int WINDOW_TICKS = 40;
-    private static final int OVERHEAT_TICKS = Hellforge.COIN_OVERHEAT_TICKS;
     private static final int RANK_ICON_SIZE = 32;
     private static final int RANK_TEXTURE_WIDTH = 160;
     private static final int RANK_TEXTURE_HEIGHT = 32;
@@ -35,6 +34,10 @@ public class CoinChainHudOverlay {
         if (player == null || mc.options.hideGui) {
             return;
         }
+        if (!ClientConfig.getBoolean(ClientConfig.INSTANCE.hellforgeChainHudEnabled, true)) {
+            resetRankPop();
+            return;
+        }
 
         ItemStack stack = getHeldHellforge(player);
         if (stack.isEmpty()) {
@@ -43,8 +46,8 @@ public class CoinChainHudOverlay {
         }
 
         CompoundTag tag = stack.getOrCreateTag();
-        int hits = Math.max(tag.getInt("CoinChainHits"), CoinHitFeedbackClient.getCurrentHits());
-        int timer = Math.max(tag.getInt("CoinChainTimer"), CoinHitFeedbackClient.getChainTimer());
+        int hits = Math.max(tag.getInt(Hellforge.NBT_COIN_CHAIN_HITS), CoinHitFeedbackClient.getCurrentHits());
+        int timer = Math.max(tag.getInt(Hellforge.NBT_COIN_CHAIN_TIMER), CoinHitFeedbackClient.getChainTimer());
         int overheatTimer = Math.max(tag.getInt(Hellforge.NBT_COIN_OVERHEAT_TIMER), CoinHitFeedbackClient.getOverheatTimer());
         if (CoinHitFeedbackClient.isClearSuppressed()) {
             hits = 0;
@@ -83,29 +86,43 @@ public class CoinChainHudOverlay {
     private static void render(GuiGraphics graphics, int screenWidth, int hits, int timer, int overheatTimer) {
         Font font = Minecraft.getInstance().font;
         String grade = Hellforge.getCoinChainGrade(Math.max(1, hits));
-        int x = screenWidth - 122;
-        int y = 30;
         int color = getGradeColor(grade);
         boolean hasChain = hits > 0 && timer > 0;
         boolean overheated = overheatTimer > 0;
 
+        int offsetX = ClientConfig.getInt(ClientConfig.INSTANCE.hellforgeChainHudOffsetX, 0);
+        int offsetY = ClientConfig.getInt(ClientConfig.INSTANCE.hellforgeChainHudOffsetY, 30);
+        float scale = Math.max(0.5F, Math.min(2.0F, ClientConfig.getInt(ClientConfig.INSTANCE.hellforgeChainHudScale, 100) / 100.0F));
+        int hudWidth = 122;
+        int x = screenWidth - Math.round(hudWidth * scale) + offsetX;
+        int y = offsetY;
+
         RenderSystem.enableBlend();
+        graphics.pose().pushPose();
+        graphics.pose().translate(x, y, 0.0F);
+        graphics.pose().scale(scale, scale, 1.0F);
 
         int barWidth = 72;
         int barHeight = 3;
-        int barX = x + 4;
-        int barY = y + 34;
+        int barX = 4;
+        int barY = 34;
         if (hasChain) {
-            drawRank(graphics, font, grade, hits, x, y, color, overheated);
-            int filled = Math.max(0, Math.min(barWidth, (int)(barWidth * (timer / (float)WINDOW_TICKS))));
+            drawRank(graphics, font, grade, hits, 0, 0, color, overheated);
+            int windowTicks = Math.max(1, Hellforge.getCoinChainWindowTicks());
+            int filled = Math.max(0, Math.min(barWidth, (int)(barWidth * (timer / (float)windowTicks))));
+            if (ClientConfig.getBoolean(ClientConfig.INSTANCE.hellforgeCoinHitHudFlashEnabled, true)) {
+                renderCoinHitFlash(graphics, barX, barY, barWidth, color);
+            }
             graphics.fill(barX, barY, barX + barWidth, barY + barHeight, 0xAA111111);
             graphics.fill(barX, barY, barX + filled, barY + barHeight, color);
         }
 
         if (overheated) {
-            int overheatY = hasChain ? barY + 8 : y + 10;
+            int overheatY = hasChain ? barY + 8 : 10;
             renderOverheat(graphics, font, barX, overheatY, barWidth, overheatTimer);
         }
+
+        graphics.pose().popPose();
         RenderSystem.disableBlend();
     }
 
@@ -120,6 +137,7 @@ public class CoinChainHudOverlay {
         graphics.fill(x - 2, y - 2, x + pulseWidth, y - 1, flashColor);
         graphics.fill(x - 2, y + 4, x + pulseWidth, y + 5, flashColor);
     }
+
     private static void drawRank(GuiGraphics graphics, Font font, String grade, int hits, int x, int y, int color, boolean overheated) {
         String text = "\u00D7 " + hits;
         long time = System.currentTimeMillis();
@@ -144,8 +162,9 @@ public class CoinChainHudOverlay {
     }
 
     private static void renderOverheat(GuiGraphics graphics, Font font, int x, int y, int width, int timer) {
-        int capped = Math.max(0, Math.min(OVERHEAT_TICKS, timer));
-        int filled = Math.max(0, Math.min(width, (int)(width * (capped / (float)OVERHEAT_TICKS))));
+        int overheatTicks = Math.max(Hellforge.hellforgeConfig().coinOverheatTicks.get(), Hellforge.hellforgeConfig().coinStrongOverheatTicks.get());
+        int capped = Math.max(0, Math.min(overheatTicks, timer));
+        int filled = Math.max(0, Math.min(width, (int)(width * (capped / (float)Math.max(1, overheatTicks)))));
         int hotColor = 0xFFFF6A1A;
         graphics.drawString(font, "OVERHEAT", x - 2, y, hotColor, true);
         int barY = y + 10;
