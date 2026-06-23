@@ -4,6 +4,7 @@ import juitar.gwrexpansions.config.GWREConfig;
 import juitar.gwrexpansions.entity.BOMD.CoinEntity;
 import juitar.gwrexpansions.item.ConfigurableGunItem;
 import juitar.gwrexpansions.item.GunSkillItem;
+import juitar.gwrexpansions.item.GunSkillTooltip;
 import juitar.gwrexpansions.network.CoinHitFeedbackPacket;
 import juitar.gwrexpansions.network.GWRENetwork;
 import juitar.gwrexpansions.registry.GWRESounds;
@@ -466,7 +467,8 @@ public class Hellforge extends ConfigurableGunItem implements GunSkillItem {
 
     @Override
     protected void addExtraStatsTooltip(ItemStack stack, @Nullable Level world, List<Component> tooltip) {
-        tooltip.add(Component.translatable("tooltip.gwrexpansions.hellforge_revolver.desc1").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.gwrexpansions.hellforge_revolver.desc1",
+            GunSkillTooltip.keyName()).withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.gwrexpansions.hellforge_revolver.desc2").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.gwrexpansions.hellforge_revolver.desc3").withStyle(ChatFormatting.GRAY));
 
@@ -483,6 +485,7 @@ public class Hellforge extends ConfigurableGunItem implements GunSkillItem {
         }
 
         tooltip.add(Component.literal(""));
-        tooltip.add(Component.translatable("tooltip.gwrexpansions.hellforge_revolver.usage").withStyle(ChatFormatting.YELLOW));
+        tooltip.add(Component.translatable("tooltip.gwrexpansions.hellforge_revolver.usage",
+            GunSkillTooltip.keyName()).withStyle(ChatFormatting.YELLOW));
     }
 }

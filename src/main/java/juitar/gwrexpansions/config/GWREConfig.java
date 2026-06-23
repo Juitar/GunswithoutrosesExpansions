@@ -116,6 +116,27 @@ public class GWREConfig {
                 }
         }
 
+        public static class SupershotgunConfig extends GunConfig {
+                public final ForgeConfigSpec.BooleanValue meatHookKillRewardEnabled;
+                public final ForgeConfigSpec.IntValue meatHookKillRewardWindowTicks;
+                public final ForgeConfigSpec.DoubleValue meatHookKillRewardAbsorptionHearts;
+
+                public SupershotgunConfig(ForgeConfigSpec.Builder builder) {
+                        super(builder, "Supershotgun", 0, 1.5, 1.0, 40, 4);
+                        builder.push("Supershotgun_Mechanics");
+                        meatHookKillRewardEnabled = builder
+                                        .comment("Whether killing a meat-hooked target with the Super Shotgun refreshes the meat hook cooldown and grants absorption.")
+                                        .define("meatHookKillRewardEnabled", true);
+                        meatHookKillRewardWindowTicks = builder
+                                        .comment("Ticks after the last meat hook pull tick during which a Super Shotgun kill can trigger the reward.")
+                                        .defineInRange("meatHookKillRewardWindowTicks", 40, 0, 72000);
+                        meatHookKillRewardAbsorptionHearts = builder
+                                        .comment("Absorption hearts granted by the meat hook kill reward. This does not stack above the configured amount.")
+                                        .defineInRange("meatHookKillRewardAbsorptionHearts", 4.0, 0.0, 100.0);
+                        builder.pop();
+                }
+        }
+
         public static class GeneralConfig {
                 public final ForgeConfigSpec.BooleanValue enableAllAchievementsSuperShotgunReward;
                 public final ForgeConfigSpec.BooleanValue allowShooterProjectileSelfDamage;
@@ -662,7 +683,7 @@ public class GWREConfig {
                 public final GunConfig Netherite;
                 public final GunConfig NetheriteMonster;
                 public final GunConfig DragonSteel;
-                public final GunConfig Supershotgun;
+                public final SupershotgunConfig Supershotgun;
                 public final RemnantFangshotConfig RemnantFangshot;
                 public final MirecallerConfig Mirecaller;
 
@@ -671,7 +692,7 @@ public class GWREConfig {
                         Netherite = new GunConfig(builder, "Netherite", 0, 0.6, 1.0, 20, 5.0);
                         NetheriteMonster = new GunConfig(builder, "NetheriteMonster", 0, 0.8, 1.0, 20, 4.0);
                         DragonSteel = new GunConfig(builder, "DragonSteel", 0, 0.75, 1.0, 20, 4);
-                        Supershotgun = new GunConfig(builder, "Supershotgun", 0, 1.5, 1.0, 40, 4);
+                        Supershotgun = new SupershotgunConfig(builder);
                         RemnantFangshot = new RemnantFangshotConfig(builder);
                         Mirecaller = new MirecallerConfig(builder);
                         builder.pop();

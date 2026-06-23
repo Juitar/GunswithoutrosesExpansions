@@ -6,6 +6,8 @@ import com.github.L_Ender.cataclysm.init.ModSounds;
 import juitar.gwrexpansions.config.GWREConfig;
 import juitar.gwrexpansions.entity.cataclysm.CursiumBulletEntity;
 import juitar.gwrexpansions.item.ConfigurableGunItem;
+import juitar.gwrexpansions.item.GunSkillItem;
+import juitar.gwrexpansions.item.GunSkillTooltip;
 import juitar.gwrexpansions.registry.CompatCataclysm;
 import juitar.gwrexpansions.registry.GWRECataclysmEnchantments;
 import lykrast.gunswithoutroses.entity.BulletEntity;
@@ -22,6 +24,7 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -33,7 +36,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class CursiumGunItem extends ConfigurableGunItem {
+public class CursiumGunItem extends ConfigurableGunItem implements GunSkillItem {
     private static final String RAGE_TAG = "CursiumRage";
     private static final String TRIPLE_SHOT_READY_TAG = "CursiumTripleShotReady";
     public static final String CURSIUM_SNIPER_SHOT_TAG = "CursiumSniperShot";
@@ -143,22 +146,25 @@ public class CursiumGunItem extends ConfigurableGunItem {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        ItemStack stack = player.getItemInHand(hand);
-        if (player.isShiftKeyDown()) {
-            double maxRage = getMaxRage();
-            if (getRage(stack) < maxRage) {
-                return InteractionResultHolder.fail(stack);
-            }
+        return super.use(level, player, hand);
+    }
 
-            if (!level.isClientSide) {
-                setRage(stack, 0.0D);
-                setTripleShotReady(stack, true);
-                releasePhantomHalberdStorm((ServerLevel) level, player);
-            }
-            return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
+    @Override
+    public boolean canUseGunSkill(ServerPlayer player, InteractionHand hand, ItemStack stack) {
+        return stack.getItem() instanceof CursiumGunItem
+                && getRage(stack) >= getMaxRage();
+    }
+
+    @Override
+    public void useGunSkill(ServerPlayer player, InteractionHand hand, ItemStack stack) {
+        double maxRage = getMaxRage();
+        if (getRage(stack) < maxRage) {
+            return;
         }
 
-        return super.use(level, player, hand);
+        setRage(stack, 0.0D);
+        setTripleShotReady(stack, true);
+        releasePhantomHalberdStorm(player.serverLevel(), player);
     }
 
     @Override
@@ -175,7 +181,8 @@ public class CursiumGunItem extends ConfigurableGunItem {
     protected void addExtraStatsTooltip(ItemStack stack, @Nullable Level world, List<Component> tooltip){
         tooltip.add(Component.translatable("tooltip.gwrexpansions.cursium_sniper.desc").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.gwrexpansions.cursium_sniper.desc2") .withStyle(ChatFormatting.GRAY));
-        tooltip.add(Component.translatable("tooltip.gwrexpansions.cursium_sniper.rage")
+        tooltip.add(Component.translatable("tooltip.gwrexpansions.cursium_sniper.rage",
+                GunSkillTooltip.keyName())
                 .withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.gwrexpansions.cursium_sniper.triple_shot")
                 .withStyle(ChatFormatting.GRAY));

@@ -15,6 +15,8 @@ import org.lwjgl.glfw.GLFW;
 
 @Mod.EventBusSubscriber(modid = GWRexpansions.MODID, value = Dist.CLIENT)
 public class GunSkillKeyHandler {
+    private static boolean wasGunSkillDown;
+
     public static final KeyMapping GUN_SKILL = new KeyMapping(
         "key.gwrexpansions.gun_skill",
         KeyConflictContext.IN_GAME,
@@ -37,8 +39,10 @@ public class GunSkillKeyHandler {
             return;
         }
 
-        while (GUN_SKILL.consumeClick()) {
-            GWRENetwork.CHANNEL.sendToServer(new GunSkillPacket());
+        boolean down = GUN_SKILL.isDown();
+        if (down != wasGunSkillDown) {
+            GWRENetwork.CHANNEL.sendToServer(new GunSkillPacket(down));
+            wasGunSkillDown = down;
         }
 
         CoinHitFeedbackClient.tick();

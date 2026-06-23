@@ -10,11 +10,18 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.function.Supplier;
 
 public class GunSkillPacket {
+    private final boolean pressed;
+
+    public GunSkillPacket(boolean pressed) {
+        this.pressed = pressed;
+    }
+
     public static void encode(GunSkillPacket msg, FriendlyByteBuf buf) {
+        buf.writeBoolean(msg.pressed);
     }
 
     public static GunSkillPacket decode(FriendlyByteBuf buf) {
-        return new GunSkillPacket();
+        return new GunSkillPacket(buf.readBoolean());
     }
 
     public static void handle(GunSkillPacket msg, Supplier<NetworkEvent.Context> ctx) {
@@ -24,18 +31,22 @@ public class GunSkillPacket {
                 return;
             }
 
-            if (tryUseSkill(player, InteractionHand.MAIN_HAND)) {
+            if (trySkill(player, InteractionHand.MAIN_HAND, msg.pressed)) {
                 return;
             }
-            tryUseSkill(player, InteractionHand.OFF_HAND);
+            trySkill(player, InteractionHand.OFF_HAND, msg.pressed);
         });
         ctx.get().setPacketHandled(true);
     }
 
-    private static boolean tryUseSkill(ServerPlayer player, InteractionHand hand) {
+    private static boolean trySkill(ServerPlayer player, InteractionHand hand, boolean pressed) {
         ItemStack stack = player.getItemInHand(hand);
         if (stack.getItem() instanceof GunSkillItem skillItem && skillItem.canUseGunSkill(player, hand, stack)) {
-            skillItem.useGunSkill(player, hand, stack);
+            if (pressed) {
+                skillItem.useGunSkill(player, hand, stack);
+            } else {
+                skillItem.releaseGunSkill(player, hand, stack);
+            }
             return true;
         }
         return false;

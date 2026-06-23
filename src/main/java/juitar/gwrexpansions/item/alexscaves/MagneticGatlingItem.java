@@ -5,11 +5,14 @@ import juitar.gwrexpansions.config.GWREConfig;
 import juitar.gwrexpansions.entity.alexscaves.MagneticBulletEntity;
 import juitar.gwrexpansions.entity.alexscaves.MagneticPinEntity;
 import juitar.gwrexpansions.item.ConfigurableGatlingItem;
+import juitar.gwrexpansions.item.GunSkillItem;
+import juitar.gwrexpansions.item.GunSkillTooltip;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.item.IBullet;
 import lykrast.gunswithoutroses.registry.GWRAttributes;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.ItemTags;
@@ -28,7 +31,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class MagneticGatlingItem extends ConfigurableGatlingItem {
+public class MagneticGatlingItem extends ConfigurableGatlingItem implements GunSkillItem {
     private static final int PIN_DURABILITY_COST = 4;
     private static final int PIN_COOLDOWN = 40;
     public static final TagKey<Item> MAGNETIZABLE_BULLETS = ItemTags.create(GWRexpansions.resource("magnetizable_bullets"));
@@ -39,20 +42,23 @@ public class MagneticGatlingItem extends ConfigurableGatlingItem {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        ItemStack stack = player.getItemInHand(hand);
-        if (player.isCrouching()) {
-            if (player.getCooldowns().isOnCooldown(this)) {
-                return InteractionResultHolder.fail(stack);
-            }
-            player.startUsingItem(hand);
-            if (!level.isClientSide) {
-                fireMagneticPin(level, player, stack);
-                player.getCooldowns().addCooldown(this, PIN_COOLDOWN);
-                player.awardStat(Stats.ITEM_USED.get(this));
-            }
-            return InteractionResultHolder.consume(stack);
-        }
         return super.use(level, player, hand);
+    }
+
+    @Override
+    public boolean canUseGunSkill(ServerPlayer player, InteractionHand hand, ItemStack stack) {
+        return stack.getItem() instanceof MagneticGatlingItem && !player.getCooldowns().isOnCooldown(this);
+    }
+
+    @Override
+    public void useGunSkill(ServerPlayer player, InteractionHand hand, ItemStack stack) {
+        if (player.getCooldowns().isOnCooldown(this)) {
+            return;
+        }
+
+        fireMagneticPin(player.level(), player, stack);
+        player.getCooldowns().addCooldown(this, PIN_COOLDOWN);
+        player.awardStat(Stats.ITEM_USED.get(this));
     }
 
     private void fireMagneticPin(Level level, Player player, ItemStack gun) {
@@ -122,7 +128,8 @@ public class MagneticGatlingItem extends ConfigurableGatlingItem {
 
     @Override
     protected void addExtraStatsTooltip(ItemStack stack, @Nullable Level level, List<Component> tooltip) {
-        tooltip.add(Component.translatable("tooltip.gwrexpansions.magnetic_gatling.desc").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.gwrexpansions.magnetic_gatling.desc",
+                GunSkillTooltip.keyName()).withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.gwrexpansions.magnetic_gatling.desc2").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.gwrexpansions.magnetic_gatling.desc3").withStyle(ChatFormatting.GRAY));
     }

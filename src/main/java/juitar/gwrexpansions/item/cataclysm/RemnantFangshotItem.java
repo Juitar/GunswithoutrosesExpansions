@@ -8,6 +8,8 @@ import com.google.common.collect.Multimap;
 import juitar.gwrexpansions.advancement.RemnantSandstormChargeTrigger;
 import juitar.gwrexpansions.config.GWREConfig;
 import juitar.gwrexpansions.item.ConfigurableGunItem;
+import juitar.gwrexpansions.item.GunSkillItem;
+import juitar.gwrexpansions.item.GunSkillTooltip;
 import juitar.gwrexpansions.registry.GWRECataclysmEnchantments;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.item.IBullet;
@@ -48,7 +50,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class RemnantFangshotItem extends ConfigurableGunItem {
+public class RemnantFangshotItem extends ConfigurableGunItem implements GunSkillItem {
     public static final String BULLET_TAG = "RemnantFangshotShot";
     public static final String BULLET_SHOT_ID_TAG = "RemnantFangshotShotId";
     public static final String SANDSTORM_SHOT_TAG = "RemnantFangshotPowerSandstorm";
@@ -90,19 +92,23 @@ public class RemnantFangshotItem extends ConfigurableGunItem {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        ItemStack stack = player.getItemInHand(hand);
-        if (player.isShiftKeyDown()) {
-            if (!canPowerDash(stack) || getDashTicks(stack) > 0) {
-                return InteractionResultHolder.fail(stack);
-            }
+        return super.use(level, player, hand);
+    }
 
-            if (!level.isClientSide) {
-                startDash(level, player, stack);
-            }
-            return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+    @Override
+    public boolean canUseGunSkill(ServerPlayer player, InteractionHand hand, ItemStack stack) {
+        return stack.getItem() instanceof RemnantFangshotItem
+                && canPowerDash(stack)
+                && getDashTicks(stack) <= 0;
+    }
+
+    @Override
+    public void useGunSkill(ServerPlayer player, InteractionHand hand, ItemStack stack) {
+        if (!canPowerDash(stack) || getDashTicks(stack) > 0) {
+            return;
         }
 
-        return super.use(level, player, hand);
+        startDash(player.level(), player, stack);
     }
 
     @Override
@@ -210,7 +216,8 @@ public class RemnantFangshotItem extends ConfigurableGunItem {
         super.addExtraStatsTooltip(stack, world, tooltip);
         tooltip.add(Component.translatable("tooltip.gwrexpansions.remnant_fangshot.desc").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.gwrexpansions.remnant_fangshot.desc2").withStyle(ChatFormatting.GRAY));
-        tooltip.add(Component.translatable("tooltip.gwrexpansions.remnant_fangshot.desc3").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.gwrexpansions.remnant_fangshot.desc3",
+                GunSkillTooltip.keyName()).withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.gwrexpansions.remnant_fangshot.power",
                 getPowerSeconds(stack)).withStyle(isPowered(stack) ? ChatFormatting.GOLD : ChatFormatting.DARK_GRAY));
         tooltip.add(Component.translatable("tooltip.gwrexpansions.remnant_fangshot.rage",

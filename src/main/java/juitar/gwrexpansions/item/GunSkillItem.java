@@ -8,4 +8,7 @@ public interface GunSkillItem {
     boolean canUseGunSkill(ServerPlayer player, InteractionHand hand, ItemStack stack);
 
     void useGunSkill(ServerPlayer player, InteractionHand hand, ItemStack stack);
+
+    default void releaseGunSkill(ServerPlayer player, InteractionHand hand, ItemStack stack) {
+    }
 }

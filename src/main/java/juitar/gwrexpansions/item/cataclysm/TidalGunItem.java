@@ -5,6 +5,8 @@ import juitar.gwrexpansions.config.GWREConfig;
 import juitar.gwrexpansions.entity.cataclysm.TidalAbyssBlastPortalEntity;
 import juitar.gwrexpansions.entity.cataclysm.TidalRiftEntity;
 import juitar.gwrexpansions.item.ConfigurableGunItem;
+import juitar.gwrexpansions.item.GunSkillItem;
+import juitar.gwrexpansions.item.GunSkillTooltip;
 import juitar.gwrexpansions.registry.CompatCataclysm;
 import juitar.gwrexpansions.registry.GWRECataclysmEnchantments;
 import juitar.gwrexpansions.registry.GWREEntities;
@@ -36,9 +38,10 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-public class TidalGunItem extends ConfigurableGunItem {
+public class TidalGunItem extends ConfigurableGunItem implements GunSkillItem {
     private static final String ENERGY_TAG = "TidalEnergy";
     private static final String CHARGE_TICKS_TAG = "TidalChargeTicks";
+    private static final String SKILL_CHARGING_TAG = "TidalSkillCharging";
     private static final String HUD_TICKS_TAG = "TidalHudTicks";
     private static final String LAND_ORB_COOLDOWN_TAG = "TidalLandOrbCooldown";
     private static final String LAND_MINE_COOLDOWN_TAG = "TidalLandMineCooldown";
@@ -68,18 +71,37 @@ public class TidalGunItem extends ConfigurableGunItem {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        ItemStack stack = player.getItemInHand(hand);
-        if (!player.isShiftKeyDown()) {
-            return super.use(level, player, hand);
-        }
+        return super.use(level, player, hand);
+    }
 
+    @Override
+    public boolean canUseGunSkill(ServerPlayer player, InteractionHand hand, ItemStack stack) {
+        return stack.getItem() instanceof TidalGunItem
+                && (isSkillCharging(stack)
+                || isFullForm(player.level(), player) && !player.getCooldowns().isOnCooldown(this));
+    }
+
+    @Override
+    public void useGunSkill(ServerPlayer player, InteractionHand hand, ItemStack stack) {
+        Level level = player.level();
         if (!isFullForm(level, player)) {
-            return InteractionResultHolder.fail(stack);
+            return;
         }
 
-        player.startUsingItem(hand);
-        stack.getOrCreateTag().putInt(CHARGE_TICKS_TAG, 0);
-        return InteractionResultHolder.consume(stack);
+        CompoundTag tag = stack.getOrCreateTag();
+        tag.putBoolean(SKILL_CHARGING_TAG, true);
+        tag.putInt(CHARGE_TICKS_TAG, 0);
+        tag.putInt(HUD_TICKS_TAG, 10);
+    }
+
+    @Override
+    public void releaseGunSkill(ServerPlayer player, InteractionHand hand, ItemStack stack) {
+        if (!isSkillCharging(stack)) {
+            clearCharge(stack);
+            return;
+        }
+
+        releaseChargedSkill(stack, player.level(), player, getHudChargeTicks(stack));
     }
 
     @Override
@@ -90,6 +112,10 @@ public class TidalGunItem extends ConfigurableGunItem {
         }
 
         int usedTicks = getUseDuration(stack) - remainingUseDuration;
+        releaseChargedSkill(stack, level, player, usedTicks);
+    }
+
+    private void releaseChargedSkill(ItemStack stack, Level level, Player player, int usedTicks) {
         clearCharge(stack);
         GWREConfig.TidalPistolConfig tidal = tidalConfig();
         boolean fullForm = isFullForm(level, player);
@@ -147,6 +173,10 @@ public class TidalGunItem extends ConfigurableGunItem {
         tickCooldown(tag, HUD_TICKS_TAG);
 
         boolean held = isSelected || player.getMainHandItem() == stack || player.getOffhandItem() == stack;
+        if (!held && isSkillCharging(stack)) {
+            clearCharge(stack);
+        }
+
         if (!level.isClientSide && level.getGameTime() % 20L == 0L) {
             int regen = tidalConfig().inventoryRegenPerSecond.get();
             if (held) {
@@ -155,6 +185,16 @@ public class TidalGunItem extends ConfigurableGunItem {
                         : tidalConfig().heldLandRegenPerSecond.get();
             }
             addEnergy(stack, regen);
+        }
+
+        if (!level.isClientSide && held && isSkillCharging(stack)) {
+            if (isFullForm(level, player)) {
+                tag.putInt(CHARGE_TICKS_TAG, tag.getInt(CHARGE_TICKS_TAG) + 1);
+                tag.putInt(HUD_TICKS_TAG, 10);
+            } else {
+                clearCharge(stack);
+                level.playSound(null, player.blockPosition(), SoundEvents.TRIDENT_HIT_GROUND, SoundSource.PLAYERS, 0.45F, 0.7F);
+            }
         }
 
         if (!level.isClientSide && held && isFullForm(level, player)) {
@@ -178,7 +218,8 @@ public class TidalGunItem extends ConfigurableGunItem {
         tooltip.add(Component.translatable("tooltip.gwrexpansions.tidal_pistol.desc").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.gwrexpansions.tidal_pistol.desc2").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.gwrexpansions.tidal_pistol.desc3").withStyle(ChatFormatting.GRAY));
-        tooltip.add(Component.translatable("tooltip.gwrexpansions.tidal_pistol.desc4").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.gwrexpansions.tidal_pistol.desc4",
+                GunSkillTooltip.keyName()).withStyle(ChatFormatting.GRAY));
     }
 
     public static GWREConfig.TidalPistolConfig tidalConfig() {
@@ -392,7 +433,12 @@ public class TidalGunItem extends ConfigurableGunItem {
     private static void clearCharge(ItemStack stack) {
         CompoundTag tag = stack.getOrCreateTag();
         tag.putInt(CHARGE_TICKS_TAG, 0);
+        tag.remove(SKILL_CHARGING_TAG);
         tag.putInt(HUD_TICKS_TAG, 30);
+    }
+
+    private static boolean isSkillCharging(ItemStack stack) {
+        return stack.getOrCreateTag().getBoolean(SKILL_CHARGING_TAG);
     }
 
     private static Vec3 getAimedPoint(Level level, Player player) {
