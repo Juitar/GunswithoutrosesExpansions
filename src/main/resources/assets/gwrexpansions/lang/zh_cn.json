@@ -159,6 +159,8 @@
   "subtitles.gwrexpansions.hellforge_revolver.reload": "狱锻之轮换弹",
   "subtitles.gwrexpansions.hellforge_revolver.coin_flip": "硬币翻转",
   "subtitles.gwrexpansions.hellforge_revolver.coin_hit": "硬币击中",
+  "subtitles.gwrexpansions.hellforge_revolver.overheat": "狱锻之轮过热",
+  "subtitles.gwrexpansions.hellforge_revolver.heating_music": "狱锻之轮升温音乐",
   "effect.gwrexpansions.aimed": "瞄准",
   "entity.gwrexpansions.coin": "硬币",
   "entity.gwrexpansions.tracking_bullet": "追踪子弹",

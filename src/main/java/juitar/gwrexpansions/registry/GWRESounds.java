@@ -29,6 +29,8 @@ public class GWRESounds {
     public static final RegistryObject<SoundEvent> HELLFORGE_REVOLVER_RELOAD = initSound("item.hellforge_revolver.reload");
     public static final RegistryObject<SoundEvent> HELLFORGE_REVOLVER_COIN_FLIP = initSound("item.hellforge_revolver.coin_flip");
     public static final RegistryObject<SoundEvent> HELLFORGE_REVOLVER_COIN_HIT = initSound("item.hellforge_revolver.coin_hit");
+    public static final RegistryObject<SoundEvent> HELLFORGE_REVOLVER_OVERHEAT = initSound("item.hellforge_revolver.overheat");
+    public static final RegistryObject<SoundEvent> HELLFORGE_REVOLVER_HEATING_MUSIC = initSound("item.hellforge_revolver.heating_music");
     
     public static RegistryObject<SoundEvent> initSound(String name) {
         return REG.register(name, () -> SoundEvent.createVariableRangeEvent(GWRexpansions.resource(name)));

@@ -35,8 +35,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.PacketDistributor;
 
 /**
- * 硬币实体 - 由Hellforge抛射的硬币
- * 当被子弹击中时会触发特殊效果
+  *
  */
 public class CoinEntity extends ThrowableItemProjectile {
     private static final EntityDataAccessor<Integer> OWNER_ID = SynchedEntityData.defineId(CoinEntity.class, EntityDataSerializers.INT);
@@ -47,14 +46,13 @@ public class CoinEntity extends ThrowableItemProjectile {
     public CoinEntity(EntityType<? extends CoinEntity> type, Level level) {
         super(type, level);
         this.setNoGravity(true);
-        this.setBoundingBox(this.getBoundingBox().inflate(0.5)); // 大幅增大碰撞箱以便更容易被子弹击中
+        this.setBoundingBox(this.getBoundingBox().inflate(0.5));
     }
 
     public CoinEntity(Level level, LivingEntity shooter) {
         super(GWREEntities.COIN.get(), shooter, level);
         this.setNoGravity(true);
-        this.setBoundingBox(this.getBoundingBox().inflate(0.5)); // 大幅增大碰撞箱以便更容易被子弹击中
-
+        this.setBoundingBox(this.getBoundingBox().inflate(0.5));
         if (shooter != null) {
             this.entityData.set(OWNER_ID, shooter.getId());
         }
@@ -68,14 +66,13 @@ public class CoinEntity extends ThrowableItemProjectile {
     
     @Override
     protected Item getDefaultItem() {
-        return Items.GOLD_NUGGET; // 使用金粒作为硬币的物品表示
+        return Items.GOLD_NUGGET;
     }
     
     @Override
     public void tick() {
         super.tick();
 
-        // 增加生存时间
         lifetime++;
         if (lifetime <= GOLDEN_WINDOW_TICKS) {
             this.setNoGravity(true);
@@ -84,13 +81,11 @@ public class CoinEntity extends ThrowableItemProjectile {
             this.setNoGravity(false);
         }
 
-        // 超过最大生存时间后消失
         if (lifetime > MAX_LIFETIME) {
             this.discard();
             return;
         }
 
-        // 添加金色粒子效果 - 增加粒子数量使硬币更明显
         if (this.level().isClientSide) {
             if (this.random.nextFloat() < 0.5f) {
                 this.level().addParticle(ParticleTypes.CRIT,
@@ -100,7 +95,6 @@ public class CoinEntity extends ThrowableItemProjectile {
                     0, 0, 0);
             }
 
-            // 添加额外的金色粒子，使硬币更容易被看到
             if (this.random.nextFloat() < 0.3f) {
                 this.level().addParticle(ParticleTypes.END_ROD,
                     this.getX(), this.getY(), this.getZ(),
@@ -110,21 +104,16 @@ public class CoinEntity extends ThrowableItemProjectile {
             }
         }
 
-        // 检查是否被子弹击中 - 服务器端逻辑
         if (!this.level().isClientSide) {
-            // 使用更大的检测范围，提高击中率
             double detectionRange = lifetime <= GOLDEN_WINDOW_TICKS ? 2.25 : 1.5;
 
-            // 检查附近的子弹实体
             List<BulletEntity> nearbyBullets = this.level().getEntitiesOfClass(
                 BulletEntity.class,
                 this.getBoundingBox().inflate(detectionRange),
                 bullet -> isValidHellforgeBullet(bullet) && bullet.distanceTo(this) < detectionRange
             );
 
-            // 如果有子弹在附近，处理击中事件
             if (!nearbyBullets.isEmpty()) {
-                // 播放音效提示子弹接近硬币
                 this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
                     SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.NEUTRAL, 0.5F, 2.0F);
 
@@ -178,7 +167,6 @@ public class CoinEntity extends ThrowableItemProjectile {
     protected void onHitEntity(EntityHitResult result) {
         Entity hitEntity = result.getEntity();
 
-        // 如果被子弹击中
         if (hitEntity instanceof BulletEntity bullet) {
             double detectionRange = 1.5;
             List<BulletEntity> nearbyBullets = this.level().getEntitiesOfClass(
@@ -198,9 +186,6 @@ public class CoinEntity extends ThrowableItemProjectile {
 
 
     
-    /**
-     * 处理子弹击中硬币的逻辑 - 支持多硬币连锁反弹增伤
-     */
     public void handleBulletHit(BulletEntity bullet) {
         if (!this.level().isClientSide) {
             double detectionRange = 1.5;
@@ -216,9 +201,6 @@ public class CoinEntity extends ThrowableItemProjectile {
         }
     }
 
-    /**
-     * 同一枚硬币被多颗Hellforge子弹命中时，每颗子弹都执行一次弹射和复制。
-     */
     private void handleBulletHits(List<BulletEntity> bullets) {
         if (this.level().isClientSide) {
             return;
@@ -264,7 +246,6 @@ public class CoinEntity extends ThrowableItemProjectile {
 
     private boolean processBulletHit(BulletEntity bullet, boolean spawnExtra) {
         if (!this.level().isClientSide) {
-            // 检查是否是Hellforge子弹
             CompoundTag bulletData = bullet.getPersistentData();
             if (!bulletData.getBoolean("HellforgeShot")) {
                 return false;
@@ -273,29 +254,22 @@ public class CoinEntity extends ThrowableItemProjectile {
             Entity owner = getOwnerEntity();
 
             if (owner instanceof LivingEntity livingOwner) {
-                // 检查是否已经反弹过（防止无限反弹）
                 int bounceCount = bulletData.getInt("CoinBounceCount");
 
-                // 限制最大反弹次数
                 if (bounceCount >= 5) {
-                    // 超过最大反弹次数，子弹消失
                     bullet.discard();
                     return true;
                 }
 
-                // 增加反弹计数
                 int coinLinkHits = bounceCount + 1;
                 bulletData.putInt("CoinBounceCount", coinLinkHits);
 
-                // 记录硬币反弹子弹用于成就追踪
                 BOMDGameplayEventHandler.recordCoinBounceBullet(bullet);
 
-                // 检查是否一发子弹命中四个硬币（BLOOD IS FUEL成就）
-                if (bounceCount == 3 && owner instanceof ServerPlayer player) { // 第4次反弹 = 命中4个硬币
+                if (bounceCount == 3 && owner instanceof ServerPlayer player) {
                     BloodIsFuelTrigger.onFourCoinsHit(player);
                 }
 
-                // 设置子弹位置到硬币位置
                 bullet.setPos(this.getX(), this.getY(), this.getZ());
 
                 boolean isClone = bulletData.getBoolean("HellforgeCoinClone");
@@ -306,6 +280,11 @@ public class CoinEntity extends ThrowableItemProjectile {
                 if (!isClone) {
                     ItemStack hellforge = Hellforge.findHellforgeStack(livingOwner);
                     Hellforge.advanceCoinRecharge(hellforge, Hellforge.getCoinRechargeAdvanceForLink(coinLinkHits));
+                    int previousOverheatLink = bulletData.getInt("HellforgeCoinOverheatBestLink");
+                    if (coinLinkHits >= 3 && coinLinkHits > previousOverheatLink) {
+                        Hellforge.triggerCoinOverheat(livingOwner, coinLinkHits);
+                        bulletData.putInt("HellforgeCoinOverheatBestLink", coinLinkHits);
+                    }
                     int previousReturned = bulletData.getInt("HellforgeCoinReturnedAmount");
                     int targetReturned = Hellforge.getCoinReturnAmount(chainHits, coinLinkHits);
                     int coinsToReturn = Math.max(0, targetReturned - previousReturned);
@@ -325,7 +304,7 @@ public class CoinEntity extends ThrowableItemProjectile {
 
                 if (!isClone && owner instanceof ServerPlayer player) {
                     GWRENetwork.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player),
-                        new CoinHitFeedbackPacket(chainHits, Hellforge.COIN_CHAIN_WINDOW_TICKS));
+                        new CoinHitFeedbackPacket(chainHits, Hellforge.COIN_CHAIN_WINDOW_TICKS, Hellforge.findHellforgeStack(livingOwner).getOrCreateTag().getInt(Hellforge.NBT_COIN_OVERHEAT_TIMER)));
                 }
 
                 double baseDamage = getOrStoreBaseDamage(bullet);
@@ -333,28 +312,28 @@ public class CoinEntity extends ThrowableItemProjectile {
                 bullet.setDamage(baseDamage * damageMultiplier);
                 bulletData.putInt("HellforgeCoinLinkHits", coinLinkHits);
 
-                // 寻找目标的优先级：硬币 > 普通敌人。硬币收益不依赖目标Buff。
                 Entity target = null;
                 final double SEARCH_RANGE = 32.0;
 
-                // 首先寻找其他硬币（连锁弹射优先级最高）
                 CoinEntity nearestCoin = findNearestValidCoin(this.level(), this.position(), SEARCH_RANGE, this);
                 if (nearestCoin != null) {
                     target = nearestCoin;
+                    int intentTargetId = getIntentTargetId();
+                    if (intentTargetId >= 0 && !nearestCoin.getPersistentData().contains(Hellforge.COIN_INTENT_TARGET_ID)) {
+                        nearestCoin.getPersistentData().putInt(Hellforge.COIN_INTENT_TARGET_ID, intentTargetId);
+                    }
                 } else {
                     LivingEntity livingTarget = CoinTargetUtils.findBestRicochetTarget(this.level(), this.position(), livingOwner, SEARCH_RANGE,
-                        Hellforge.getPriorityTargetId(livingOwner));
+                        getIntentOrPriorityTargetId(livingOwner));
                     target = livingTarget;
                 }
 
                 if (target != null) {
-                    // 计算朝向目标的方向
                     Vec3 targetPos = target.position().add(0, target.getBbHeight() * 0.5, 0);
                     Vec3 currentPos = this.position();
                     Vec3 direction = targetPos.subtract(currentPos).normalize();
 
-                    // 设置子弹的新运动方向和速度
-                    double speed = 3.0; // 反弹后的速度
+                    double speed = 3.0;
                     bullet.setDeltaMovement(direction.scale(speed));
 
                     if (target instanceof CoinEntity targetCoin) {
@@ -369,12 +348,10 @@ public class CoinEntity extends ThrowableItemProjectile {
                         }
                     }
 
-                    // 播放硬币击中音效（连锁反弹音效更响亮）
                     this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
                         GWRESounds.HELLFORGE_REVOLVER_COIN_HIT.get(), SoundSource.PLAYERS,
                         chainHits >= 4 ? 1.8F : 1.2F, Math.min(1.8F, 0.95F + chainHits * 0.12F));
                 } else {
-                    // 没有目标，给子弹一个随机方向继续飞行
                     Vec3 randomDirection = new Vec3(
                         (this.random.nextDouble() - 0.5) * 2.0,
                         (this.random.nextDouble() - 0.5) * 2.0,
@@ -388,12 +365,10 @@ public class CoinEntity extends ThrowableItemProjectile {
                         spawnExtraBouncedBullet(bullet, livingOwner);
                     }
 
-                    // 播放不同的音效表示没有目标
                     this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
                         SoundEvents.GLASS_BREAK, SoundSource.PLAYERS, 1.0F, 1.0F);
                 }
 
-                // 生成粒子效果（连锁弹射粒子更多，伤害越高粒子越多）
                 int particleCount = 24 + (chainHits * 8);
                 for (int i = 0; i < particleCount; i++) {
                     this.level().addParticle(ParticleTypes.CRIT,
@@ -403,7 +378,6 @@ public class CoinEntity extends ThrowableItemProjectile {
                         (this.random.nextDouble() - 0.5) * 1.0);
                 }
 
-                // 连锁弹射时添加特殊粒子效果
                 if (chainHits > 1) {
                     int enchantedParticles = 14 + (chainHits * 6);
                     for (int i = 0; i < enchantedParticles; i++) {
@@ -426,9 +400,6 @@ public class CoinEntity extends ThrowableItemProjectile {
         return bullet != null && bullet.isAlive() && bullet.getPersistentData().getBoolean("HellforgeShot");
     }
 
-    /**
-     * A/S评级复制一颗低伤害子弹。复制弹不再复制自己，也不提供硬币返还或开火冷却重置。
-     */
     private void spawnExtraBouncedBullet(BulletEntity source, LivingEntity owner) {
         source.getPersistentData().putBoolean("HellforgeCoinCopySpawned", true);
 
@@ -442,7 +413,8 @@ public class CoinEntity extends ThrowableItemProjectile {
         extraBullet.setDeltaMovement(source.getDeltaMovement());
         extraBullet.setXRot(source.getXRot());
         extraBullet.setYRot(source.getYRot());
-        extraBullet.setDamage(source.getDamage() * 0.5D);
+        int linkHits = Math.max(1, source.getPersistentData().getInt("HellforgeCoinLinkHits"));
+        extraBullet.setDamage(source.getDamage() * Hellforge.getCoinCopyDamageRatio(linkHits));
         extraBullet.setKnockbackStrength(source.getKnockbackStrength());
         extraBullet.setHeadshotMultiplier(1.0D);
         extraBullet.setWaterInertia(source.getWaterInertia());
@@ -483,8 +455,18 @@ public class CoinEntity extends ThrowableItemProjectile {
             && !bulletData.getBoolean("HellforgeCoinCopySpawned");
     }
 
+    private int getIntentOrPriorityTargetId(LivingEntity owner) {
+        int intentTargetId = getIntentTargetId();
+        return intentTargetId >= 0 ? intentTargetId : Hellforge.getPriorityTargetId(owner);
+    }
+
+    private int getIntentTargetId() {
+        CompoundTag coinData = this.getPersistentData();
+        return coinData.contains(Hellforge.COIN_INTENT_TARGET_ID) ? coinData.getInt(Hellforge.COIN_INTENT_TARGET_ID) : -1;
+    }
+
     /**
-     * 寻找最近的有效硬币（排除当前硬币）
+      *
      */
     private CoinEntity findNearestValidCoin(Level level, Vec3 position, double range, CoinEntity excludeCoin) {
         List<CoinEntity> coins = level.getEntitiesOfClass(CoinEntity.class,
@@ -506,9 +488,6 @@ public class CoinEntity extends ThrowableItemProjectile {
         return nearestCoin;
     }
     
-    /**
-     * 获取硬币的所有者实体
-     */
     public Entity getOwnerEntity() {
         int ownerId = this.entityData.get(OWNER_ID);
         if (ownerId != -1) {

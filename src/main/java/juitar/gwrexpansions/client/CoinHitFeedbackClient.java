@@ -11,13 +11,16 @@ public class CoinHitFeedbackClient {
     private static int chainTimer;
     private static int flashTicks;
     private static int clearSuppressTicks;
+    private static int overheatTimer;
 
-    public static void onCoinHit(int hits, int timer) {
+    public static void onCoinHit(int hits, int timer, int newOverheatTimer) {
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;
         if (player == null) {
             return;
         }
+
+        overheatTimer = Math.max(overheatTimer, newOverheatTimer);
 
         if (hits <= 0 || timer <= 0) {
             currentHits = 0;
@@ -62,6 +65,9 @@ public class CoinHitFeedbackClient {
         if (clearSuppressTicks > 0) {
             clearSuppressTicks--;
         }
+        if (overheatTimer > 0) {
+            overheatTimer--;
+        }
         if (chainTimer <= 0) {
             currentHits = 0;
         }
@@ -77,6 +83,10 @@ public class CoinHitFeedbackClient {
 
     public static int getFlashTicks() {
         return flashTicks;
+    }
+
+    public static int getOverheatTimer() {
+        return overheatTimer;
     }
 
     public static boolean isClearSuppressed() {

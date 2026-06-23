@@ -159,6 +159,8 @@
   "subtitles.gwrexpansions.hellforge_revolver.reload": "Hellforge Revolver reloads",
   "subtitles.gwrexpansions.hellforge_revolver.coin_flip": "Coin flips",
   "subtitles.gwrexpansions.hellforge_revolver.coin_hit": "Coin hit",
+  "subtitles.gwrexpansions.hellforge_revolver.overheat": "Hellforge overheats",
+  "subtitles.gwrexpansions.hellforge_revolver.heating_music": "Hellforge heating music",
   "effect.gwrexpansions.aimed": "Aimed",
   "entity.gwrexpansions.coin": "Coin",
   "entity.gwrexpansions.tracking_bullet": "Tracking Bullet",
