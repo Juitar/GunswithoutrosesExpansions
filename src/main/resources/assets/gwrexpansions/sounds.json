@@ -44,6 +44,12 @@
     ],
     "subtitle": "subtitles.gwrexpansions.meat_hook.miss"
   },
+  "meat_hook.ready": {
+    "category": "players",
+    "sounds": [
+      "gwrexpansions:meat_hook_ready"
+    ]
+  },
   "obsidian_core.hit": {
     "sounds": [
       "gwrexpansions:obsidian_core_hit"

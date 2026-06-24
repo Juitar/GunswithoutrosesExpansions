@@ -18,6 +18,7 @@ public class GWRESounds {
     public static final RegistryObject<SoundEvent> meat_hook_hit = initSound("meat_hook.hit");
     public static final RegistryObject<SoundEvent> meat_hook_miss = initSound("meat_hook.miss");
     public static final RegistryObject<SoundEvent> meat_hook_pull = initSound("meat_hook.pull");
+    public static final RegistryObject<SoundEvent> meat_hook_ready = initSound("meat_hook.ready");
     // 黑曜石发射器声音
     public static final RegistryObject<SoundEvent> OBSIDIAN_LAUNCHER_FIRE = initSound("item.obsidian_launcher.shoot");
     public static final RegistryObject<SoundEvent> OBSIDIAN_CORE_HIT  = initSound("obsidian_core.hit");
