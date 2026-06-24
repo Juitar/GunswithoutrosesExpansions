@@ -26,6 +26,12 @@ public class GWRENetwork {
             GunSkillPacket::handle,
             Optional.of(NetworkDirection.PLAY_TO_SERVER));
 
+        CHANNEL.registerMessage(packetId++, MeatHookInputPacket.class,
+            MeatHookInputPacket::encode,
+            MeatHookInputPacket::decode,
+            MeatHookInputPacket::handle,
+            Optional.of(NetworkDirection.PLAY_TO_SERVER));
+
         CHANNEL.registerMessage(packetId++, CoinHitFeedbackPacket.class,
             CoinHitFeedbackPacket::encode,
             CoinHitFeedbackPacket::decode,

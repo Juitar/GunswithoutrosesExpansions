@@ -3,8 +3,12 @@ package juitar.gwrexpansions.item.vanilla;
 import juitar.gwrexpansions.config.GWREConfig;
 import juitar.gwrexpansions.entity.vanilla.MeatHookEntity;
 import juitar.gwrexpansions.item.ConfigurableGunItem;
+import juitar.gwrexpansions.item.GunSkillItem;
+import juitar.gwrexpansions.item.GunSkillTooltip;
+import lykrast.gunswithoutroses.entity.BulletEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
@@ -20,7 +24,8 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class Supershotgun extends ConfigurableGunItem {
+public class Supershotgun extends ConfigurableGunItem implements GunSkillItem {
+    public static final String SUPER_SHOTGUN_SHOT_TAG = "GWRESuperShotgunShot";
     private static final double HOOK_RANGE = 32.0D; // 肉钩最大射程
     private static final double PULL_SPEED = 1.5D; // 拉近速度
     private static final int HOOK_COOLDOWN = 100; // 肉钩冷却时间（tick）
@@ -46,43 +51,34 @@ public class Supershotgun extends ConfigurableGunItem {
 
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
-        ItemStack stack = player.getItemInHand(hand);
-        
-        // 检查玩家是否在潜行
-        if (player.isCrouching()) {
-            // 检查冷却时间
-            int cooldown = getHookCooldown(stack);
-            if (cooldown > 0) {
-                return InteractionResultHolder.pass(stack);
-            }
-            
-            // 发射肉钩实体
-            if (!world.isClientSide) {
-                MeatHookEntity hook = new MeatHookEntity(world, player);
-                Vec3 look = player.getLookAngle();
-                hook.shoot(look.x, look.y, look.z, 3.5f, 0.0f); // 速度3.5，无扩散
-                world.addFreshEntity(hook);
-                
-                // 设置冷却时间，并标记为暂停状态
-                setHookCooldown(stack, HOOK_COOLDOWN);
-                setCooldownPaused(stack, true);
-                resetPauseCounter(stack);
-            }
-
-            return InteractionResultHolder.consume(stack);
-        }
-        
-        // 如果不是潜行，使用默认的射击行为
         return super.use(world, player, hand);
     }
 
     @Override
-    public void releaseUsing(ItemStack stack, Level world, LivingEntity entity, int timeLeft) {
-        // 当玩家停止使用物品时，检查是否需要清理肉钩
-        if (entity instanceof Player player && player.isCrouching()) {
-            // 可以在这里添加额外的清理逻辑
+    protected void affectBulletEntity(LivingEntity shooter, ItemStack gun, BulletEntity shot, boolean bulletFree) {
+        super.affectBulletEntity(shooter, gun, shot, bulletFree);
+        shot.getPersistentData().putBoolean(SUPER_SHOTGUN_SHOT_TAG, true);
+    }
+
+    @Override
+    public boolean canUseGunSkill(ServerPlayer player, InteractionHand hand, ItemStack stack) {
+        return stack.getItem() instanceof Supershotgun && getHookCooldown(stack) <= 0;
+    }
+
+    @Override
+    public void useGunSkill(ServerPlayer player, InteractionHand hand, ItemStack stack) {
+        if (getHookCooldown(stack) > 0) {
+            return;
         }
-        super.releaseUsing(stack, world, entity, timeLeft);
+
+        MeatHookEntity hook = new MeatHookEntity(player.level(), player);
+        Vec3 look = player.getLookAngle();
+        hook.shoot(look.x, look.y, look.z, 3.5f, 0.0f);
+        player.level().addFreshEntity(hook);
+
+        setHookCooldown(stack, HOOK_COOLDOWN);
+        setCooldownPaused(stack, true);
+        resetPauseCounter(stack);
     }
 
     @Override
@@ -125,7 +121,8 @@ public class Supershotgun extends ConfigurableGunItem {
     @Override
     protected void addExtraStatsTooltip(ItemStack stack, @Nullable Level world, List<Component> tooltip) {
         super.addExtraStatsTooltip(stack, world, tooltip);
-        tooltip.add(Component.translatable("tooltip.gwrexpansions.supershotgun.hook").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.gwrexpansions.supershotgun.hook",
+                GunSkillTooltip.keyName()).withStyle(ChatFormatting.GRAY));
         
         int cooldown = getHookCooldown(stack);
         boolean isPaused = isCooldownPaused(stack);
@@ -196,5 +193,35 @@ public class Supershotgun extends ConfigurableGunItem {
         }
         // 恢复冷却计算
         resumeCooldown(stack);
+    }
+
+    public void resetHookCooldown(ItemStack stack) {
+        setHookCooldown(stack, 0);
+        setCooldownPaused(stack, false);
+        resetPauseCounter(stack);
+    }
+
+    public static boolean resetHookCooldown(Player player) {
+        boolean reset = resetHookCooldownStack(player.getMainHandItem());
+        reset |= resetHookCooldownStack(player.getOffhandItem());
+
+        if (!reset) {
+            for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+                if (resetHookCooldownStack(player.getInventory().getItem(i))) {
+                    reset = true;
+                    break;
+                }
+            }
+        }
+
+        return reset;
+    }
+
+    private static boolean resetHookCooldownStack(ItemStack stack) {
+        if (stack.getItem() instanceof Supershotgun supershotgun) {
+            supershotgun.resetHookCooldown(stack);
+            return true;
+        }
+        return false;
     }
 }
