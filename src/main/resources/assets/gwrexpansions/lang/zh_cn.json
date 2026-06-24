@@ -153,7 +153,7 @@
   "tooltip.gwrexpansions.hellforge_revolver.coins": "硬币: %d/%d",
   "tooltip.gwrexpansions.hellforge_revolver.coin_recharge": "下一枚硬币: %d/%d tick",
   "tooltip.gwrexpansions.hellforge_revolver.usage": "按下 [%s] 抛出硬币。",
-  "message.gwrexpansions.no_coins": "没有硬币！射击来获得硬币。",
+  "message.gwrexpansions.no_coins": "没有币了！",
   "message.gwrexpansions.coin_cooldown": "抛硬币冷却中：%s 秒",
   "subtitles.gwrexpansions.hellforge_revolver.shoot": "狱锻之轮开火",
   "subtitles.gwrexpansions.hellforge_revolver.reload": "狱锻之轮换弹",

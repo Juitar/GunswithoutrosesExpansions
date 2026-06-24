@@ -153,7 +153,7 @@
   "tooltip.gwrexpansions.hellforge_revolver.coins": "Coins: %d/%d",
   "tooltip.gwrexpansions.hellforge_revolver.coin_recharge": "Next coin: %d/%d ticks",
   "tooltip.gwrexpansions.hellforge_revolver.usage": "Press [%s] to throw a coin.",
-  "message.gwrexpansions.no_coins": "No coins available! Shoot to earn coins.",
+  "message.gwrexpansions.no_coins": "No coins available!",
   "message.gwrexpansions.coin_cooldown": "Coin throw on cooldown: %s seconds",
   "subtitles.gwrexpansions.hellforge_revolver.shoot": "Hellforge Revolver fires",
   "subtitles.gwrexpansions.hellforge_revolver.reload": "Hellforge Revolver reloads",

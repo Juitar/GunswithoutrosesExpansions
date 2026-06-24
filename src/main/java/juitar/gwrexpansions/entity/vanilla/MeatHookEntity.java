@@ -36,13 +36,22 @@ public class MeatHookEntity extends AbstractArrow {
             EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> OWNER_ID = SynchedEntityData.defineId(MeatHookEntity.class,
             EntityDataSerializers.INT);
-    private static final double FIXED_PULL_SPEED = 0.85D;
-    private static final double MAX_HOOK_SPEED = 1.65D;
-    private static final double MAX_RELEASE_SPEED = 2.15D;
+    private static final double FIXED_PULL_SPEED = 1.10D;
+    private static final double MAX_HOOK_SPEED = 1.70D;
+    private static final double MAX_RELEASE_SPEED = 2.25D;
     private static final double MAX_TANGENT_CARRY_SPEED = 1.10D;
+    private static final double MAX_ORBIT_SPEED_BASE = 0.65D;
+    private static final double MAX_LIFT_SPEED_BASE = 0.75D;
+    private static final double MAX_RELEASE_UPWARD_SPEED = 0.85D;
+    private static final double RELEASE_UPWARD_SOFTCAP_KEEP = 0.30D;
+    private static final double PITCH_RELEASE_FORWARD_SHARE = 0.45D;
+    private static final double PITCH_RELEASE_UPWARD_SHARE = 0.20D;
+    private static final double CLOSE_RELEASE_UPWARD_BOOST = 0.40D;
+    private static final double CLOSE_RELEASE_MAX_UPWARD_SPEED = 0.55D;
+    private static final double CLOSE_RELEASE_TOWARD_REDUCTION = 0.80D;
     private static final double YAW_ORBIT_STRENGTH = 0.095D;
     private static final double PITCH_LIFT_STRENGTH = 0.12D;
-    private static final double INPUT_DECAY = 0.78D;
+    private static final double INPUT_DECAY = 0.72D;
     private static final double NEAR_DISTANCE = 6.0D;
     private static final double NEAR_RADIAL_MULTIPLIER = 0.42D;
     private static final double NEAR_LIFT_BOOST = 0.55D;
@@ -50,13 +59,11 @@ public class MeatHookEntity extends AbstractArrow {
     private static final double MAX_ORBIT_INPUT = 28.0D;
     private static final double INPUT_CLAMP = 12.0D;
     private static final double PITCH_RELEASE_THRESHOLD = 7.5D;
-    private static final double SWING_BREAK_ANGLE_DEGREES = 45.0D;
+    private static final double SWING_BREAK_ANGLE_DEGREES = 55.0D;
     private static final double MIN_ROPE_LENGTH = 3.0D;
     private static final double ROPE_SLACK = 0.15D;
-    private static final double ROPE_TENSION = 0.38D;
-    private static final double MAX_TENSION = 0.85D;
-    private static final int MAX_PULL_TIME = 60; // 最大拉动时间，防止无限拉动
-    private static final double MIN_DISTANCE_TO_DISCARD = 2.0D; // 玩家与目标的最小距离，低于此距离时肉钩消失
+    private static final int MAX_PULL_TIME = 100; // 最大拉动时间，防止无限拉动
+    private static final double MIN_DISTANCE_TO_DISCARD = 2.5D; // 玩家与目标的最小距离，低于此距离时肉钩消失
     private static final int MAX_LIFETIME = 80; // 肉钩最长存在时间
     private static final int MAX_PULL_DISTANCE = 32;
 
@@ -255,12 +262,13 @@ public class MeatHookEntity extends AbstractArrow {
                 boolean releaseByPitchFlick = distanceToAnchor < NEAR_DISTANCE
                         && orbitPitchInput > PITCH_RELEASE_THRESHOLD
                         && pullTime > 6;
-                boolean releaseBySwingBreak = shouldBreakBySwingAngle(player, hookAnchor);
+                boolean releaseBySwingBreak = shouldBreakByHorizontalSwing(player, hookAnchor)
+                        || shouldReleaseByOverloadAway(player, hookAnchor);
 
                 // 只有当玩家非常接近目标、主动低头弹射或拉动时间过长时才停止拉动
                 if (releaseByDistance || releaseByPitchFlick || releaseBySwingBreak || pullTime >= MAX_PULL_TIME) {
                     if (DEBUG) {
-                        String reason = releaseByDistance ? "玩家已接近目标"
+                        String reason = releaseByDistance ? "近距离滑翔释放"
                                 : releaseByPitchFlick ? "低头弹射释放"
                                         : releaseBySwingBreak ? "甩动角度断钩" : "拉动时间过长";
                         LOGGER.info("停止拉动：{}", reason);
@@ -274,7 +282,7 @@ public class MeatHookEntity extends AbstractArrow {
                     }
 
                     if (releaseByDistance) {
-                        stopPlayerAtHookTarget(player);
+                        applyCloseReleaseMomentum(player, hookAnchor);
                     } else {
                         applyReleaseMomentum(player, hookAnchor);
                     }
@@ -523,9 +531,12 @@ public class MeatHookEntity extends AbstractArrow {
         double inputMultiplier = distance > 12.0D ? 0.9D : 1.2D + nearT * 0.85D;
 
         Vec3 radialPull = radial.scale(FIXED_PULL_SPEED * radialMultiplier);
-        Vec3 orbit = right.scale(orbitYawInput * YAW_ORBIT_STRENGTH * inputMultiplier);
-        Vec3 lift = up.scale(Math.max(0.0D, orbitPitchInput) * PITCH_LIFT_STRENGTH * inputMultiplier
-                + nearT * NEAR_LIFT_BOOST * Math.max(0.0D, orbitPitchInput) / INPUT_CLAMP);
+        double orbitSpeed = Mth.clamp(orbitYawInput * YAW_ORBIT_STRENGTH * inputMultiplier,
+                -MAX_ORBIT_SPEED_BASE * inputMultiplier, MAX_ORBIT_SPEED_BASE * inputMultiplier);
+        Vec3 orbit = right.scale(orbitSpeed);
+        double liftSpeed = Math.max(0.0D, orbitPitchInput) * PITCH_LIFT_STRENGTH * inputMultiplier
+                + nearT * NEAR_LIFT_BOOST * Math.max(0.0D, orbitPitchInput) / INPUT_CLAMP;
+        Vec3 lift = up.scale(Math.min(liftSpeed, MAX_LIFT_SPEED_BASE));
 
         Vec3 current = player.getDeltaMovement();
         Vec3 currentWithoutRadial = current.subtract(radial.scale(current.dot(radial)));
@@ -536,6 +547,12 @@ public class MeatHookEntity extends AbstractArrow {
                 .add(lift)
                 .add(tangentCarry);
 
+        double speedSqr = current.lengthSqr();
+        if (speedSqr > 1.0D) {
+            double dragFactor = 0.02D * (speedSqr - 1.0D);
+            next = next.subtract(current.normalize().scale(dragFactor));
+        }
+
         return clampVector(next, MAX_HOOK_SPEED);
     }
 
@@ -545,20 +562,72 @@ public class MeatHookEntity extends AbstractArrow {
         if (toTarget.lengthSqr() > 1.0E-4D) {
             Vec3 radial = toTarget.normalize();
             Vec3 right = getOrbitRight(radial);
+            double pitchRelease = Math.max(0.0D, orbitPitchInput) * PITCH_LIFT_STRENGTH * RELEASE_BOOST;
+            Vec3 forward = getReleaseForward(player, right);
             current = current
                     .add(right.scale(orbitYawInput * YAW_ORBIT_STRENGTH * RELEASE_BOOST))
-                    .add(0.0D, Math.max(0.0D, orbitPitchInput) * PITCH_LIFT_STRENGTH * RELEASE_BOOST, 0.0D);
+                    .add(forward.scale(pitchRelease * PITCH_RELEASE_FORWARD_SHARE))
+                    .add(0.0D, pitchRelease * PITCH_RELEASE_UPWARD_SHARE, 0.0D);
         }
-        player.setDeltaMovement(clampVector(current, MAX_RELEASE_SPEED));
+        current = applyReleaseVerticalSoftCap(clampVector(current, MAX_RELEASE_SPEED), MAX_RELEASE_UPWARD_SPEED);
+        player.setDeltaMovement(current);
         player.hurtMarked = true;
         MeatHookFallProtectionHandler.grant(player);
     }
 
-    private void stopPlayerAtHookTarget(Player player) {
-        player.setDeltaMovement(Vec3.ZERO);
+    private void applyCloseReleaseMomentum(Player player, Vec3 hookAnchor) {
+        Vec3 current = clampVector(player.getDeltaMovement(), MAX_RELEASE_SPEED);
+        Vec3 toTarget = hookAnchor.subtract(player.getEyePosition());
+        if (toTarget.lengthSqr() > 1.0E-4D) {
+            Vec3 radial = toTarget.normalize();
+            Vec3 right = getOrbitRight(radial);
+            Vec3 forward = getReleaseForward(player, right);
+            double towardSpeed = current.dot(radial);
+            if (towardSpeed > 0.0D) {
+                current = current.subtract(radial.scale(towardSpeed * CLOSE_RELEASE_TOWARD_REDUCTION));
+            }
+            current = current
+                    .add(right.scale(orbitYawInput * YAW_ORBIT_STRENGTH * RELEASE_BOOST * 0.45D))
+                    .add(forward.scale(Math.max(0.0D, orbitPitchInput) * PITCH_LIFT_STRENGTH * RELEASE_BOOST * 0.18D))
+                    .add(0.0D, CLOSE_RELEASE_UPWARD_BOOST, 0.0D);
+        } else {
+            current = current.add(0.0D, CLOSE_RELEASE_UPWARD_BOOST, 0.0D);
+        }
+        current = applyReleaseVerticalSoftCap(clampVector(current, MAX_RELEASE_SPEED), CLOSE_RELEASE_MAX_UPWARD_SPEED);
+        player.setDeltaMovement(current);
         player.hurtMarked = true;
         player.fallDistance = 0.0F;
         MeatHookFallProtectionHandler.grant(player);
+    }
+
+    private Vec3 applyReleaseVerticalSoftCap(Vec3 velocity, double maxUpwardSpeed) {
+        if (velocity.y <= maxUpwardSpeed) {
+            return velocity;
+        }
+
+        double cappedY = maxUpwardSpeed + (velocity.y - maxUpwardSpeed) * RELEASE_UPWARD_SOFTCAP_KEEP;
+        return new Vec3(velocity.x, cappedY, velocity.z);
+    }
+
+    private Vec3 getReleaseForward(Player player, Vec3 fallback) {
+        Vec3 look = player.getLookAngle();
+        Vec3 horizontalLook = new Vec3(look.x, 0.0D, look.z);
+        if (horizontalLook.lengthSqr() > 1.0E-4D) {
+            return horizontalLook.normalize();
+        }
+
+        Vec3 current = player.getDeltaMovement();
+        Vec3 horizontalVelocity = new Vec3(current.x, 0.0D, current.z);
+        if (horizontalVelocity.lengthSqr() > 1.0E-4D) {
+            return horizontalVelocity.normalize();
+        }
+
+        Vec3 horizontalFallback = new Vec3(fallback.x, 0.0D, fallback.z);
+        if (horizontalFallback.lengthSqr() > 1.0E-4D) {
+            return horizontalFallback.normalize();
+        }
+
+        return new Vec3(1.0D, 0.0D, 0.0D);
     }
 
     private Vec3 applyRopeConstraint(Player player, Vec3 hookAnchor, Vec3 velocity) {
@@ -574,18 +643,20 @@ public class MeatHookEntity extends AbstractArrow {
             return velocity;
         }
 
+        double overshoot = predictedDistance - maxDistance;
         Vec3 outward = fromAnchor.scale(1.0D / predictedDistance);
         double awaySpeed = velocity.dot(outward);
-        Vec3 constrained = awaySpeed > 0.0D ? velocity.subtract(outward.scale(awaySpeed)) : velocity;
-        double overshoot = predictedDistance - maxDistance;
-        constrained = constrained.subtract(outward.scale(Math.min(overshoot * ROPE_TENSION, MAX_TENSION)));
+        Vec3 constrained = awaySpeed > 0.0D ? velocity.subtract(outward.scale(awaySpeed * 0.85D)) : velocity;
+        constrained = constrained.subtract(outward.scale(Math.min(overshoot * 0.5D, 1.2D)));
 
         return clampVector(constrained, MAX_HOOK_SPEED);
     }
 
-    private boolean shouldBreakBySwingAngle(Player player, Vec3 hookAnchor) {
+    private boolean shouldBreakByHorizontalSwing(Player player, Vec3 hookAnchor) {
         Vec3 currentOffset = player.getEyePosition().subtract(hookAnchor);
-        if (currentOffset.lengthSqr() < 1.0E-4D) {
+        Vec3 initialHorizontal = new Vec3(initialRopeDirection.x, 0.0D, initialRopeDirection.z);
+        Vec3 currentHorizontal = new Vec3(currentOffset.x, 0.0D, currentOffset.z);
+        if (currentHorizontal.lengthSqr() < 1.0E-4D) {
             return false;
         }
 
@@ -594,9 +665,26 @@ public class MeatHookEntity extends AbstractArrow {
             return false;
         }
 
-        double dot = initialRopeDirection.normalize().dot(currentOffset.normalize());
+        if (initialHorizontal.lengthSqr() < 1.0E-4D) {
+            return false;
+        }
+
+        double dot = initialHorizontal.normalize().dot(currentHorizontal.normalize());
         double minDot = Math.cos(Math.toRadians(SWING_BREAK_ANGLE_DEGREES));
         return dot < minDot;
+    }
+
+    private boolean shouldReleaseByOverloadAway(Player player, Vec3 hookAnchor) {
+        if (pullTime <= 10) {
+            return false;
+        }
+
+        Vec3 toTarget = hookAnchor.subtract(player.getEyePosition());
+        if (toTarget.lengthSqr() < 1.0E-4D) {
+            return false;
+        }
+
+        return player.getDeltaMovement().dot(toTarget.normalize()) < -0.1D;
     }
 
     public void addOrbitInput(float deltaYaw, float deltaPitch) {
