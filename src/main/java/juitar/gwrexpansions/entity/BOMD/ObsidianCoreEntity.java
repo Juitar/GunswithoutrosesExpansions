@@ -1,10 +1,11 @@
 package juitar.gwrexpansions.entity.BOMD;
 
-import juitar.gwrexpansions.registry.CompatBOMD;
-import juitar.gwrexpansions.registry.GWREItems;
+import com.cerbon.bosses_of_mass_destruction.particle.BMDParticles;
+import com.cerbon.bosses_of_mass_destruction.sound.BMDSounds;
 import juitar.gwrexpansions.registry.GWRESounds;
+import juitar.gwrexpansions.item.BOMD.ObsidianLauncher;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
@@ -22,11 +23,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ShieldItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
@@ -35,15 +34,15 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.MobType;
 import juitar.gwrexpansions.advancement.BOMD.ObsidianCakeTrigger;
 
 import java.util.List;
-import java.util.Random;
+import java.util.UUID;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerLevel;
 
 public class ObsidianCoreEntity extends AbstractArrow {
     private static final EntityDataAccessor<Boolean> RETURNING = SynchedEntityData.defineId(ObsidianCoreEntity.class, EntityDataSerializers.BOOLEAN);
@@ -52,6 +51,8 @@ public class ObsidianCoreEntity extends AbstractArrow {
     private static final EntityDataAccessor<Float> AOE_RADIUS_MULTIPLIER = SynchedEntityData.defineId(ObsidianCoreEntity.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> MAX_RANGE = SynchedEntityData.defineId(ObsidianCoreEntity.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Integer> SPELL_TYPE = SynchedEntityData.defineId(ObsidianCoreEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> SPELL_RELEASED = SynchedEntityData.defineId(ObsidianCoreEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> FRENZY_SHOT = SynchedEntityData.defineId(ObsidianCoreEntity.class, EntityDataSerializers.BOOLEAN);
     private static final double RETURN_SPEED = 1.5D; // 回归速度
     private static final float AOE_RADIUS = 1.0f; // AOE范围
     private static final float AOE_DAMAGE_FACTOR = 1.0F; // AOE伤害系数
@@ -62,6 +63,8 @@ public class ObsidianCoreEntity extends AbstractArrow {
     private boolean hasHit = false; // 是否已击中目标
     private boolean hasDealtAOE = false; // 是否已造成AOE伤害
     private Vec3 startPos; // 发射起始位置
+    private UUID launcherId;
+    private boolean lifecycleCleared = false;
     
     /**
      * 施法属性枚举
@@ -129,6 +132,8 @@ public class ObsidianCoreEntity extends AbstractArrow {
         this.entityData.define(AOE_RADIUS_MULTIPLIER, 1.0f); // 默认AOE范围乘数为1.0
         this.entityData.define(MAX_RANGE, BASE_MAX_RANGE); // 默认最大射程
         this.entityData.define(SPELL_TYPE, SpellType.FIRE.ordinal()); // 默认为火焰属性
+        this.entityData.define(SPELL_RELEASED, false);
+        this.entityData.define(FRENZY_SHOT, false);
     }
     
     @Override
@@ -140,6 +145,7 @@ public class ObsidianCoreEntity extends AbstractArrow {
         // 我们将使用自定义的碰撞检测
         Entity owner = this.getOwner();
         if (owner != null && !owner.isAlive() && !this.level().isClientSide) {
+            this.clearLauncherState(false);
             this.discard();
             return;
         }
@@ -185,6 +191,9 @@ public class ObsidianCoreEntity extends AbstractArrow {
         
         // 超时移除
         if (this.tickCount > MAX_LIFETIME) {
+            if (!this.level().isClientSide) {
+                this.clearLauncherState(false);
+            }
             this.discard();
         }
         
@@ -301,10 +310,13 @@ public class ObsidianCoreEntity extends AbstractArrow {
         // 获取所有者
         Entity owner = this.getOwner();
         if (owner == null || !owner.isAlive()) {
+            if (!this.level().isClientSide) {
+                this.clearLauncherState(false);
+            }
             this.discard();
             return;
         }
-        
+
         // 计算回归向量
         Vec3 ownerPos = owner.position().add(0, owner.getEyeHeight() * 0.8, 0);
         Vec3 currentPos = this.position();
@@ -315,15 +327,11 @@ public class ObsidianCoreEntity extends AbstractArrow {
         
         // 如果距离小于1.75，则立即移除实体
         if (distanceToOwner < 1.75) {
-            // 确保实体被立即移除
-            this.discard();
+            if (!this.level().isClientSide) {
+                this.clearLauncherState(true);
+            }
             this.level().broadcastEntityEvent(this, (byte)3); // 生成粒子效果
-            
-            // 播放捡起音效
-            this.level().playSound(null, owner.getX(), owner.getY(), owner.getZ(), 
-                SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.2F, 
-                ((this.random.nextFloat() - this.random.nextFloat()) * 0.7F + 1.0F) * 2.0F);
-            
+            this.discard();
             return;
         }
         
@@ -378,95 +386,9 @@ public class ObsidianCoreEntity extends AbstractArrow {
         this.level().playSound(null, hitEntity.getX(), hitEntity.getY(), hitEntity.getZ(),
         GWRESounds.OBSIDIAN_CORE_HIT.get(), SoundSource.NEUTRAL, 1.0F, 1.0F);
         
-        // 处理伤害
-        if (hitEntity.isAttackable()) {
-            Entity owner = this.getOwner();
-            
-            // 计算基础伤害
-            float damage = (float)this.getBaseDamage();
-            
-            // 获取施法属性
-            SpellType spellType = getSpellType();
-            
-            // 对直接击中的目标应用施法效果
-            if (hitEntity instanceof LivingEntity livingTarget) {
-                switch (spellType) {
-                    case FIRE:
-                        // 火焰伤害增强25%
-                        damage *= 1.25f;
-                        // 点燃目标，持续5-7秒
-                        int fireDuration = 5 + this.random.nextInt(3);
-                        livingTarget.setSecondsOnFire(fireDuration);
-                        break;
-                        
-                    case FROST:
-                        // 减速效果，50%减速，持续5秒
-                        livingTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 1));
-                        // 对火焰免疫实体额外伤害
-                        if (livingTarget.fireImmune()) {
-                            damage *= 1.5f;
-                        }
-                        break;
-                        
-                    case HOLY:
-                        // 神圣伤害对亡灵生物更有效
-                        if (livingTarget.getMobType().equals(MobType.UNDEAD)) {
-                            damage *= 1.25f;
-                        }
-                        // 直接击中目标也给予伤害吸收效果
-                        if (owner instanceof LivingEntity ownerLiving) {
-                            // 给予1级伤害吸收效果，持续30秒
-                            ownerLiving.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 600, 0));
-                            // 播放神圣效果音效
-                            this.level().playSound(null, ownerLiving.getX(), ownerLiving.getY(), ownerLiving.getZ(), 
-                                SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 1.0F, 1.0F);
-                        }
-                        break;
-                }
-                
-                // 应用伤害
-                if (hitEntity.hurt(this.damageSources().arrow(this, owner instanceof LivingEntity ? (LivingEntity)owner : null), damage)) {
-                    // 如果伤害成功应用
-                    
-                    // 击退效果
-                    livingTarget.knockback(0.5F, this.getX() - livingTarget.getX(), this.getZ() - livingTarget.getZ());
-                    
-                    // 破盾效果：只对玩家生效，检查是否正在使用盾牌
-                    if (livingTarget instanceof Player player && player.isBlocking()) {
-                        // 禁用盾牌 - 参考斧头的破盾机制
-                        // 使用getCooldowns().addCooldown方法禁用玩家当前使用的盾牌
-                        // 获取玩家正在使用的物品（主手或副手）
-                        ItemStack activeShield = player.getUseItem();
-                        if (!activeShield.isEmpty() && activeShield.getItem() instanceof ShieldItem) {
-                            // 添加5秒冷却（100 ticks）
-                            player.getCooldowns().addCooldown(activeShield.getItem(), 100);
-                        }
-                        
-                        // 播放盾牌禁用的声音和粒子效果
-                        this.level().playSound(null, player.getX(), player.getY(), player.getZ(), 
-                            SoundEvents.SHIELD_BREAK, SoundSource.PLAYERS, 0.8F, 0.8F + this.level().random.nextFloat() * 0.4F);
-                    }
-                }
-            }
-        }
-        
-        // 处理AOE伤害 - 只在未处理过AOE的情况下处理
-        if (!this.hasDealtAOE) {
-            // 在客户端生成粒子效果
-            if (this.level().isClientSide) {
-                this.spawnAOEParticles(hitEntity);
-            }
-            
-            // 仅在服务端处理AOE伤害
-            if (!this.level().isClientSide) {
-                // 传递已击中实体，确保AOE伤害不重复应用于直接击中目标
-                if (hitEntity instanceof LivingEntity livingTarget) {
-                    this.dealAOEDamage(livingTarget);
-                } else {
-                    this.dealAOEDamage(hitEntity.blockPosition());
-                }
-                this.hasDealtAOE = true;
-            }
+        if (!this.level().isClientSide && hitEntity instanceof LivingEntity livingTarget && hitEntity.isAttackable()) {
+            this.hurtDirectTarget(livingTarget);
+            this.releaseImmediateSpell(livingTarget.blockPosition());
         }
         
         // 设置为回归状态 - 必须在AOE伤害处理后设置，否则会影响AOE逻辑
@@ -489,18 +411,8 @@ public class ObsidianCoreEntity extends AbstractArrow {
         this.level().playSound(null, hitPos, 
         GWRESounds.OBSIDIAN_CORE_MISS.get(), SoundSource.NEUTRAL, 1.0F, 1.0F);
         
-        // 处理AOE伤害 - 只在未处理过AOE的情况下处理
-        if (!this.hasDealtAOE) {
-            // 在客户端生成粒子效果
-            if (this.level().isClientSide) {
-                this.spawnAOEParticles(hitPos);
-            }
-            
-            // 仅在服务端处理AOE伤害
-            if (!this.level().isClientSide) {
-                this.dealAOEDamage(hitPos);
-                this.hasDealtAOE = true;
-            }
+        if (!this.level().isClientSide) {
+            this.releaseImmediateSpell(hitPos);
         }
         
         // 设置为回归状态 - 必须在AOE伤害处理后设置
@@ -508,6 +420,97 @@ public class ObsidianCoreEntity extends AbstractArrow {
         
         // 停止移动
         this.setDeltaMovement(Vec3.ZERO);
+    }
+
+    private void hurtDirectTarget(LivingEntity target) {
+        Entity owner = this.getOwner();
+        float damage = (float)this.getBaseDamage();
+        SpellType spellType = getSpellType();
+
+        switch (spellType) {
+            case FIRE:
+                damage *= 1.15F;
+                target.setSecondsOnFire(4 + this.random.nextInt(3));
+                break;
+            case FROST:
+                target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 80, 1));
+                break;
+            case HOLY:
+                if (target.getMobType().equals(MobType.UNDEAD)) {
+                    damage *= 1.2F;
+                }
+                if (owner instanceof LivingEntity ownerLiving) {
+                    ownerLiving.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 300, 0));
+                }
+                break;
+        }
+
+        if (target.hurt(this.damageSources().arrow(this, owner instanceof LivingEntity ? (LivingEntity)owner : null), damage)) {
+            target.knockback(0.5F, this.getX() - target.getX(), this.getZ() - target.getZ());
+            if (target instanceof Player player && player.isBlocking()) {
+                ItemStack activeShield = player.getUseItem();
+                if (!activeShield.isEmpty() && activeShield.getItem() instanceof ShieldItem) {
+                    player.getCooldowns().addCooldown(activeShield.getItem(), 100);
+                }
+                this.level().playSound(null, player.getX(), player.getY(), player.getZ(),
+                        SoundEvents.SHIELD_BREAK, SoundSource.PLAYERS, 0.8F,
+                        0.8F + this.level().random.nextFloat() * 0.4F);
+            }
+        }
+    }
+
+    private void releaseImmediateSpell(BlockPos impactPos) {
+        if (this.hasDealtAOE) {
+            return;
+        }
+
+        this.hasDealtAOE = true;
+        this.setSpellReleased(true);
+        this.spawnBOMDSpellEffect(impactPos);
+        this.dealAOEDamage(impactPos);
+    }
+
+    private void spawnBOMDSpellEffect(BlockPos pos) {
+        if (!(this.level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+
+        SpellType spellType = getSpellType();
+        ParticleOptions particle = switch (spellType) {
+            case FIRE -> BMDParticles.OBSIDILITH_BURST.get();
+            case FROST -> BMDParticles.OBSIDILITH_SPIKE.get();
+            case HOLY -> BMDParticles.PILLAR_RUNE.get();
+        };
+
+        serverLevel.sendParticles(particle,
+                pos.getX() + 0.5D, pos.getY() + 0.65D, pos.getZ() + 0.5D,
+                28, 0.65D, 0.45D, 0.65D, 0.04D);
+        serverLevel.sendParticles(BMDParticles.PILLAR_SPAWN_INDICATOR.get(),
+                pos.getX() + 0.5D, pos.getY() + 0.08D, pos.getZ() + 0.5D,
+                18, 0.8D, 0.02D, 0.8D, 0.0D);
+
+        this.level().playSound(null, pos, switch (spellType) {
+            case FIRE -> BMDSounds.OBSIDILITH_BURST.get();
+            case FROST -> BMDSounds.SPIKE.get();
+            case HOLY -> BMDSounds.OBSIDILITH_PREPARE_ATTACK.get();
+        }, SoundSource.NEUTRAL, 1.0F, switch (spellType) {
+            case FIRE -> 0.9F;
+            case FROST -> 1.05F;
+            case HOLY -> 1.2F;
+        });
+    }
+
+    private void applyImmediateSpellEffect(LivingEntity target) {
+        switch (getSpellType()) {
+            case FIRE:
+                target.setSecondsOnFire(5 + this.random.nextInt(3));
+                break;
+            case FROST:
+                target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 120, 2));
+                break;
+            case HOLY:
+                break;
+        }
     }
     
     /**
@@ -631,27 +634,7 @@ public class ObsidianCoreEntity extends AbstractArrow {
                 // 最高3级伤害吸收效果，每级30秒
                 int effectLevel = Math.min(2, absorptionLevel - 1); // 转换为0-2的等级
                 livingOwner.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 600, effectLevel));
-                
-                // 播放神圣效果音效
-                this.level().playSound(null, livingOwner.getX(), livingOwner.getY(), livingOwner.getZ(), 
-                    SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 1.0F, 1.0F);
             }
-        }
-        
-        // 根据施法属性播放不同AOE音效
-        switch (spellType) {
-            case FIRE:
-                this.level().playSound(null, hitPos, 
-                    SoundEvents.FIRECHARGE_USE, SoundSource.NEUTRAL, 1.0F, 0.8F);
-                break;
-            case FROST:
-                this.level().playSound(null, hitPos,
-                    SoundEvents.GLASS_BREAK, SoundSource.NEUTRAL, 1.0F, 0.6F);
-                break;
-            case HOLY:
-                this.level().playSound(null, hitPos,
-                    SoundEvents.BELL_RESONATE, SoundSource.NEUTRAL, 1.0F, 1.2F);
-                break;
         }
     }
     
@@ -1107,6 +1090,14 @@ public class ObsidianCoreEntity extends AbstractArrow {
     public boolean hurt(DamageSource source, float amount) {
         return false;
     }
+
+    @Override
+    public void remove(RemovalReason reason) {
+        if (!this.level().isClientSide && !this.lifecycleCleared) {
+            this.clearLauncherState(false);
+        }
+        super.remove(reason);
+    }
     
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
@@ -1151,6 +1142,13 @@ public class ObsidianCoreEntity extends AbstractArrow {
                 this.entityData.set(SPELL_TYPE, spellTypeOrdinal);
             }
         }
+
+        if (tag.hasUUID("LauncherId")) {
+            this.launcherId = tag.getUUID("LauncherId");
+        }
+        this.entityData.set(SPELL_RELEASED, tag.getBoolean("SpellReleased"));
+        this.entityData.set(FRENZY_SHOT, tag.getBoolean("FrenzyShot"));
+        this.lifecycleCleared = tag.getBoolean("LifecycleCleared");
     }
     
     @Override
@@ -1178,6 +1176,12 @@ public class ObsidianCoreEntity extends AbstractArrow {
         
         // 保存施法属性
         tag.putInt("SpellType", this.entityData.get(SPELL_TYPE));
+        if (this.launcherId != null) {
+            tag.putUUID("LauncherId", this.launcherId);
+        }
+        tag.putBoolean("SpellReleased", this.isSpellReleased());
+        tag.putBoolean("FrenzyShot", this.isFrenzyShot());
+        tag.putBoolean("LifecycleCleared", this.lifecycleCleared);
     }
     
     @Override
@@ -1227,6 +1231,40 @@ public class ObsidianCoreEntity extends AbstractArrow {
      */
     public void setSpellType(SpellType spellType) {
         this.entityData.set(SPELL_TYPE, spellType.ordinal());
+    }
+
+    public void setLauncherId(UUID launcherId) {
+        this.launcherId = launcherId;
+    }
+
+    public void setFrenzyShot(boolean frenzyShot) {
+        this.entityData.set(FRENZY_SHOT, frenzyShot);
+    }
+
+    public boolean isFrenzyShot() {
+        return this.entityData.get(FRENZY_SHOT);
+    }
+
+    public void setSpellReleased(boolean spellReleased) {
+        this.entityData.set(SPELL_RELEASED, spellReleased);
+    }
+
+    public boolean isSpellReleased() {
+        return this.entityData.get(SPELL_RELEASED);
+    }
+
+    private void clearLauncherState(boolean returned) {
+        if (this.lifecycleCleared || this.launcherId == null || !(this.getOwner() instanceof Player player)) {
+            this.lifecycleCleared = true;
+            return;
+        }
+
+        this.lifecycleCleared = true;
+        if (returned) {
+            ObsidianLauncher.onCoreReturned(player, this.launcherId, this.getSpellType(), this.isSpellReleased(), this.isFrenzyShot());
+        } else {
+            ObsidianLauncher.onCoreLost(player, this.launcherId);
+        }
     }
 
     /**

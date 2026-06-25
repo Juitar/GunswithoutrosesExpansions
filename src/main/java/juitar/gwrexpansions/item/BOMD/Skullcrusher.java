@@ -18,6 +18,9 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -28,6 +31,7 @@ import net.minecraft.world.level.Level;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.function.Predicate;
 
@@ -37,6 +41,9 @@ public class Skullcrusher extends ConfigurableGatlingItem {
     private static final int DECAY_RATE = 1; // 每次减少的点数
     private static final double MAX_SPEED_REDUCTION = 0.5; // 最大射速减少50%
     private static final int MAX_CONSECUTIVE_TIME = 100; // 重新定义最大连续射击时间计数
+    private static final UUID CHARGE_MOVEMENT_SPEED_UUID = UUID.fromString("ff402a19-bc6c-4a83-a64f-bcc962a1d8e0");
+    private static final double VANILLA_USE_MOVEMENT_MULTIPLIER = 0.2D;
+    private static final double MAX_EFFECTIVE_MOVEMENT_MULTIPLIER = 1.5D;
     
     /**
      * 创建可配置的加特林
@@ -75,6 +82,7 @@ public class Skullcrusher extends ConfigurableGatlingItem {
             
             // 只有在不使用武器时才衰减
             if (!isUsingThisGun) {
+                removeChargeSpeedModifier(player);
                 int consecutiveTime = stack.getOrCreateTag().getInt(CONSECUTIVE_TIME_KEY);
                 if (consecutiveTime > 0) {
                     // 每次减少DECAY_RATE点
@@ -88,6 +96,7 @@ public class Skullcrusher extends ConfigurableGatlingItem {
     public void onUseTick(Level world, LivingEntity user, ItemStack gun, int ticks) {
         if (user instanceof Player player) {
             int used = this.getUseDuration(gun) - ticks;
+            applyChargeSpeedModifier(player, used);
             
             // 更新连续射击计数
             long currentTime = world.getGameTime();
@@ -148,6 +157,41 @@ public class Skullcrusher extends ConfigurableGatlingItem {
                     player.awardStat(Stats.ITEM_USED.get(this));
                 }
             }
+        }
+    }
+
+    @Override
+    public void releaseUsing(ItemStack stack, Level world, LivingEntity entity, int timeLeft) {
+        if (entity instanceof Player player) {
+            removeChargeSpeedModifier(player);
+        }
+        super.releaseUsing(stack, world, entity, timeLeft);
+    }
+
+    @Override
+    public boolean onDroppedByPlayer(ItemStack item, Player player) {
+        removeChargeSpeedModifier(player);
+        return super.onDroppedByPlayer(item, player);
+    }
+
+    private static void applyChargeSpeedModifier(Player player, int useTicks) {
+        AttributeInstance movementSpeed = player.getAttribute(Attributes.MOVEMENT_SPEED);
+        if (movementSpeed == null) {
+            return;
+        }
+
+        movementSpeed.removeModifier(CHARGE_MOVEMENT_SPEED_UUID);
+        double progress = Math.min(1.0D, Math.max(0.0D, useTicks / (double)MAX_CONSECUTIVE_TIME));
+        double effectiveMultiplier = 1.0D + (MAX_EFFECTIVE_MOVEMENT_MULTIPLIER - 1.0D) * progress;
+        double attributeMultiplier = effectiveMultiplier / VANILLA_USE_MOVEMENT_MULTIPLIER - 1.0D;
+        movementSpeed.addTransientModifier(new AttributeModifier(CHARGE_MOVEMENT_SPEED_UUID,
+                "Skullcrusher charge movement speed", attributeMultiplier, AttributeModifier.Operation.MULTIPLY_TOTAL));
+    }
+
+    private static void removeChargeSpeedModifier(Player player) {
+        AttributeInstance movementSpeed = player.getAttribute(Attributes.MOVEMENT_SPEED);
+        if (movementSpeed != null) {
+            movementSpeed.removeModifier(CHARGE_MOVEMENT_SPEED_UUID);
         }
     }
 //原use方法

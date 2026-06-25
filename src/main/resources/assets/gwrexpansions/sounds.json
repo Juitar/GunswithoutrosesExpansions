@@ -110,5 +110,12 @@
     "sounds": [
       "gwrexpansions:obsidian_pull"
     ]
+  },
+  "item.obsidian_launcher.reload": {
+    "category": "players",
+    "subtitle": "subtitles.gwrexpansions.obsidian_launcher.reload",
+    "sounds": [
+      "gwrexpansions:obsidian_core_reload"
+    ]
   }
 }

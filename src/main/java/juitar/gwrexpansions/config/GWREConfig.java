@@ -809,11 +809,29 @@ public class GWREConfig {
                 }
         }
         public static class LauncherConfigs {
-                public final GunConfig Obisidian;
+                public final ObsidianLauncherConfig Obisidian;
 
                 public LauncherConfigs(ForgeConfigSpec.Builder builder) {
                         builder.push("Launcher");
-                        Obisidian = new GunConfig(builder, "Obsidian", 30, 1.0, 1.0, 60, 0.0);
+                        Obisidian = new ObsidianLauncherConfig(builder);
+                        builder.pop();
+                }
+        }
+
+        public static class ObsidianLauncherConfig extends GunConfig {
+                public final ForgeConfigSpec.IntValue frenzyDurationTicks;
+                public final ForgeConfigSpec.IntValue storedSpellWeight;
+                public final ForgeConfigSpec.IntValue missingSpellWeight;
+
+                public ObsidianLauncherConfig(ForgeConfigSpec.Builder builder) {
+                        super(builder, "Obsidian", 30, 1.0, 1.0, 60, 0.0);
+                        builder.push("Obsidian_Mechanics");
+                        frenzyDurationTicks = builder.comment("Spell Frenzy duration in ticks after consuming all three stored spells.")
+                                        .defineInRange("frenzyDurationTicks", 60, 1, 72000);
+                        storedSpellWeight = builder.comment("Random spell weight for a spell type that is already stored on the launcher.")
+                                        .defineInRange("storedSpellWeight", 1, 0, 1000);
+                        missingSpellWeight = builder.comment("Random spell weight for a spell type that is not stored yet.")
+                                        .defineInRange("missingSpellWeight", 4, 0, 1000);
                         builder.pop();
                 }
         }
