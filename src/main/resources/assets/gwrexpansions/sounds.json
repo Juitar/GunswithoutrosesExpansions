@@ -47,7 +47,7 @@
   "meat_hook.ready": {
     "category": "players",
     "sounds": [
-      "gwrexpansions:meat_hook_ready"
+      "gwrexpansions:hook_ready"
     ]
   },
   "obsidian_core.hit": {

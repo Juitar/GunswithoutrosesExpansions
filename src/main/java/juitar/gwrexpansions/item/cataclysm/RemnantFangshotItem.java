@@ -216,8 +216,12 @@ public class RemnantFangshotItem extends ConfigurableGunItem implements GunSkill
         super.addExtraStatsTooltip(stack, world, tooltip);
         tooltip.add(Component.translatable("tooltip.gwrexpansions.remnant_fangshot.desc").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.gwrexpansions.remnant_fangshot.desc2").withStyle(ChatFormatting.GRAY));
-        tooltip.add(Component.translatable("tooltip.gwrexpansions.remnant_fangshot.desc3",
-                GunSkillTooltip.keyName()).withStyle(ChatFormatting.GRAY));
+        Component gunSkillKey = GunSkillTooltip.keyName();
+        tooltip.add(Component.empty()
+                .append(Component.translatable("tooltip.gwrexpansions.remnant_fangshot.desc3.prefix"))
+                .append(gunSkillKey)
+                .append(Component.translatable("tooltip.gwrexpansions.remnant_fangshot.desc3.suffix"))
+                .withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.gwrexpansions.remnant_fangshot.power",
                 getPowerSeconds(stack)).withStyle(isPowered(stack) ? ChatFormatting.GOLD : ChatFormatting.DARK_GRAY));
         tooltip.add(Component.translatable("tooltip.gwrexpansions.remnant_fangshot.rage",

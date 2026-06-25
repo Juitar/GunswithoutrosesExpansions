@@ -76,6 +76,7 @@ public class ClientConfig {
     public final ForgeConfigSpec.BooleanValue superShotgunHudEnabled;
     public final ForgeConfigSpec.IntValue superShotgunHudOffsetX;
     public final ForgeConfigSpec.IntValue superShotgunHudOffsetY;
+    public final ForgeConfigSpec.DoubleValue superShotgunHudScale;
     public final ForgeConfigSpec.BooleanValue skullcrusherHudEnabled;
     public final ForgeConfigSpec.IntValue skullcrusherHudOffsetX;
     public final ForgeConfigSpec.IntValue skullcrusherHudOffsetY;
@@ -180,6 +181,8 @@ public class ClientConfig {
         superShotgunHudEnabled = defineHudEnabled(builder, "super_shotgun", "超级霰弹枪 / Super Shotgun");
         superShotgunHudOffsetX = defineHudOffsetX(builder, "super_shotgun");
         superShotgunHudOffsetY = defineHudOffsetY(builder, "super_shotgun", 10);
+        superShotgunHudScale = builder.comment("超级霰弹枪肉钩 HUD 缩放 / Super Shotgun meat hook HUD scale")
+                .defineInRange("super_shotgun_hud_scale", 1.0D, 0.5D, 2.0D);
 
         skullcrusherHudEnabled = defineHudEnabled(builder, "skullcrusher", "骷髅粉碎者 / Skullcrusher");
         skullcrusherHudOffsetX = defineHudOffsetX(builder, "skullcrusher");
@@ -245,6 +248,14 @@ public class ClientConfig {
     }
 
     public static int getInt(ForgeConfigSpec.IntValue value, int fallback) {
+        try {
+            return value.get();
+        } catch (IllegalStateException e) {
+            return fallback;
+        }
+    }
+
+    public static double getDouble(ForgeConfigSpec.DoubleValue value, double fallback) {
         try {
             return value.get();
         } catch (IllegalStateException e) {

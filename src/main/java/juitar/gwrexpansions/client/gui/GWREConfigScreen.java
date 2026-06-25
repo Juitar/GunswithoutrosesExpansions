@@ -613,101 +613,154 @@ public class GWREConfigScreen {
 
         private static void addClientCategory(ConfigBuilder builder, ConfigEntryBuilder entries) {
                 ConfigCategory category = builder.getOrCreateCategory(text("category.client"));
+                SubCategoryBuilder gwre = entries.startSubCategory(text("client.mod.gwrexpansions")).setExpanded(false);
+                SubCategoryBuilder superShotgun = entries.startSubCategory(
+                                Component.translatable("item.gwrexpansions.super_shotgun")).setExpanded(false);
+                addHudClientEntries(superShotgun::add, entries, "super_shotgun_hud",
+                                ClientConfig.INSTANCE.superShotgunHudEnabled,
+                                ClientConfig.INSTANCE.superShotgunHudOffsetX,
+                                ClientConfig.INSTANCE.superShotgunHudOffsetY, 10);
+                addDouble(superShotgun::add, entries, "super_shotgun_hud_scale",
+                                ClientConfig.INSTANCE.superShotgunHudScale, 1.0D, 0.5D, 2.0D);
+                gwre.add(superShotgun.build());
+                category.addEntry(gwre.build());
+
+                if (isLoaded(CompatModids.CATACLYSM)) {
+                        SubCategoryBuilder cataclysm = entries.startSubCategory(text("client.mod.cataclysm"))
+                                        .setExpanded(false);
+
+                        SubCategoryBuilder harbinger = entries.startSubCategory(
+                                        Component.translatable("item.gwrexpansions.harbinger_raycaster"))
+                                        .setExpanded(false);
+                        addBoolean(harbinger::add, entries, "harbinger_overload_hud_enabled",
+                                        ClientConfig.INSTANCE.harbingerOverloadHudEnabled, true);
+                        addInt(harbinger::add, entries, "harbinger_overload_hud_offset_x",
+                                        ClientConfig.INSTANCE.harbingerOverloadHudOffsetX, 0, -2000, 2000);
+                        addInt(harbinger::add, entries, "harbinger_overload_hud_offset_y",
+                                        ClientConfig.INSTANCE.harbingerOverloadHudOffsetY, 32, -2000, 2000);
+                        cataclysm.add(harbinger.build());
+
+                        SubCategoryBuilder tidal = entries.startSubCategory(
+                                        Component.translatable("item.gwrexpansions.tidal_pistol")).setExpanded(false);
+                        addHudClientEntries(tidal::add, entries, "tidal_pistol_hud",
+                                        ClientConfig.INSTANCE.tidalPistolHudEnabled,
+                                        ClientConfig.INSTANCE.tidalPistolHudOffsetX,
+                                        ClientConfig.INSTANCE.tidalPistolHudOffsetY, 42);
+                        cataclysm.add(tidal.build());
+
+                        SubCategoryBuilder ceraunus = entries.startSubCategory(
+                                        Component.translatable("item.gwrexpansions.ceraunus_burst")).setExpanded(false);
+                        addHudClientEntries(ceraunus::add, entries, "ceraunus_burst_hud",
+                                        ClientConfig.INSTANCE.ceraunusBurstHudEnabled,
+                                        ClientConfig.INSTANCE.ceraunusBurstHudOffsetX,
+                                        ClientConfig.INSTANCE.ceraunusBurstHudOffsetY, 18);
+                        cataclysm.add(ceraunus.build());
+
+                        SubCategoryBuilder remnant = entries.startSubCategory(
+                                        Component.translatable("item.gwrexpansions.remnant_fangshot"))
+                                        .setExpanded(false);
+                        addHudClientEntries(remnant::add, entries, "remnant_fangshot_hud",
+                                        ClientConfig.INSTANCE.remnantFangshotHudEnabled,
+                                        ClientConfig.INSTANCE.remnantFangshotHudOffsetX,
+                                        ClientConfig.INSTANCE.remnantFangshotHudOffsetY, 13);
+                        cataclysm.add(remnant.build());
+
+                        SubCategoryBuilder cursium = entries.startSubCategory(
+                                        Component.translatable("item.gwrexpansions.cursium_sniper")).setExpanded(false);
+                        addHudClientEntries(cursium::add, entries, "cursium_sniper_hud",
+                                        ClientConfig.INSTANCE.cursiumSniperHudEnabled,
+                                        ClientConfig.INSTANCE.cursiumSniperHudOffsetX,
+                                        ClientConfig.INSTANCE.cursiumSniperHudOffsetY, 23);
+                        cataclysm.add(cursium.build());
+
+                        category.addEntry(cataclysm.build());
+                }
+
                 if (isLoaded(CompatModids.BOMD)) {
-                        category.addEntry(
+                        SubCategoryBuilder bomd = entries.startSubCategory(text("client.mod.bomd")).setExpanded(false);
+
+                        SubCategoryBuilder hellforge = entries.startSubCategory(
+                                        Component.translatable("item.gwrexpansions.hellforge_revolver"))
+                                        .setExpanded(false);
+                        hellforge.add(
                                         entries.startBooleanToggle(text("coin_counter_enabled"),
                                                         ClientConfig.INSTANCE.coinCounterEnabled.get())
                                                         .setDefaultValue(ClientConfig.INSTANCE.coinCounterEnabled.getDefault())
                                                         .setSaveConsumer(ClientConfig.INSTANCE.coinCounterEnabled::set)
                                                         .build());
-                        category.addEntry(entries.startEnumSelector(text("coin_counter_position"),
+                        hellforge.add(entries.startEnumSelector(text("coin_counter_position"),
                                         ClientConfig.CoinCounterPosition.class, ClientConfig.INSTANCE.coinCounterPosition.get())
                                         .setEnumNameProvider(
                                                         value -> text("coin_counter_position." + value.name().toLowerCase()))
                                         .setDefaultValue(ClientConfig.INSTANCE.coinCounterPosition.getDefault())
                                         .setSaveConsumer(ClientConfig.INSTANCE.coinCounterPosition::set)
                                         .build());
-                        addInt(category::addEntry, entries, "coin_counter_offset_x", ClientConfig.INSTANCE.coinCounterOffsetX,
+                        addInt(hellforge::add, entries, "coin_counter_offset_x", ClientConfig.INSTANCE.coinCounterOffsetX,
                                         0, -2000,
                                         2000);
-                        addInt(category::addEntry, entries, "coin_counter_offset_y", ClientConfig.INSTANCE.coinCounterOffsetY,
+                        addInt(hellforge::add, entries, "coin_counter_offset_y", ClientConfig.INSTANCE.coinCounterOffsetY,
                                         8, -2000,
                                         2000);
-                        addInt(category::addEntry, entries, "coin_counter_background_alpha",
+                        addInt(hellforge::add, entries, "coin_counter_background_alpha",
                                         ClientConfig.INSTANCE.coinCounterBackgroundAlpha, 0, 0, 255);
-                        addInt(category::addEntry, entries, "coin_counter_scale", ClientConfig.INSTANCE.coinCounterScale, 100,
+                        addInt(hellforge::add, entries, "coin_counter_scale", ClientConfig.INSTANCE.coinCounterScale, 100,
                                         50, 200);
-                        category.addEntry(entries
+                        hellforge.add(entries
                                         .startBooleanToggle(text("coin_counter_show_progress"),
                                                         ClientConfig.INSTANCE.coinCounterShowProgress.get())
                                         .setDefaultValue(ClientConfig.INSTANCE.coinCounterShowProgress.getDefault())
                                         .setSaveConsumer(ClientConfig.INSTANCE.coinCounterShowProgress::set)
                                         .build());
-                }
-                if (isLoaded(CompatModids.CATACLYSM)) {
-                        addBoolean(category::addEntry, entries, "harbinger_overload_hud_enabled",
-                                        ClientConfig.INSTANCE.harbingerOverloadHudEnabled, true);
-                        addInt(category::addEntry, entries, "harbinger_overload_hud_offset_x",
-                                        ClientConfig.INSTANCE.harbingerOverloadHudOffsetX, 0, -2000, 2000);
-                        addInt(category::addEntry, entries, "harbinger_overload_hud_offset_y",
-                                        ClientConfig.INSTANCE.harbingerOverloadHudOffsetY, 32, -2000, 2000);
-                        addHudClientEntries(category, entries, "tidal_pistol_hud", ClientConfig.INSTANCE.tidalPistolHudEnabled,
-                                        ClientConfig.INSTANCE.tidalPistolHudOffsetX,
-                                        ClientConfig.INSTANCE.tidalPistolHudOffsetY, 42);
-                        addHudClientEntries(category, entries, "ceraunus_burst_hud",
-                                        ClientConfig.INSTANCE.ceraunusBurstHudEnabled,
-                                        ClientConfig.INSTANCE.ceraunusBurstHudOffsetX,
-                                        ClientConfig.INSTANCE.ceraunusBurstHudOffsetY, 18);
-                        addHudClientEntries(category, entries, "remnant_fangshot_hud",
-                                        ClientConfig.INSTANCE.remnantFangshotHudEnabled,
-                                        ClientConfig.INSTANCE.remnantFangshotHudOffsetX,
-                                        ClientConfig.INSTANCE.remnantFangshotHudOffsetY, 13);
-                        addHudClientEntries(category, entries, "cursium_sniper_hud",
-                                        ClientConfig.INSTANCE.cursiumSniperHudEnabled,
-                                        ClientConfig.INSTANCE.cursiumSniperHudOffsetX,
-                                        ClientConfig.INSTANCE.cursiumSniperHudOffsetY, 23);
-                }
-                addHudClientEntries(category, entries, "super_shotgun_hud",
-                                ClientConfig.INSTANCE.superShotgunHudEnabled,
-                                ClientConfig.INSTANCE.superShotgunHudOffsetX,
-                                ClientConfig.INSTANCE.superShotgunHudOffsetY, 10);
-                if (isLoaded(CompatModids.BOMD)) {
-                        addHudClientEntries(category, entries, "skullcrusher_hud", ClientConfig.INSTANCE.skullcrusherHudEnabled,
-                                        ClientConfig.INSTANCE.skullcrusherHudOffsetX,
-                                        ClientConfig.INSTANCE.skullcrusherHudOffsetY, 10);
-                        addHudClientEntries(category, entries, "obsidian_launcher_hud",
-                                        ClientConfig.INSTANCE.obsidianLauncherHudEnabled,
-                                        ClientConfig.INSTANCE.obsidianLauncherHudOffsetX,
-                                        ClientConfig.INSTANCE.obsidianLauncherHudOffsetY, 10);
-                        addHudClientEntries(category, entries, "hellforge_chain_hud",
+                        addHudClientEntries(hellforge::add, entries, "hellforge_chain_hud",
                                         ClientConfig.INSTANCE.hellforgeChainHudEnabled,
                                         ClientConfig.INSTANCE.hellforgeChainHudOffsetX,
                                         ClientConfig.INSTANCE.hellforgeChainHudOffsetY, 30);
-                        addInt(category::addEntry, entries, "hellforge_chain_hud_scale",
+                        addInt(hellforge::add, entries, "hellforge_chain_hud_scale",
                                         ClientConfig.INSTANCE.hellforgeChainHudScale, 100, 50, 200);
-                        addBoolean(category::addEntry, entries, "hellforge_coin_hit_shock_enabled",
+                        addBoolean(hellforge::add, entries, "hellforge_coin_hit_shock_enabled",
                                         ClientConfig.INSTANCE.hellforgeCoinHitShockEnabled, true);
-                        addInt(category::addEntry, entries, "hellforge_coin_hit_shock_strength",
+                        addInt(hellforge::add, entries, "hellforge_coin_hit_shock_strength",
                                         ClientConfig.INSTANCE.hellforgeCoinHitShockStrength, 100, 0, 300);
-                        addBoolean(category::addEntry, entries, "hellforge_coin_hit_fov_punch_enabled",
+                        addBoolean(hellforge::add, entries, "hellforge_coin_hit_fov_punch_enabled",
                                         ClientConfig.INSTANCE.hellforgeCoinHitFovPunchEnabled, true);
-                        addBoolean(category::addEntry, entries, "hellforge_coin_hit_hud_flash_enabled",
+                        addBoolean(hellforge::add, entries, "hellforge_coin_hit_hud_flash_enabled",
                                         ClientConfig.INSTANCE.hellforgeCoinHitHudFlashEnabled, true);
-                        addBoolean(category::addEntry, entries, "hellforge_overheat_voice_enabled",
+                        addBoolean(hellforge::add, entries, "hellforge_overheat_voice_enabled",
                                         ClientConfig.INSTANCE.hellforgeOverheatVoiceEnabled, true);
-                        addBoolean(category::addEntry, entries, "hellforge_overheat_music_enabled",
+                        addBoolean(hellforge::add, entries, "hellforge_overheat_music_enabled",
                                         ClientConfig.INSTANCE.hellforgeOverheatMusicEnabled, true);
+                        bomd.add(hellforge.build());
+
+                        SubCategoryBuilder skullcrusher = entries.startSubCategory(
+                                        Component.translatable("item.gwrexpansions.skullcrusher_pulverizer"))
+                                        .setExpanded(false);
+                        addHudClientEntries(skullcrusher::add, entries, "skullcrusher_hud",
+                                        ClientConfig.INSTANCE.skullcrusherHudEnabled,
+                                        ClientConfig.INSTANCE.skullcrusherHudOffsetX,
+                                        ClientConfig.INSTANCE.skullcrusherHudOffsetY, 10);
+                        bomd.add(skullcrusher.build());
+
+                        SubCategoryBuilder obsidianLauncher = entries.startSubCategory(
+                                        Component.translatable("item.gwrexpansions.obsidian_launcher"))
+                                        .setExpanded(false);
+                        addHudClientEntries(obsidianLauncher::add, entries, "obsidian_launcher_hud",
+                                        ClientConfig.INSTANCE.obsidianLauncherHudEnabled,
+                                        ClientConfig.INSTANCE.obsidianLauncherHudOffsetX,
+                                        ClientConfig.INSTANCE.obsidianLauncherHudOffsetY, 10);
+                        bomd.add(obsidianLauncher.build());
+
+                        category.addEntry(bomd.build());
                 }
         }
 
-        private static void addHudClientEntries(ConfigCategory category, ConfigEntryBuilder entries, String key,
+        private static void addHudClientEntries(EntrySink sink, ConfigEntryBuilder entries, String key,
                         ForgeConfigSpec.BooleanValue enabled, ForgeConfigSpec.IntValue offsetX,
                         ForgeConfigSpec.IntValue offsetY,
                         int defaultY) {
 
-                addBoolean(category::addEntry, entries, key + "_enabled", enabled, true);
-                addInt(category::addEntry, entries, key + "_offset_x", offsetX, 0, -2000, 2000);
-                addInt(category::addEntry, entries, key + "_offset_y", offsetY, defaultY, -2000, 2000);
+                addBoolean(sink, entries, key + "_enabled", enabled, true);
+                addInt(sink, entries, key + "_offset_x", offsetX, 0, -2000, 2000);
+                addInt(sink, entries, key + "_offset_y", offsetY, defaultY, -2000, 2000);
         }
 
         private static void addStringList(EntrySink sink, ConfigEntryBuilder entries, String key,

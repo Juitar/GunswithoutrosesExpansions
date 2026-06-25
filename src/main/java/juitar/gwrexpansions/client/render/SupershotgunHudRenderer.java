@@ -117,8 +117,10 @@ public class SupershotgunHudRenderer {
         int screenHeight = mc.getWindow().getGuiScaledHeight();
         int offsetX = ClientConfig.getInt(ClientConfig.INSTANCE.superShotgunHudOffsetX, 0);
         int offsetY = ClientConfig.getInt(ClientConfig.INSTANCE.superShotgunHudOffsetY, 10);
+        float hudScale = getHudScale();
+        int scaledSize = Math.round(COOLDOWN_SIZE * hudScale);
         HudCollisionLayout.Bounds bounds = HudCollisionLayout.claim(event, screenWidth / 2 + 22 + offsetX,
-                screenHeight / 2 + 16 + offsetY, COOLDOWN_SIZE, COOLDOWN_SIZE, screenWidth, screenHeight);
+                screenHeight / 2 + 16 + offsetY, scaledSize, scaledSize, screenWidth, screenHeight);
 
         int x = bounds.x;
         int y = bounds.y;
@@ -128,10 +130,12 @@ public class SupershotgunHudRenderer {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         poseStack.pushPose();
+        poseStack.translate(x, y, 0.0F);
+        poseStack.scale(hudScale, hudScale, 1.0F);
 
-        drawSegmentedCooldown(guiGraphics, x + COOLDOWN_SIZE / 2, y + COOLDOWN_SIZE / 2, progress, activeAlpha);
-        drawScaledIcon(guiGraphics, x + (COOLDOWN_SIZE - ICON_DISPLAY_SIZE) / 2,
-                y + (COOLDOWN_SIZE - ICON_DISPLAY_SIZE) / 2, ICON_DISPLAY_SIZE / (float) ICON_TEXTURE_SIZE);
+        drawSegmentedCooldown(guiGraphics, COOLDOWN_SIZE / 2, COOLDOWN_SIZE / 2, progress, activeAlpha);
+        drawScaledIcon(guiGraphics, (COOLDOWN_SIZE - ICON_DISPLAY_SIZE) / 2,
+                (COOLDOWN_SIZE - ICON_DISPLAY_SIZE) / 2, ICON_DISPLAY_SIZE / (float) ICON_TEXTURE_SIZE);
 
         poseStack.popPose();
         RenderSystem.disableBlend();
@@ -144,19 +148,23 @@ public class SupershotgunHudRenderer {
         int screenHeight = mc.getWindow().getGuiScaledHeight();
         int offsetX = ClientConfig.getInt(ClientConfig.INSTANCE.superShotgunHudOffsetX, 0);
         int offsetY = ClientConfig.getInt(ClientConfig.INSTANCE.superShotgunHudOffsetY, 10);
-        HudCollisionLayout.Bounds bounds = HudCollisionLayout.claim(event, (screenWidth - READY_WIDTH) / 2 + offsetX,
-                screenHeight / 2 + 18 + offsetY, READY_WIDTH, READY_HEIGHT, screenWidth, screenHeight);
+        float hudScale = getHudScale();
+        int scaledWidth = Math.round(READY_WIDTH * hudScale);
+        int scaledHeight = Math.round(READY_HEIGHT * hudScale);
+        HudCollisionLayout.Bounds bounds = HudCollisionLayout.claim(event, (screenWidth - scaledWidth) / 2 + offsetX,
+                screenHeight / 2 + 18 + offsetY, scaledWidth, scaledHeight, screenWidth, screenHeight);
 
         int age = READY_BANNER_TICKS - readyBannerTicks;
         float pop = 1.0F + Math.max(0.0F, 1.0F - age / 6.0F) * 0.24F;
         int alpha = readyBannerTicks < 10 ? Mth.clamp(readyBannerTicks * 25, 0, 255) : 255;
-        int centerX = bounds.x + READY_WIDTH / 2;
-        int centerY = bounds.y + READY_HEIGHT / 2;
+        int centerX = bounds.x + scaledWidth / 2;
+        int centerY = bounds.y + scaledHeight / 2;
 
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         poseStack.pushPose();
         poseStack.translate(centerX, centerY, 0.0F);
+        poseStack.scale(hudScale, hudScale, 1.0F);
         poseStack.scale(pop, pop, 1.0F);
 
         drawReadyStreak(guiGraphics, -25, -5, 1, withAlpha(READY_STREAK_COLOR, alpha));
@@ -221,6 +229,11 @@ public class SupershotgunHudRenderer {
 
     private static int withAlpha(int color, int alpha) {
         return (Mth.clamp(alpha, 0, 255) << 24) | (color & 0x00FFFFFF);
+    }
+
+    private static float getHudScale() {
+        return (float) Mth.clamp(ClientConfig.getDouble(ClientConfig.INSTANCE.superShotgunHudScale, 1.0D),
+                0.5D, 2.0D);
     }
 
     private static void playReadySound(Player player) {
