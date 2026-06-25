@@ -22,6 +22,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -129,6 +130,8 @@ public class BulletHitEventHandler {
 
                 // 检查子弹是否有HellforgeShot标记
                 if (isHellforgeShot) {
+                    bulletData.putFloat(Hellforge.BULLET_LAST_TARGET_HEALTH, target.getHealth());
+                    bulletData.putFloat(Hellforge.BULLET_LAST_TARGET_MAX_HEALTH, target.getMaxHealth());
                     if (bulletData.getInt("HellforgeCoinChainHits") <= 0 && shooter instanceof LivingEntity livingShooter) {
                         Hellforge.breakCoinChain(livingShooter);
                     } else if (bulletData.getInt("HellforgeCoinChainHits") <= 0) {
@@ -148,6 +151,55 @@ public class BulletHitEventHandler {
         } finally {
             // 确保标记被重置
             PROCESSING.set(false);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onLivingDeath(LivingDeathEvent event) {
+        if (!(event.getSource().getDirectEntity() instanceof BulletEntity bullet)) {
+            return;
+        }
+
+        CompoundTag bulletData = bullet.getPersistentData();
+        if (!bulletData.getBoolean("HellforgeShot") || !(event.getSource().getEntity() instanceof LivingEntity shooter)) {
+            return;
+        }
+
+        LivingEntity target = event.getEntity();
+        boolean headshot = bulletData.getBoolean(Hellforge.BULLET_HEADSHOT);
+        boolean ricoshot = bulletData.getInt("CoinBounceCount") > 0;
+        float previousHealth = bulletData.getFloat(Hellforge.BULLET_LAST_TARGET_HEALTH);
+        float previousMaxHealth = Math.max(1.0F, bulletData.getFloat(Hellforge.BULLET_LAST_TARGET_MAX_HEALTH));
+        boolean oneShot = previousHealth >= previousMaxHealth * 0.75F;
+
+        if (headshot) {
+            Hellforge.recordStyleEvent(shooter, Hellforge.StyleEvent.HEADSHOT_KILL, 1, target);
+        } else if (ricoshot) {
+            Hellforge.recordStyleEvent(shooter, Hellforge.StyleEvent.RICOSHOT_KILL, Math.max(1, bulletData.getInt("CoinBounceCount")), target);
+        } else if (oneShot) {
+            Hellforge.recordStyleEvent(shooter, Hellforge.StyleEvent.ONE_SHOT, 1, target);
+        } else {
+            Hellforge.recordStyleEvent(shooter, Hellforge.StyleEvent.KILL, 1, target);
+        }
+
+        recordHellforgeMultiKill(shooter, target);
+    }
+
+    private static void recordHellforgeMultiKill(LivingEntity shooter, LivingEntity target) {
+        ItemStack stack = Hellforge.findHellforgeStack(shooter);
+        if (stack.isEmpty()) {
+            return;
+        }
+
+        CompoundTag tag = stack.getOrCreateTag();
+        int kills = tag.getInt(Hellforge.NBT_RECENT_KILL_TIMER) > 0 ? tag.getInt(Hellforge.NBT_RECENT_KILL_COUNT) + 1 : 1;
+        tag.putInt(Hellforge.NBT_RECENT_KILL_COUNT, kills);
+        tag.putInt(Hellforge.NBT_RECENT_KILL_TIMER, 60);
+
+        if (kills == 2) {
+            Hellforge.recordStyleEvent(shooter, Hellforge.StyleEvent.DOUBLE_KILL, kills, target);
+        } else if (kills >= 3) {
+            Hellforge.recordStyleEvent(shooter, Hellforge.StyleEvent.TRIPLE_KILL, kills, target);
         }
     }
 

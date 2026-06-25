@@ -283,11 +283,9 @@ public class CoinEntity extends ThrowableItemProjectile {
                 if (!isClone) {
                     ItemStack hellforge = Hellforge.findHellforgeStack(livingOwner);
                     Hellforge.advanceCoinRecharge(hellforge, Hellforge.getCoinRechargeAdvanceForLink(coinLinkHits));
-                    int previousOverheatLink = bulletData.getInt("HellforgeCoinOverheatBestLink");
-                    if (coinLinkHits >= 3 && coinLinkHits > previousOverheatLink) {
-                        Hellforge.triggerCoinOverheat(livingOwner, coinLinkHits);
-                        bulletData.putInt("HellforgeCoinOverheatBestLink", coinLinkHits);
-                    }
+                    Hellforge.recordStyleEvent(livingOwner,
+                        coinLinkHits >= 2 ? Hellforge.StyleEvent.COIN_CHAIN : Hellforge.StyleEvent.COIN_HIT,
+                        coinLinkHits, null);
                     int previousReturned = bulletData.getInt("HellforgeCoinReturnedAmount");
                     int targetReturned = Hellforge.getCoinReturnAmount(chainHits, coinLinkHits);
                     int coinsToReturn = Math.max(0, targetReturned - previousReturned);
@@ -304,11 +302,6 @@ public class CoinEntity extends ThrowableItemProjectile {
                 }
                 bulletData.putInt("HellforgeCoinChainHits", chainHits);
                 bulletData.putString("HellforgeCoinGrade", Hellforge.getCoinChainGrade(chainHits));
-
-                if (!isClone && owner instanceof ServerPlayer player) {
-                    GWRENetwork.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player),
-                        new CoinHitFeedbackPacket(chainHits, Hellforge.getCoinChainWindowTicks(), Hellforge.findHellforgeStack(livingOwner).getOrCreateTag().getInt(Hellforge.NBT_COIN_OVERHEAT_TIMER)));
-                }
 
                 double baseDamage = getOrStoreBaseDamage(bullet);
                 double damageMultiplier = isClone ? 0.5D : Hellforge.getCoinLinkDamageMultiplier(chainHits, coinLinkHits);
@@ -368,8 +361,6 @@ public class CoinEntity extends ThrowableItemProjectile {
                         spawnExtraBouncedBullet(bullet, livingOwner);
                     }
 
-                    this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
-                        SoundEvents.GLASS_BREAK, SoundSource.PLAYERS, 1.0F, 1.0F);
                 }
 
                 int particleCount = 24 + (chainHits * 8);

@@ -24,6 +24,7 @@ public abstract class BulletEntityMixin {
         if (ModList.get().isLoaded(CompatModids.CATACLYSM)) {
             juitar.gwrexpansions.compat.CataclysmHooks.onBulletHeadshot(bullet, shooter, headshot);
         }
+        juitar.gwrexpansions.item.BOMD.Hellforge.onBulletHeadshot(bullet, target, shooter, headshot);
         bulletItem.onLivingEntityHit(bullet, target, shooter, level, headshot);
     }
 }
