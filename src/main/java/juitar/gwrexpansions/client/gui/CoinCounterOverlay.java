@@ -100,8 +100,13 @@ public class CoinCounterOverlay {
 
         // 获取配置的位置（传入已计算的尺寸信息）
         ClientConfig.Position position = getConfiguredPosition(screenWidth, screenHeight, scale, totalWidth, iconSize);
-        int startX = position.x;
-        int y = position.y;
+        int startX = (int)Math.floor(position.x);
+        int y = (int)Math.floor(position.y);
+        double fracX = position.x - startX;
+        double fracY = position.y - y;
+
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(fracX, fracY, 0.0F);
 
         // 渲染背景（如果透明度大于0）
         if (backgroundAlpha > 0) {
@@ -131,6 +136,7 @@ public class CoinCounterOverlay {
             }
         }
 
+        guiGraphics.pose().popPose();
         RenderSystem.disableBlend();
     }
 
@@ -147,7 +153,7 @@ public class CoinCounterOverlay {
             position = ClientConfig.CoinCounterPosition.TOP_CENTER;
         }
 
-        int x, y;
+        double x, y;
 
         switch (position) {
             case TOP_LEFT:
@@ -180,8 +186,8 @@ public class CoinCounterOverlay {
                     y = ClientConfig.INSTANCE.coinCounterOffsetY.get();
                 } catch (IllegalStateException e) {
                     // 配置尚未加载，使用默认值
-                    x = 0;
-                    y = 8;
+                    x = 0.0D;
+                    y = 8.0D;
                 }
                 break;
             default:

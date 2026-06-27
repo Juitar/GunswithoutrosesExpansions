@@ -53,39 +53,45 @@ public class ClientConfig {
     // 硬币计数器UI配置
     public final ForgeConfigSpec.BooleanValue coinCounterEnabled;
     public final ForgeConfigSpec.EnumValue<CoinCounterPosition> coinCounterPosition;
-    public final ForgeConfigSpec.IntValue coinCounterOffsetX;
-    public final ForgeConfigSpec.IntValue coinCounterOffsetY;
+    public final ForgeConfigSpec.DoubleValue coinCounterOffsetX;
+    public final ForgeConfigSpec.DoubleValue coinCounterOffsetY;
     public final ForgeConfigSpec.IntValue coinCounterBackgroundAlpha;
     public final ForgeConfigSpec.IntValue coinCounterScale;
     public final ForgeConfigSpec.BooleanValue coinCounterShowProgress;
     public final ForgeConfigSpec.BooleanValue harbingerOverloadHudEnabled;
-    public final ForgeConfigSpec.IntValue harbingerOverloadHudOffsetX;
-    public final ForgeConfigSpec.IntValue harbingerOverloadHudOffsetY;
+    public final ForgeConfigSpec.DoubleValue harbingerOverloadHudOffsetX;
+    public final ForgeConfigSpec.DoubleValue harbingerOverloadHudOffsetY;
     public final ForgeConfigSpec.BooleanValue tidalPistolHudEnabled;
-    public final ForgeConfigSpec.IntValue tidalPistolHudOffsetX;
-    public final ForgeConfigSpec.IntValue tidalPistolHudOffsetY;
+    public final ForgeConfigSpec.DoubleValue tidalPistolHudOffsetX;
+    public final ForgeConfigSpec.DoubleValue tidalPistolHudOffsetY;
     public final ForgeConfigSpec.BooleanValue ceraunusBurstHudEnabled;
-    public final ForgeConfigSpec.IntValue ceraunusBurstHudOffsetX;
-    public final ForgeConfigSpec.IntValue ceraunusBurstHudOffsetY;
+    public final ForgeConfigSpec.DoubleValue ceraunusBurstHudOffsetX;
+    public final ForgeConfigSpec.DoubleValue ceraunusBurstHudOffsetY;
     public final ForgeConfigSpec.BooleanValue remnantFangshotHudEnabled;
-    public final ForgeConfigSpec.IntValue remnantFangshotHudOffsetX;
-    public final ForgeConfigSpec.IntValue remnantFangshotHudOffsetY;
+    public final ForgeConfigSpec.DoubleValue remnantFangshotHudOffsetX;
+    public final ForgeConfigSpec.DoubleValue remnantFangshotHudOffsetY;
     public final ForgeConfigSpec.BooleanValue cursiumSniperHudEnabled;
-    public final ForgeConfigSpec.IntValue cursiumSniperHudOffsetX;
-    public final ForgeConfigSpec.IntValue cursiumSniperHudOffsetY;
+    public final ForgeConfigSpec.DoubleValue cursiumSniperHudOffsetX;
+    public final ForgeConfigSpec.DoubleValue cursiumSniperHudOffsetY;
     public final ForgeConfigSpec.BooleanValue superShotgunHudEnabled;
-    public final ForgeConfigSpec.IntValue superShotgunHudOffsetX;
-    public final ForgeConfigSpec.IntValue superShotgunHudOffsetY;
+    public final ForgeConfigSpec.DoubleValue superShotgunHudOffsetX;
+    public final ForgeConfigSpec.DoubleValue superShotgunHudOffsetY;
     public final ForgeConfigSpec.DoubleValue superShotgunHudScale;
     public final ForgeConfigSpec.BooleanValue skullcrusherHudEnabled;
-    public final ForgeConfigSpec.IntValue skullcrusherHudOffsetX;
-    public final ForgeConfigSpec.IntValue skullcrusherHudOffsetY;
+    public final ForgeConfigSpec.DoubleValue skullcrusherHudOffsetX;
+    public final ForgeConfigSpec.DoubleValue skullcrusherHudOffsetY;
+    public final ForgeConfigSpec.DoubleValue skullcrusherHudCenterYAdjust;
+    public final ForgeConfigSpec.IntValue skullcrusherHudLeftArcXAdjust;
+    public final ForgeConfigSpec.IntValue skullcrusherHudRightArcXAdjust;
+    public final ForgeConfigSpec.DoubleValue skullcrusherHudArcScale;
+    public final ForgeConfigSpec.IntValue skullcrusherHudBaseGap;
+    public final ForgeConfigSpec.DoubleValue skullcrusherHudSpreadGapMultiplier;
     public final ForgeConfigSpec.BooleanValue obsidianLauncherHudEnabled;
-    public final ForgeConfigSpec.IntValue obsidianLauncherHudOffsetX;
-    public final ForgeConfigSpec.IntValue obsidianLauncherHudOffsetY;
+    public final ForgeConfigSpec.DoubleValue obsidianLauncherHudOffsetX;
+    public final ForgeConfigSpec.DoubleValue obsidianLauncherHudOffsetY;
     public final ForgeConfigSpec.BooleanValue hellforgeChainHudEnabled;
-    public final ForgeConfigSpec.IntValue hellforgeChainHudOffsetX;
-    public final ForgeConfigSpec.IntValue hellforgeChainHudOffsetY;
+    public final ForgeConfigSpec.DoubleValue hellforgeChainHudOffsetX;
+    public final ForgeConfigSpec.DoubleValue hellforgeChainHudOffsetY;
     public final ForgeConfigSpec.IntValue hellforgeChainHudScale;
     public final ForgeConfigSpec.BooleanValue hellforgeCoinHitShockEnabled;
     public final ForgeConfigSpec.IntValue hellforgeCoinHitShockStrength;
@@ -122,11 +128,11 @@ public class ClientConfig {
 
         coinCounterOffsetX = builder
                 .comment("硬币计数器X轴偏移 (仅在position为custom时生效) / X offset (only works when position is custom)")
-                .defineInRange("offset_x", 0, -2000, 2000);
+                .defineInRange("offset_x", 0.0D, -2000.0D, 2000.0D);
 
         coinCounterOffsetY = builder
                 .comment("硬币计数器Y轴偏移 (仅在position为custom时生效) / Y offset (only works when position is custom)")
-                .defineInRange("offset_y", 8, -2000, 2000);
+                .defineInRange("offset_y", 8.0D, -2000.0D, 2000.0D);
 
         coinCounterBackgroundAlpha = builder
                 .comment("硬币计数器背景透明度 (0-255, 0为完全透明) / Background alpha (0-255, 0 is fully transparent)")
@@ -151,11 +157,11 @@ public class ClientConfig {
 
         harbingerOverloadHudOffsetX = builder
                 .comment("先兆裁光过载HUD X轴偏移 / X offset for Harbinger overload HUD")
-                .defineInRange("offset_x", 0, -2000, 2000);
+                .defineInRange("offset_x", 0.0D, -2000.0D, 2000.0D);
 
         harbingerOverloadHudOffsetY = builder
                 .comment("先兆裁光过载HUD Y轴偏移 / Y offset for Harbinger overload HUD")
-                .defineInRange("offset_y", 32, -2000, 2000);
+                .defineInRange("offset_y", 32.0D, -2000.0D, 2000.0D);
 
         builder.pop();
 
@@ -186,7 +192,21 @@ public class ClientConfig {
 
         skullcrusherHudEnabled = defineHudEnabled(builder, "skullcrusher", "骷髅粉碎者 / Skullcrusher");
         skullcrusherHudOffsetX = defineHudOffsetX(builder, "skullcrusher");
-        skullcrusherHudOffsetY = defineHudOffsetY(builder, "skullcrusher", 10);
+        skullcrusherHudOffsetY = builder.comment("skullcrusher HUD Y轴偏移 / HUD Y offset")
+                .defineInRange("skullcrusher_offset_y", 10.0D, -2000.0D, 2000.0D);
+        skullcrusherHudCenterYAdjust = builder.comment("骷髅粉碎者HUD中心Y微调 / Skullcrusher HUD center Y fine adjustment")
+                .defineInRange("skullcrusher_center_y_adjust", -13.0D, -200.0D, 200.0D);
+        skullcrusherHudLeftArcXAdjust = builder.comment("骷髅粉碎者HUD左弧X微调 / Skullcrusher HUD left arc X fine adjustment")
+                .defineInRange("skullcrusher_left_arc_x_adjust", 0, -200, 200);
+        skullcrusherHudRightArcXAdjust = builder.comment("骷髅粉碎者HUD右弧X微调 / Skullcrusher HUD right arc X fine adjustment")
+                .defineInRange("skullcrusher_right_arc_x_adjust", -1, -200, 200);
+        skullcrusherHudArcScale = builder.comment("骷髅粉碎者HUD弧线缩放 / Skullcrusher HUD arc scale")
+                .defineInRange("skullcrusher_arc_scale", 0.5D, 0.1D, 2.0D);
+        skullcrusherHudBaseGap = builder.comment("骷髅粉碎者HUD准星到弧线基础距离 / Skullcrusher HUD base gap from crosshair to arc")
+                .defineInRange("skullcrusher_base_gap", 4, -100, 200);
+        skullcrusherHudSpreadGapMultiplier = builder
+                .comment("骷髅粉碎者HUD扩散距离倍率 / Skullcrusher HUD spread gap multiplier")
+                .defineInRange("skullcrusher_spread_gap_multiplier", 0.9D, 0.0D, 10.0D);
 
         obsidianLauncherHudEnabled = defineHudEnabled(builder, "obsidian_launcher", "黑曜石发射器 / Obsidian Launcher");
         obsidianLauncherHudOffsetX = defineHudOffsetX(builder, "obsidian_launcher");
@@ -218,14 +238,14 @@ public class ClientConfig {
                 .define(key + "_enabled", true);
     }
 
-    private static ForgeConfigSpec.IntValue defineHudOffsetX(ForgeConfigSpec.Builder builder, String key) {
+    private static ForgeConfigSpec.DoubleValue defineHudOffsetX(ForgeConfigSpec.Builder builder, String key) {
         return builder.comment(key + " HUD X轴偏移 / HUD X offset")
-                .defineInRange(key + "_offset_x", 0, -2000, 2000);
+                .defineInRange(key + "_offset_x", 0.0D, -2000.0D, 2000.0D);
     }
 
-    private static ForgeConfigSpec.IntValue defineHudOffsetY(ForgeConfigSpec.Builder builder, String key, int defaultValue) {
+    private static ForgeConfigSpec.DoubleValue defineHudOffsetY(ForgeConfigSpec.Builder builder, String key, double defaultValue) {
         return builder.comment(key + " HUD Y轴偏移 / HUD Y offset")
-                .defineInRange(key + "_offset_y", defaultValue, -2000, 2000);
+                .defineInRange(key + "_offset_y", defaultValue, -2000.0D, 2000.0D);
     }
 
     /**
@@ -285,7 +305,7 @@ public class ClientConfig {
         int maxCoins = 4;
         int totalWidth = (maxCoins - 1) * spacing + iconSize;
 
-        int x, y;
+        double x, y;
 
         switch (position) {
             case TOP_LEFT:
@@ -318,8 +338,8 @@ public class ClientConfig {
                     y = INSTANCE.coinCounterOffsetY.get();
                 } catch (IllegalStateException e) {
                     // 配置尚未加载，使用默认值
-                    x = 0;
-                    y = 8;
+                    x = 0.0D;
+                    y = 8.0D;
                 }
                 break;
             default:
@@ -336,10 +356,10 @@ public class ClientConfig {
      * 位置类
      */
     public static class Position {
-        public final int x;
-        public final int y;
+        public final double x;
+        public final double y;
 
-        public Position(int x, int y) {
+        public Position(double x, double y) {
             this.x = x;
             this.y = y;
         }

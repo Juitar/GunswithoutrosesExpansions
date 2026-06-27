@@ -92,8 +92,8 @@ public class ObsidianLauncherHudRenderer {
 
         int width = showFrenzy ? FRENZY_BAR_WIDTH : SPELL_HUD_WIDTH;
         int height = showFrenzy ? FRENZY_BAR_HEIGHT : SPELL_HUD_HEIGHT;
-        int offsetX = ClientConfig.getInt(ClientConfig.INSTANCE.obsidianLauncherHudOffsetX, 0);
-        int offsetY = ClientConfig.getInt(ClientConfig.INSTANCE.obsidianLauncherHudOffsetY, 10);
+        double offsetX = ClientConfig.getDouble(ClientConfig.INSTANCE.obsidianLauncherHudOffsetX, 0.0D);
+        double offsetY = ClientConfig.getDouble(ClientConfig.INSTANCE.obsidianLauncherHudOffsetY, 10.0D);
         HudCollisionLayout.Bounds bounds = HudCollisionLayout.claim(event, (screenWidth - width) / 2 + offsetX,
                 screenHeight / 2 + offsetY, width, height, screenWidth, screenHeight);
         int x = bounds.x;
@@ -102,6 +102,7 @@ public class ObsidianLauncherHudRenderer {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         poseStack.pushPose();
+        poseStack.translate(bounds.fracX, bounds.fracY, 0.0F);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
         if (showFrenzy) {

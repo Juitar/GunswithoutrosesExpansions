@@ -14,16 +14,20 @@ final class HudCollisionLayout {
     private HudCollisionLayout() {
     }
 
-    static Bounds claim(RenderGuiEvent event, int preferredX, int preferredY, int width, int height,
+    static Bounds claim(RenderGuiEvent event, double preferredX, double preferredY, int width, int height,
                         int screenWidth, int screenHeight) {
         if (currentEvent != event) {
             currentEvent = event;
             USED.clear();
         }
 
-        int clampedX = clamp(preferredX, 0, Math.max(0, screenWidth - width));
-        int clampedY = clamp(preferredY, 0, Math.max(0, screenHeight - height));
-        Bounds preferred = new Bounds(clampedX, clampedY, width, height);
+        int floorX = (int)Math.floor(preferredX);
+        int floorY = (int)Math.floor(preferredY);
+        double fracX = preferredX - floorX;
+        double fracY = preferredY - floorY;
+        int clampedX = clamp(floorX, 0, Math.max(0, screenWidth - width));
+        int clampedY = clamp(floorY, 0, Math.max(0, screenHeight - height));
+        Bounds preferred = new Bounds(clampedX, clampedY, width, height, fracX, fracY);
         if (!intersectsAny(preferred)) {
             USED.add(preferred);
             return preferred;
@@ -32,7 +36,7 @@ final class HudCollisionLayout {
         int maxAttempts = Math.max(12, screenHeight / STEP);
         for (int i = 1; i <= maxAttempts; i++) {
             Bounds down = new Bounds(clampedX, clamp(clampedY + i * STEP, 0, Math.max(0, screenHeight - height)),
-                    width, height);
+                    width, height, fracX, fracY);
             if (!intersectsAny(down)) {
                 USED.add(down);
                 return down;
@@ -61,12 +65,16 @@ final class HudCollisionLayout {
         final int y;
         final int width;
         final int height;
+        final double fracX;
+        final double fracY;
 
-        private Bounds(int x, int y, int width, int height) {
+        private Bounds(int x, int y, int width, int height, double fracX, double fracY) {
             this.x = x;
             this.y = y;
             this.width = width;
             this.height = height;
+            this.fracX = fracX;
+            this.fracY = fracY;
         }
 
         private boolean intersects(Bounds other, int padding) {

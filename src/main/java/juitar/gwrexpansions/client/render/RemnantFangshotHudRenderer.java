@@ -46,8 +46,8 @@ public class RemnantFangshotHudRenderer {
         PoseStack poseStack = guiGraphics.pose();
         int screenWidth = mc.getWindow().getGuiScaledWidth();
         int screenHeight = mc.getWindow().getGuiScaledHeight();
-        int offsetX = ClientConfig.getInt(ClientConfig.INSTANCE.remnantFangshotHudOffsetX, 0);
-        int offsetY = ClientConfig.getInt(ClientConfig.INSTANCE.remnantFangshotHudOffsetY, 13);
+        double offsetX = ClientConfig.getDouble(ClientConfig.INSTANCE.remnantFangshotHudOffsetX, 0.0D);
+        double offsetY = ClientConfig.getDouble(ClientConfig.INSTANCE.remnantFangshotHudOffsetY, 13.0D);
         HudCollisionLayout.Bounds bounds = HudCollisionLayout.claim(event, (screenWidth - BAR_WIDTH) / 2 + offsetX,
                 screenHeight / 2 + offsetY, BAR_WIDTH, BAR_HEIGHT, screenWidth, screenHeight);
         int x = bounds.x;
@@ -58,6 +58,7 @@ public class RemnantFangshotHudRenderer {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, awakened ? 1.0F : 0.9F);
 
         poseStack.pushPose();
+        poseStack.translate(bounds.fracX, bounds.fracY, 0.0F);
         guiGraphics.blit(RAGE_BAR, x, y, 0.0F, 0.0F, BAR_WIDTH, BAR_HEIGHT, TEXTURE_WIDTH, TEXTURE_HEIGHT);
         int progressWidth = Math.min(BAR_WIDTH, Math.max(0, (int) Math.ceil(BAR_WIDTH * progress)));
         if (progressWidth > 0) {

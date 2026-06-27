@@ -39,8 +39,8 @@ public class CursiumSniperHudRenderer {
         PoseStack poseStack = guiGraphics.pose();
         int screenWidth = mc.getWindow().getGuiScaledWidth();
         int screenHeight = mc.getWindow().getGuiScaledHeight();
-        int offsetX = ClientConfig.getInt(ClientConfig.INSTANCE.cursiumSniperHudOffsetX, 0);
-        int offsetY = ClientConfig.getInt(ClientConfig.INSTANCE.cursiumSniperHudOffsetY, 23);
+        double offsetX = ClientConfig.getDouble(ClientConfig.INSTANCE.cursiumSniperHudOffsetX, 0.0D);
+        double offsetY = ClientConfig.getDouble(ClientConfig.INSTANCE.cursiumSniperHudOffsetY, 23.0D);
         HudCollisionLayout.Bounds bounds = HudCollisionLayout.claim(event, (screenWidth - BAR_WIDTH) / 2 + offsetX,
                 screenHeight / 2 + offsetY, BAR_WIDTH, BAR_HEIGHT, screenWidth, screenHeight);
 
@@ -48,6 +48,7 @@ public class CursiumSniperHudRenderer {
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 0.95F);
         poseStack.pushPose();
+        poseStack.translate(bounds.fracX, bounds.fracY, 0.0F);
         drawRage(guiGraphics, stack, bounds.x, bounds.y);
         poseStack.popPose();
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);

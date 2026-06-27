@@ -98,12 +98,12 @@ public class CoinChainHudOverlay {
         boolean hasChain = hits > 0 && timer > 0;
         boolean overheated = overheatTimer > 0;
 
-        int offsetX = ClientConfig.getInt(ClientConfig.INSTANCE.hellforgeChainHudOffsetX, 0);
-        int offsetY = ClientConfig.getInt(ClientConfig.INSTANCE.hellforgeChainHudOffsetY, 30);
+        double offsetX = ClientConfig.getDouble(ClientConfig.INSTANCE.hellforgeChainHudOffsetX, 0.0D);
+        double offsetY = ClientConfig.getDouble(ClientConfig.INSTANCE.hellforgeChainHudOffsetY, 30.0D);
         float scale = Math.max(0.5F, Math.min(2.0F, ClientConfig.getInt(ClientConfig.INSTANCE.hellforgeChainHudScale, 100) / 100.0F));
         int hudWidth = 122;
-        int x = screenWidth - Math.round(hudWidth * scale) + offsetX;
-        int y = offsetY;
+        double x = screenWidth - Math.round(hudWidth * scale) + offsetX;
+        double y = offsetY;
 
         RenderSystem.enableBlend();
         graphics.pose().pushPose();

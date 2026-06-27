@@ -49,8 +49,8 @@ public class CeraunusBurstHudRenderer {
         int screenWidth = mc.getWindow().getGuiScaledWidth();
         int screenHeight = mc.getWindow().getGuiScaledHeight();
         int rowWidth = SLOT_SIZE * 3 + SLOT_GAP * 2;
-        int offsetX = ClientConfig.getInt(ClientConfig.INSTANCE.ceraunusBurstHudOffsetX, 0);
-        int offsetY = ClientConfig.getInt(ClientConfig.INSTANCE.ceraunusBurstHudOffsetY, 18);
+        double offsetX = ClientConfig.getDouble(ClientConfig.INSTANCE.ceraunusBurstHudOffsetX, 0.0D);
+        double offsetY = ClientConfig.getDouble(ClientConfig.INSTANCE.ceraunusBurstHudOffsetY, 18.0D);
         HudCollisionLayout.Bounds bounds = HudCollisionLayout.claim(event, (screenWidth - rowWidth) / 2 + offsetX,
                 screenHeight / 2 + offsetY, rowWidth, SLOT_SIZE, screenWidth, screenHeight);
         int x = bounds.x;
@@ -62,6 +62,7 @@ public class CeraunusBurstHudRenderer {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, completed ? 1.0F : 0.9F);
 
         poseStack.pushPose();
+        poseStack.translate(bounds.fracX, bounds.fracY, 0.0F);
         for (int i = 0; i < 3; i++) {
             int slotX = x + i * (SLOT_SIZE + SLOT_GAP);
             drawSlot(guiGraphics, slotX, y, completed);

@@ -39,8 +39,8 @@ public class TidalPistolHudRenderer {
         PoseStack poseStack = guiGraphics.pose();
         int screenWidth = mc.getWindow().getGuiScaledWidth();
         int screenHeight = mc.getWindow().getGuiScaledHeight();
-        int offsetX = ClientConfig.getInt(ClientConfig.INSTANCE.tidalPistolHudOffsetX, 0);
-        int offsetY = ClientConfig.getInt(ClientConfig.INSTANCE.tidalPistolHudOffsetY, 42);
+        double offsetX = ClientConfig.getDouble(ClientConfig.INSTANCE.tidalPistolHudOffsetX, 0.0D);
+        double offsetY = ClientConfig.getDouble(ClientConfig.INSTANCE.tidalPistolHudOffsetY, 42.0D);
         HudCollisionLayout.Bounds bounds = HudCollisionLayout.claim(event, (screenWidth - BAR_WIDTH) / 2 + offsetX,
                 screenHeight / 2 + offsetY, BAR_WIDTH, BAR_HEIGHT + 5, screenWidth, screenHeight);
         int x = bounds.x;
@@ -49,6 +49,7 @@ public class TidalPistolHudRenderer {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         poseStack.pushPose();
+        poseStack.translate(bounds.fracX, bounds.fracY, 0.0F);
         drawEnergy(guiGraphics, stack, x, y);
         drawChargeStage(guiGraphics, stack, x, y + BAR_HEIGHT + 3);
         poseStack.popPose();

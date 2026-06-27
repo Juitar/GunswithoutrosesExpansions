@@ -62,6 +62,7 @@ public class HarbingerRaycasterHudRenderer {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         poseStack.pushPose();
+        poseStack.translate(bounds.fracX, bounds.fracY, 0.0F);
         drawBattery(guiGraphics, x, y, overload, maxOverload, active, activeProgress);
         poseStack.popPose();
         RenderSystem.disableBlend();
@@ -128,11 +129,11 @@ public class HarbingerRaycasterHudRenderer {
         return ClientConfig.getBoolean(ClientConfig.INSTANCE.harbingerOverloadHudEnabled, true);
     }
 
-    private static int getOffsetX() {
-        return ClientConfig.getInt(ClientConfig.INSTANCE.harbingerOverloadHudOffsetX, 0);
+    private static double getOffsetX() {
+        return ClientConfig.getDouble(ClientConfig.INSTANCE.harbingerOverloadHudOffsetX, 0.0D);
     }
 
-    private static int getOffsetY() {
-        return ClientConfig.getInt(ClientConfig.INSTANCE.harbingerOverloadHudOffsetY, 32);
+    private static double getOffsetY() {
+        return ClientConfig.getDouble(ClientConfig.INSTANCE.harbingerOverloadHudOffsetY, 32.0D);
     }
 }

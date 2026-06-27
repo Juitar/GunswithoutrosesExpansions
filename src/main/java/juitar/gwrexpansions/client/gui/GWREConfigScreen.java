@@ -634,10 +634,10 @@ public class GWREConfigScreen {
                                         .setExpanded(false);
                         addBoolean(harbinger::add, entries, "harbinger_overload_hud_enabled",
                                         ClientConfig.INSTANCE.harbingerOverloadHudEnabled, true);
-                        addInt(harbinger::add, entries, "harbinger_overload_hud_offset_x",
-                                        ClientConfig.INSTANCE.harbingerOverloadHudOffsetX, 0, -2000, 2000);
-                        addInt(harbinger::add, entries, "harbinger_overload_hud_offset_y",
-                                        ClientConfig.INSTANCE.harbingerOverloadHudOffsetY, 32, -2000, 2000);
+                        addDouble(harbinger::add, entries, "harbinger_overload_hud_offset_x",
+                                        ClientConfig.INSTANCE.harbingerOverloadHudOffsetX, 0.0D, -2000.0D, 2000.0D);
+                        addDouble(harbinger::add, entries, "harbinger_overload_hud_offset_y",
+                                        ClientConfig.INSTANCE.harbingerOverloadHudOffsetY, 32.0D, -2000.0D, 2000.0D);
                         cataclysm.add(harbinger.build());
 
                         SubCategoryBuilder tidal = entries.startSubCategory(
@@ -695,12 +695,12 @@ public class GWREConfigScreen {
                                         .setDefaultValue(ClientConfig.INSTANCE.coinCounterPosition.getDefault())
                                         .setSaveConsumer(ClientConfig.INSTANCE.coinCounterPosition::set)
                                         .build());
-                        addInt(hellforge::add, entries, "coin_counter_offset_x", ClientConfig.INSTANCE.coinCounterOffsetX,
-                                        0, -2000,
-                                        2000);
-                        addInt(hellforge::add, entries, "coin_counter_offset_y", ClientConfig.INSTANCE.coinCounterOffsetY,
-                                        8, -2000,
-                                        2000);
+                        addDouble(hellforge::add, entries, "coin_counter_offset_x", ClientConfig.INSTANCE.coinCounterOffsetX,
+                                        0.0D, -2000.0D,
+                                        2000.0D);
+                        addDouble(hellforge::add, entries, "coin_counter_offset_y", ClientConfig.INSTANCE.coinCounterOffsetY,
+                                        8.0D, -2000.0D,
+                                        2000.0D);
                         addInt(hellforge::add, entries, "coin_counter_background_alpha",
                                         ClientConfig.INSTANCE.coinCounterBackgroundAlpha, 0, 0, 255);
                         addInt(hellforge::add, entries, "coin_counter_scale", ClientConfig.INSTANCE.coinCounterScale, 100,
@@ -734,10 +734,24 @@ public class GWREConfigScreen {
                         SubCategoryBuilder skullcrusher = entries.startSubCategory(
                                         Component.translatable("item.gwrexpansions.skullcrusher_pulverizer"))
                                         .setExpanded(false);
-                        addHudClientEntries(skullcrusher::add, entries, "skullcrusher_hud",
-                                        ClientConfig.INSTANCE.skullcrusherHudEnabled,
-                                        ClientConfig.INSTANCE.skullcrusherHudOffsetX,
-                                        ClientConfig.INSTANCE.skullcrusherHudOffsetY, 10);
+                        addBoolean(skullcrusher::add, entries, "skullcrusher_hud_enabled",
+                                        ClientConfig.INSTANCE.skullcrusherHudEnabled, true);
+                        addDouble(skullcrusher::add, entries, "skullcrusher_hud_offset_x",
+                                        ClientConfig.INSTANCE.skullcrusherHudOffsetX, 0.0D, -2000.0D, 2000.0D);
+                        addDouble(skullcrusher::add, entries, "skullcrusher_hud_offset_y",
+                                        ClientConfig.INSTANCE.skullcrusherHudOffsetY, 10.0D, -2000.0D, 2000.0D);
+                        addDouble(skullcrusher::add, entries, "skullcrusher_hud_center_y_adjust",
+                                        ClientConfig.INSTANCE.skullcrusherHudCenterYAdjust, -13.0D, -200.0D, 200.0D);
+                        addInt(skullcrusher::add, entries, "skullcrusher_hud_left_arc_x_adjust",
+                                        ClientConfig.INSTANCE.skullcrusherHudLeftArcXAdjust, 0, -200, 200);
+                        addInt(skullcrusher::add, entries, "skullcrusher_hud_right_arc_x_adjust",
+                                        ClientConfig.INSTANCE.skullcrusherHudRightArcXAdjust, -1, -200, 200);
+                        addDouble(skullcrusher::add, entries, "skullcrusher_hud_arc_scale",
+                                        ClientConfig.INSTANCE.skullcrusherHudArcScale, 0.5D, 0.1D, 2.0D);
+                        addInt(skullcrusher::add, entries, "skullcrusher_hud_base_gap",
+                                        ClientConfig.INSTANCE.skullcrusherHudBaseGap, 4, -100, 200);
+                        addDouble(skullcrusher::add, entries, "skullcrusher_hud_spread_gap_multiplier",
+                                        ClientConfig.INSTANCE.skullcrusherHudSpreadGapMultiplier, 0.9D, 0.0D, 10.0D);
                         bomd.add(skullcrusher.build());
 
                         SubCategoryBuilder obsidianLauncher = entries.startSubCategory(
@@ -754,13 +768,13 @@ public class GWREConfigScreen {
         }
 
         private static void addHudClientEntries(EntrySink sink, ConfigEntryBuilder entries, String key,
-                        ForgeConfigSpec.BooleanValue enabled, ForgeConfigSpec.IntValue offsetX,
-                        ForgeConfigSpec.IntValue offsetY,
+                        ForgeConfigSpec.BooleanValue enabled, ForgeConfigSpec.DoubleValue offsetX,
+                        ForgeConfigSpec.DoubleValue offsetY,
                         int defaultY) {
 
                 addBoolean(sink, entries, key + "_enabled", enabled, true);
-                addInt(sink, entries, key + "_offset_x", offsetX, 0, -2000, 2000);
-                addInt(sink, entries, key + "_offset_y", offsetY, defaultY, -2000, 2000);
+                addDouble(sink, entries, key + "_offset_x", offsetX, 0.0D, -2000.0D, 2000.0D);
+                addDouble(sink, entries, key + "_offset_y", offsetY, defaultY, -2000.0D, 2000.0D);
         }
 
         private static void addStringList(EntrySink sink, ConfigEntryBuilder entries, String key,
