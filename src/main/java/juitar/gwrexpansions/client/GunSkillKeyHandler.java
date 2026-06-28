@@ -47,5 +47,6 @@ public class GunSkillKeyHandler {
 
         CoinHitFeedbackClient.tick();
         HellforgeOverheatMusicClient.tick();
+        SkullcrusherIdleSoundClient.tick();
     }
 }

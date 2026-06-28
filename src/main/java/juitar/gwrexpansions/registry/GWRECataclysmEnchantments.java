@@ -28,6 +28,14 @@ public class GWRECataclysmEnchantments {
             () -> new ExclusiveGunEnchantment(stack -> isTarget(stack, () -> CompatCataclysm.remnant_fangshot)));
     public static final RegistryObject<Enchantment> OVERLOAD_CALIBRATION = REG.register("overload_calibration",
             () -> new ExclusiveGunEnchantment(stack -> isTarget(stack, () -> CompatCataclysm.harbinger_raycaster)));
+    public static final RegistryObject<Enchantment> GILDED_SKULL = REG.register("gilded_skull",
+            () -> new ExclusiveGunEnchantment(stack -> isTarget(stack, () -> CompatBOMD.skullcrusher_pulverizer)));
+    public static final RegistryObject<Enchantment> SLOW_BURNING_FURY = REG.register("slow_burning_fury",
+            () -> new ExclusiveGunEnchantment(stack -> isTarget(stack, () -> CompatBOMD.skullcrusher_pulverizer)));
+    public static final RegistryObject<Enchantment> WISE_CASTING = REG.register("wise_casting",
+            () -> new ExclusiveGunEnchantment(stack -> isTarget(stack, () -> CompatBOMD.obsidian_launcher)));
+    public static final RegistryObject<Enchantment> COIN_RESERVE = REG.register("coin_reserve",
+            () -> new ExclusiveGunEnchantment(stack -> isTarget(stack, () -> CompatBOMD.hellforge)));
 
     public static void register(IEventBus eventBus) {
         REG.register(eventBus);

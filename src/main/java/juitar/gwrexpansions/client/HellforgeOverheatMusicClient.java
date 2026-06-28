@@ -1,5 +1,6 @@
 package juitar.gwrexpansions.client;
 
+import juitar.gwrexpansions.CompatModids;
 import juitar.gwrexpansions.item.BOMD.Hellforge;
 import juitar.gwrexpansions.config.ClientConfig;
 import juitar.gwrexpansions.registry.GWRESounds;
@@ -9,6 +10,7 @@ import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.fml.ModList;
 
 public class HellforgeOverheatMusicClient {
     private static HeatingMusicSound currentSound;
@@ -17,6 +19,13 @@ public class HellforgeOverheatMusicClient {
 
     public static void tick() {
         Minecraft mc = Minecraft.getInstance();
+        if (!ModList.get().isLoaded(CompatModids.BOMD)) {
+            stop(mc);
+            wasOverheated = false;
+            musicStartDelay = 0;
+            return;
+        }
+
         LocalPlayer player = mc.player;
         if (player == null) {
             stop(mc);

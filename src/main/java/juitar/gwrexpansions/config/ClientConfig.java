@@ -86,6 +86,7 @@ public class ClientConfig {
     public final ForgeConfigSpec.DoubleValue skullcrusherHudArcScale;
     public final ForgeConfigSpec.IntValue skullcrusherHudBaseGap;
     public final ForgeConfigSpec.DoubleValue skullcrusherHudSpreadGapMultiplier;
+    public final ForgeConfigSpec.BooleanValue skullcrusherIdleSoundEnabled;
     public final ForgeConfigSpec.BooleanValue obsidianLauncherHudEnabled;
     public final ForgeConfigSpec.DoubleValue obsidianLauncherHudOffsetX;
     public final ForgeConfigSpec.DoubleValue obsidianLauncherHudOffsetY;
@@ -207,6 +208,8 @@ public class ClientConfig {
         skullcrusherHudSpreadGapMultiplier = builder
                 .comment("骷髅粉碎者HUD扩散距离倍率 / Skullcrusher HUD spread gap multiplier")
                 .defineInRange("skullcrusher_spread_gap_multiplier", 0.9D, 0.0D, 10.0D);
+        skullcrusherIdleSoundEnabled = builder.comment("是否启用骷髅粉碎者手持待机音效 / Enable Skullcrusher held idle sound")
+                .define("skullcrusher_idle_sound_enabled", true);
 
         obsidianLauncherHudEnabled = defineHudEnabled(builder, "obsidian_launcher", "黑曜石发射器 / Obsidian Launcher");
         obsidianLauncherHudOffsetX = defineHudOffsetX(builder, "obsidian_launcher");

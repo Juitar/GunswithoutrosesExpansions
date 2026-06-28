@@ -1,19 +1,18 @@
 package juitar.gwrexpansions.event;
 
+import juitar.gwrexpansions.CompatModids;
 import juitar.gwrexpansions.GWRexpansions;
 import juitar.gwrexpansions.config.GWREConfig;
 import juitar.gwrexpansions.entity.BOMD.CoinEntity;
 import juitar.gwrexpansions.entity.vanilla.SlimeBulletEntity;
 import juitar.gwrexpansions.item.BOMD.Hellforge;
 import juitar.gwrexpansions.item.vanilla.RedstoneBulletItem;
-import juitar.gwrexpansions.registry.GWREEffects;
 import juitar.gwrexpansions.registry.VanillaItem;
 import juitar.gwrexpansions.util.CoinTargetUtils;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -26,6 +25,7 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 
 /**
@@ -37,8 +37,6 @@ public class BulletHitEventHandler {
     // 防止递归调用的标记
     private static final ThreadLocal<Boolean> PROCESSING = ThreadLocal.withInitial(() -> false);
     public static final String ALLOW_SHOOTER_HIT = "AllowShooterHit";
-    public static final String AIMED_GLOWING_TAG = "GWREAimedGlowing";
-    public static final String AIMED_PREVIOUS_GLOWING_TAG = "GWREAimedPreviousGlowing";
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onProjectileImpact(ProjectileImpactEvent event) {
@@ -81,7 +79,7 @@ public class BulletHitEventHandler {
         if (result == null) {
             return false;
         }
-        if (result instanceof EntityHitResult entityHit && entityHit.getEntity() instanceof CoinEntity) {
+        if (isBomdLoaded() && result instanceof EntityHitResult entityHit && entityHit.getEntity() instanceof CoinEntity) {
             return false;
         }
         return result.getType() == HitResult.Type.BLOCK || result.getType() == HitResult.Type.ENTITY;
@@ -139,6 +137,7 @@ public class BulletHitEventHandler {
                     }
 
                     handleHellforgeCoinDamage(bullet, target, shooter);
+                    Hellforge.onBulletHitLivingEntity(bullet, target, shooter);
 
                     // 检查是否需要进行硬币连锁反弹
                     checkCoinChaining(bullet, target, shooter);
@@ -248,141 +247,6 @@ public class BulletHitEventHandler {
     }
 
     /**
-     * 处理aimed效果的添加和移除，以及反弹子弹的额外伤害计算
-     */
-    private static void handleAimedEffect(BulletEntity bullet, LivingEntity target, Entity shooter) {
-        try {
-            CompoundTag bulletData = bullet.getPersistentData();
-
-            // 检查是否是反弹子弹击中有aimed效果的目标
-            int bounceCount = bulletData.getInt("CoinBounceCount");
-
-            if (bounceCount > 0) { // 只有反弹后的子弹才计算aimed额外伤害
-                MobEffectInstance targetAimed = target.getEffect(GWREEffects.AIMED.get());
-
-                if (targetAimed != null) {
-                    // 计算aimed额外伤害
-                    int aimedLevel = targetAimed.getAmplifier() + 1; // 效果等级（1-5）
-
-                    // 每等级1.5%最大生命值的额外伤害
-                    float percentageDamage = aimedLevel * 0.015f; // 1.5% per level
-                    float maxHealthDamage = target.getMaxHealth() * percentageDamage;
-
-                    // 应用额外伤害
-                    if (maxHealthDamage > 0) {
-                        try {
-                            // 保存当前无敌时间
-                            int originalInvulnerableTime = target.invulnerableTime;
-                            target.invulnerableTime = 0; // 临时重置无敌时间以确保额外伤害生效
-
-                            boolean extraDamaged = false;
-
-                            // 安全地应用伤害
-                            if (shooter instanceof LivingEntity livingShooter) {
-                                extraDamaged = target.hurt(bullet.level().damageSources().indirectMagic(bullet, livingShooter), maxHealthDamage);
-                            } else {
-                                extraDamaged = target.hurt(bullet.level().damageSources().magic(), maxHealthDamage);
-                            }
-
-                            // 恢复无敌时间
-                            target.invulnerableTime = originalInvulnerableTime;
-
-                            // 如果额外伤害成功，播放特殊音效和粒子效果
-                            if (extraDamaged && target.level() != null) {
-                                try {
-                                    target.level().playSound(null, target.getX(), target.getY(), target.getZ(),
-                                        net.minecraft.sounds.SoundEvents.PLAYER_HURT_SWEET_BERRY_BUSH,
-                                        net.minecraft.sounds.SoundSource.PLAYERS, 0.8F, 1.5F);
-
-                                    // 添加红色粒子效果表示额外伤害
-                                    for (int i = 0; i < aimedLevel * 3; i++) {
-                                        target.level().addParticle(net.minecraft.core.particles.ParticleTypes.DAMAGE_INDICATOR,
-                                            target.getX() + (target.getRandom().nextDouble() - 0.5) * 1.0,
-                                            target.getY() + target.getRandom().nextDouble() * 2.0,
-                                            target.getZ() + (target.getRandom().nextDouble() - 0.5) * 1.0,
-                                            0, 0, 0);
-                                    }
-                                } catch (Exception soundEx) {
-                                    System.err.println("Error playing sound/particles: " + soundEx.getMessage());
-                                }
-                            }
-                        } catch (Exception damageEx) {
-                            GWRexpansions.LOG.error("Error applying Hellforge aimed extra damage", damageEx);
-                        }
-                    }
-                }
-            }
-
-            // 检查是否需要移除aimed效果（在计算额外伤害之后）
-            boolean shouldRemoveAimed = bulletData.getBoolean("RemoveAimedOnHit");
-            int aimedTargetId = bulletData.getInt("AimedTargetId");
-
-            if (shouldRemoveAimed && target.getId() == aimedTargetId) {
-                removeAimedEffects(target);
-                bulletData.putBoolean("RemoveAimedOnHit", false);
-                // 不再提前返回，继续执行后续逻辑
-            }
-
-            // 添加aimed效果（正常的Hellforge击中逻辑）
-            MobEffectInstance currentEffect = target.getEffect(GWREEffects.AIMED.get());
-            int newLevel = 0;
-            int newDuration = 200; // 基础10秒
-
-            if (currentEffect != null) {
-                // 如果已有效果，增加等级和时间
-                newLevel = Math.min(currentEffect.getAmplifier() + 1, 4); // 最高5级（0-4）
-                newDuration = currentEffect.getDuration() + 100; // 增加5秒
-            }
-            // 应用新的效果，不显示药水粒子
-            applyAimedEffects(target, newDuration, newLevel);
-
-            // 调用Hellforge的击中处理方法
-            Hellforge.onBulletHitLivingEntity(bullet, target, shooter);
-
-        } catch (Exception e) {
-            GWRexpansions.LOG.error("Error in handleAimedEffect", e);
-        }
-    }
-
-    private static void applyAimedEffects(LivingEntity target, int duration, int amplifier) {
-        target.addEffect(new MobEffectInstance(GWREEffects.AIMED.get(), duration, amplifier, false, false, true));
-
-        CompoundTag targetData = target.getPersistentData();
-        if (!targetData.getBoolean(AIMED_GLOWING_TAG)) {
-            targetData.putBoolean(AIMED_PREVIOUS_GLOWING_TAG, target.hasGlowingTag());
-            targetData.putBoolean(AIMED_GLOWING_TAG, true);
-        }
-        target.setGlowingTag(true);
-    }
-
-    private static void removeAimedEffects(LivingEntity target) {
-        target.removeEffect(GWREEffects.AIMED.get());
-        clearAimedGlowing(target);
-    }
-
-    public static void clearAimedGlowing(LivingEntity target) {
-        CompoundTag targetData = target.getPersistentData();
-        if (targetData.getBoolean(AIMED_GLOWING_TAG)) {
-            target.setGlowingTag(targetData.getBoolean(AIMED_PREVIOUS_GLOWING_TAG));
-            targetData.remove(AIMED_GLOWING_TAG);
-            targetData.remove(AIMED_PREVIOUS_GLOWING_TAG);
-        }
-    }
-
-    private static void tickAimedGlowing(LivingEntity target) {
-        CompoundTag targetData = target.getPersistentData();
-        if (!targetData.getBoolean(AIMED_GLOWING_TAG)) {
-            return;
-        }
-
-        if (target.hasEffect(GWREEffects.AIMED.get())) {
-            target.setGlowingTag(true);
-        } else {
-            clearAimedGlowing(target);
-        }
-    }
-
-    /**
      * 检查硬币连锁反弹
      */
     private static void checkCoinChaining(BulletEntity bullet, LivingEntity target, Entity shooter) {
@@ -391,7 +255,7 @@ public class BulletHitEventHandler {
             int bounceCount = bulletData.getInt("CoinBounceCount");
 
             // 如果子弹已经反弹过，检查是否可以继续连锁到其他硬币
-            if (bounceCount > 0 && bounceCount < 5) { // 最多5次反弹
+            if (isBomdLoaded() && bounceCount > 0 && bounceCount < 5) { // 最多5次反弹
                 final double SEARCH_RANGE = 32.0;
                 Vec3 bulletPos = bullet.position();
 
@@ -427,10 +291,6 @@ public class BulletHitEventHandler {
 
                 // 获取所有子弹实体
                 level.getAllEntities().forEach(entity -> {
-                    if (entity instanceof LivingEntity living) {
-                        tickAimedGlowing(living);
-                    }
-
                     if (entity instanceof BulletEntity bullet) {
                         CompoundTag bulletData = bullet.getPersistentData();
 
@@ -438,12 +298,6 @@ public class BulletHitEventHandler {
 
                         if (bulletData.getBoolean("SeekingCoinChain")) {
                             handleCoinChainSeeking(bullet);
-                        }
-                        
-                        // 处理花苞弹的EventScheduler
-                        if (bullet instanceof juitar.gwrexpansions.entity.BOMD.BudBulletEntity budBullet) {
-                            // 这里我们需要访问BudBulletEntity的eventScheduler
-                            // 由于eventScheduler是private的，我们需要添加一个公共方法来运行它
                         }
                     }
                 });
@@ -518,5 +372,9 @@ public class BulletHitEventHandler {
             bulletData.putBoolean("SeekingCoinChain", false);
             bulletData.remove("TargetCoinId");
         }
+    }
+
+    private static boolean isBomdLoaded() {
+        return ModList.get().isLoaded(CompatModids.BOMD);
     }
 }

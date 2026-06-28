@@ -65,16 +65,14 @@ public class GWREConfigScreen {
                                 .setSaveConsumer(GWREConfig.GENERAL.allowShooterProjectileSelfDamage::set)
                                 .setTooltip(text("allow_shooter_projectile_self_damage.tooltip"))
                                 .build());
-                if (isLoaded(CompatModids.CATACLYSM)) {
-                        category.addEntry(entries.startBooleanToggle(text("enable_cataclysm_enchantment_librarian_trades"),
-                                        GWREConfig.GENERAL.enableCataclysmEnchantmentLibrarianTrades.get())
+                category.addEntry(entries.startBooleanToggle(text("enable_gun_enchantment_librarian_trades"),
+                                GWREConfig.GENERAL.enableGunEnchantmentLibrarianTrades.get())
                                         .setDefaultValue(
-                                                        GWREConfig.GENERAL.enableCataclysmEnchantmentLibrarianTrades
+                                                        GWREConfig.GENERAL.enableGunEnchantmentLibrarianTrades
                                                                         .getDefault())
-                                        .setSaveConsumer(GWREConfig.GENERAL.enableCataclysmEnchantmentLibrarianTrades::set)
-                                        .setTooltip(text("enable_cataclysm_enchantment_librarian_trades.tooltip"))
+                                        .setSaveConsumer(GWREConfig.GENERAL.enableGunEnchantmentLibrarianTrades::set)
+                                        .setTooltip(text("enable_gun_enchantment_librarian_trades.tooltip"))
                                         .build());
-                }
         }
 
         private static void addBulletCategory(ConfigBuilder builder, ConfigEntryBuilder entries) {
@@ -752,6 +750,8 @@ public class GWREConfigScreen {
                                         ClientConfig.INSTANCE.skullcrusherHudBaseGap, 4, -100, 200);
                         addDouble(skullcrusher::add, entries, "skullcrusher_hud_spread_gap_multiplier",
                                         ClientConfig.INSTANCE.skullcrusherHudSpreadGapMultiplier, 0.9D, 0.0D, 10.0D);
+                        addBoolean(skullcrusher::add, entries, "skullcrusher_idle_sound_enabled",
+                                        ClientConfig.INSTANCE.skullcrusherIdleSoundEnabled, true);
                         bomd.add(skullcrusher.build());
 
                         SubCategoryBuilder obsidianLauncher = entries.startSubCategory(

@@ -8,6 +8,7 @@ import juitar.gwrexpansions.item.GunSkillItem;
 import juitar.gwrexpansions.item.GunSkillTooltip;
 import juitar.gwrexpansions.registry.CompatBOMD;
 import juitar.gwrexpansions.registry.GWREEntities;
+import juitar.gwrexpansions.registry.GWRECataclysmEnchantments;
 import juitar.gwrexpansions.registry.GWRESounds;
 import lykrast.gunswithoutroses.item.IBullet;
 import net.minecraft.ChatFormatting;
@@ -173,6 +174,11 @@ public class ObsidianLauncher extends ConfigurableLauncherItem implements GunSki
     }
 
     private static ObsidianCoreEntity.SpellType selectSpellType(ItemStack gun, Level level) {
+        if (GWRECataclysmEnchantments.has(gun, GWRECataclysmEnchantments.WISE_CASTING)
+                && !hasAllStoredSpells(gun)) {
+            return selectMissingStoredSpellType(gun, level);
+        }
+
         int fireWeight = getSpellWeight(gun, ObsidianCoreEntity.SpellType.FIRE);
         int frostWeight = getSpellWeight(gun, ObsidianCoreEntity.SpellType.FROST);
         int holyWeight = getSpellWeight(gun, ObsidianCoreEntity.SpellType.HOLY);
@@ -189,6 +195,21 @@ public class ObsidianLauncher extends ConfigurableLauncherItem implements GunSki
             return ObsidianCoreEntity.SpellType.FROST;
         }
         return ObsidianCoreEntity.SpellType.HOLY;
+    }
+
+    private static ObsidianCoreEntity.SpellType selectMissingStoredSpellType(ItemStack gun, Level level) {
+        ObsidianCoreEntity.SpellType[] missing = new ObsidianCoreEntity.SpellType[3];
+        int count = 0;
+        if (!hasStoredFireSpell(gun)) {
+            missing[count++] = ObsidianCoreEntity.SpellType.FIRE;
+        }
+        if (!hasStoredFrostSpell(gun)) {
+            missing[count++] = ObsidianCoreEntity.SpellType.FROST;
+        }
+        if (!hasStoredHolySpell(gun)) {
+            missing[count++] = ObsidianCoreEntity.SpellType.HOLY;
+        }
+        return missing[level.getRandom().nextInt(Math.max(1, count))];
     }
 
     private static int getSpellWeight(ItemStack gun, ObsidianCoreEntity.SpellType spellType) {

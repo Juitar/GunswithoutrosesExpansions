@@ -302,8 +302,8 @@
   "config.gwrexpansions.enable_all_achievements_super_shotgun_reward.tooltip": "启用后，完成 RIP AND TEAR 会给予特殊超级霰弹枪奖励。",
   "config.gwrexpansions.allow_shooter_projectile_self_damage": "射手弹丸自伤",
   "config.gwrexpansions.allow_shooter_projectile_self_damage.tooltip": "启用后，钻石弹丸碎片和史莱姆弹丸可以伤害其射手。",
-  "config.gwrexpansions.enable_cataclysm_enchantment_librarian_trades": "灾变枪械附魔图书管理员交易",
-  "config.gwrexpansions.enable_cataclysm_enchantment_librarian_trades.tooltip": "启用后，灾变枪械专属附魔书可以出现在图书管理员村民交易中。",
+  "config.gwrexpansions.enable_gun_enchantment_librarian_trades": "枪械附魔图书管理员交易",
+  "config.gwrexpansions.enable_gun_enchantment_librarian_trades.tooltip": "启用后，所有枪械专属附魔书可以出现在图书管理员村民交易中。",
   "config.gwrexpansions.bonus_damage": "额外伤害",
   "config.gwrexpansions.damage_multiplier": "伤害倍率",
   "config.gwrexpansions.headshot_multiplier": "爆头倍率",
@@ -510,6 +510,14 @@
   "enchantment.gwrexpansions.remnant_fervor.desc": "遗响刃牙：觉醒所需射击-刃击循环减少 1 次。",
   "enchantment.gwrexpansions.overload_calibration": "过载校准",
   "enchantment.gwrexpansions.overload_calibration.desc": "先兆裁光：过载所需红石电池弹丸充能减少 2 发。",
+  "enchantment.gwrexpansions.gilded_skull": "华丽头骨",
+  "enchantment.gwrexpansions.gilded_skull.desc": "头骨粉碎者：发射的部分骨片有概率转化为钻石弹丸。",
+  "enchantment.gwrexpansions.slow_burning_fury": "怒火慢烧",
+  "enchantment.gwrexpansions.slow_burning_fury.desc": "头骨粉碎者：开火延迟基线 +2，但最终射速上限提升至 70%，移速加成上限提高 20%。",
+  "enchantment.gwrexpansions.wise_casting": "智慧施法",
+  "enchantment.gwrexpansions.wise_casting.desc": "黑曜石发射器：未集齐三种魔咒时，每次发射出的魔咒都是尚未存储的魔咒。",
+  "enchantment.gwrexpansions.coin_reserve": "硬币储备",
+  "enchantment.gwrexpansions.coin_reserve.desc": "狱锻之轮：硬币上限 +2。",
   "config.gwrexpansions.hellforge_max_coins": "锻狱最大硬币数",
   "config.gwrexpansions.hellforge_coin_recharge_ticks": "锻狱硬币回复时间",
   "config.gwrexpansions.hellforge_coin_chain_window_ticks": "锻狱硬币连击窗口",
@@ -553,5 +561,6 @@
   "config.gwrexpansions.hellforge_coin_hit_fov_punch_enabled": "启用锻狱硬币命中 FOV 冲击",
   "config.gwrexpansions.hellforge_overheat_voice_enabled": "启用锻狱过热播报",
   "config.gwrexpansions.hellforge_overheat_music_enabled": "启用锻狱过热音乐",
-  "config.gwrexpansions.hellforge_coin_hit_hud_flash_enabled": "启用锻狱硬币命中 HUD 闪光"
+  "config.gwrexpansions.hellforge_coin_hit_hud_flash_enabled": "启用锻狱硬币命中 HUD 闪光",
+  "config.gwrexpansions.skullcrusher_idle_sound_enabled": "启用头骨粉碎者待机音效"
 }

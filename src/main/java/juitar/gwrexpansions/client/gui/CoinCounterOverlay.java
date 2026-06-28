@@ -1,6 +1,7 @@
 package juitar.gwrexpansions.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import juitar.gwrexpansions.CompatModids;
 import juitar.gwrexpansions.config.ClientConfig;
 import juitar.gwrexpansions.item.BOMD.Hellforge;
 import net.minecraft.client.Minecraft;
@@ -11,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGuiEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 
 /**
@@ -21,6 +23,10 @@ public class CoinCounterOverlay {
     
     @SubscribeEvent
     public static void onRenderGui(RenderGuiEvent.Post event) {
+        if (!ModList.get().isLoaded(CompatModids.BOMD)) {
+            return;
+        }
+
         // 检查配置是否启用硬币计数器
         boolean enabled;
         try {
@@ -63,7 +69,7 @@ public class CoinCounterOverlay {
         CompoundTag tag = hellforgStack.getOrCreateTag();
         int coins = tag.getInt(Hellforge.NBT_COINS);
         int rechargeTimer = tag.getInt(Hellforge.NBT_COIN_RECHARGE_TIMER);
-        int maxCoins = Hellforge.getMaxCoins();
+        int maxCoins = Hellforge.getMaxCoins(hellforgStack);
 
         // 渲染硬币阵列
         renderCoinArray(guiGraphics, screenWidth, screenHeight, coins, maxCoins, rechargeTimer);

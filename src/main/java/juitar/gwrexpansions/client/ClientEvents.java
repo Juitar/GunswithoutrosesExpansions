@@ -1,10 +1,12 @@
 package juitar.gwrexpansions.client;
 
+import juitar.gwrexpansions.CompatModids;
 import juitar.gwrexpansions.GWRexpansions;
 import juitar.gwrexpansions.client.render.SkullcrusherHudRenderer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
@@ -19,7 +21,9 @@ public class ClientEvents {
     public static void onClientSetup(FMLClientSetupEvent event) {
         // 注册HUD渲染器
         event.enqueueWork(() -> {
-            MinecraftForge.EVENT_BUS.register(new SkullcrusherHudRenderer());
+            if (ModList.get().isLoaded(CompatModids.BOMD)) {
+                MinecraftForge.EVENT_BUS.register(new SkullcrusherHudRenderer());
+            }
         });
     }
-} 
+}

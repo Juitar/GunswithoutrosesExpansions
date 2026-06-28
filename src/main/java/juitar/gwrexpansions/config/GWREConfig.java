@@ -140,7 +140,7 @@ public class GWREConfig {
         public static class GeneralConfig {
                 public final ForgeConfigSpec.BooleanValue enableAllAchievementsSuperShotgunReward;
                 public final ForgeConfigSpec.BooleanValue allowShooterProjectileSelfDamage;
-                public final ForgeConfigSpec.BooleanValue enableCataclysmEnchantmentLibrarianTrades;
+                public final ForgeConfigSpec.BooleanValue enableGunEnchantmentLibrarianTrades;
 
                 public GeneralConfig(ForgeConfigSpec.Builder builder) {
                         builder.push("General");
@@ -150,9 +150,9 @@ public class GWREConfig {
                         allowShooterProjectileSelfDamage = builder
                                         .comment("Whether shooter-owned special projectiles can damage their shooter. Currently affects Diamond Bullet Shrapnel and Slime Bullets.")
                                         .define("allowShooterProjectileSelfDamage", true);
-                        enableCataclysmEnchantmentLibrarianTrades = builder
-                                        .comment("Whether Cataclysm gun-specific enchantments can appear in librarian villager trades.")
-                                        .define("enableCataclysmEnchantmentLibrarianTrades", false);
+                        enableGunEnchantmentLibrarianTrades = builder
+                                        .comment("Whether all gun-specific enchantments can appear in librarian villager trades.")
+                                        .define("enableGunEnchantmentLibrarianTrades", false);
                         builder.pop();
                 }
         }

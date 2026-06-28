@@ -1,18 +1,27 @@
 {
-  "parent": "minecraft:item/handheld",
+  "gui_light": "front",
   "loader": "forge:separate_transforms",
   "base":{
-    "parent": "gwrexpansions:item/skullcrusher_pulverizer_3d"
+    "parent": "gwrexpansions:item/skullcrusher_pulverizer_2d"
   },
   "perspectives":{
-    "gui":{
-      "parent": "gwrexpansions:item/skullcrusher_pulverizer_2d"
+    "firstperson_righthand":{
+      "parent": "gwrexpansions:item/skullcrusher_pulverizer_gecko"
     },
-    "ground":{
-      "parent": "gwrexpansions:item/skullcrusher_pulverizer_2d"
+    "firstperson_lefthand":{
+      "parent": "gwrexpansions:item/skullcrusher_pulverizer_gecko"
+    },
+    "thirdperson_righthand":{
+      "parent": "gwrexpansions:item/skullcrusher_pulverizer_gecko"
+    },
+    "thirdperson_lefthand":{
+      "parent": "gwrexpansions:item/skullcrusher_pulverizer_gecko"
     },
     "fixed":{
-      "parent": "gwrexpansions:item/skullcrusher_pulverizer_2d"
+      "parent": "gwrexpansions:item/skullcrusher_pulverizer_gecko"
+    },
+    "ground":{
+      "parent": "gwrexpansions:item/skullcrusher_pulverizer_gecko"
     }
   }
 }

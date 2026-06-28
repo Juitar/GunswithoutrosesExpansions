@@ -7,6 +7,7 @@ import juitar.gwrexpansions.item.GunSkillItem;
 import juitar.gwrexpansions.item.GunSkillTooltip;
 import juitar.gwrexpansions.network.CoinHitFeedbackPacket;
 import juitar.gwrexpansions.network.GWRENetwork;
+import juitar.gwrexpansions.registry.GWRECataclysmEnchantments;
 import juitar.gwrexpansions.registry.GWRESounds;
 import juitar.gwrexpansions.util.CoinTargetUtils;
 import net.minecraft.server.level.ServerPlayer;
@@ -147,7 +148,7 @@ public class Hellforge extends ConfigurableGunItem implements GunSkillItem {
         CompoundTag tag = stack.getOrCreateTag();
         int overheatTimer = tag.getInt(NBT_COIN_OVERHEAT_TIMER);
         int coins = tag.getInt(NBT_COINS);
-        if (coins < getMaxCoins()) {
+        if (coins < getMaxCoins(stack)) {
             int rechargeTimer = tag.getInt(NBT_COIN_RECHARGE_TIMER) + (overheatTimer > 0 ? 2 : 1);
             if (rechargeTimer >= getCoinRechargeTicks()) {
                 tag.putInt(NBT_COINS, coins + 1);
@@ -245,7 +246,7 @@ public class Hellforge extends ConfigurableGunItem implements GunSkillItem {
         }
 
         tag.putInt(NBT_COINS, coins - 1);
-        if (coins >= getMaxCoins()) {
+        if (coins >= getMaxCoins(stack)) {
             tag.putInt(NBT_COIN_RECHARGE_TIMER, 0);
         }
         int cooldown = tag.getInt(NBT_COIN_CHAIN_HITS) >= 5 ? hellforgeConfig().chainThrowCooldownTicks.get() : hellforgeConfig().baseThrowCooldownTicks.get();
@@ -300,6 +301,11 @@ public class Hellforge extends ConfigurableGunItem implements GunSkillItem {
 
     public static int getMaxCoins() {
         return hellforgeConfig().maxCoins.get();
+    }
+
+    public static int getMaxCoins(ItemStack stack) {
+        return getMaxCoins()
+            + (GWRECataclysmEnchantments.has(stack, GWRECataclysmEnchantments.COIN_RESERVE) ? 2 : 0);
     }
 
     public static int getCoinRechargeTicks() {
@@ -495,8 +501,8 @@ public class Hellforge extends ConfigurableGunItem implements GunSkillItem {
             return;
         }
         CompoundTag tag = stack.getOrCreateTag();
-        tag.putInt(NBT_COINS, Math.min(getMaxCoins(), tag.getInt(NBT_COINS) + amount));
-        if (tag.getInt(NBT_COINS) >= getMaxCoins()) {
+        tag.putInt(NBT_COINS, Math.min(getMaxCoins(stack), tag.getInt(NBT_COINS) + amount));
+        if (tag.getInt(NBT_COINS) >= getMaxCoins(stack)) {
             tag.putInt(NBT_COIN_RECHARGE_TIMER, 0);
         }
     }
@@ -507,18 +513,18 @@ public class Hellforge extends ConfigurableGunItem implements GunSkillItem {
         }
         CompoundTag tag = stack.getOrCreateTag();
         int coins = tag.getInt(NBT_COINS);
-        if (coins >= getMaxCoins()) {
+        if (coins >= getMaxCoins(stack)) {
             tag.putInt(NBT_COIN_RECHARGE_TIMER, 0);
             return;
         }
 
         int rechargeTimer = tag.getInt(NBT_COIN_RECHARGE_TIMER) + ticks;
-        while (coins < getMaxCoins() && rechargeTimer >= getCoinRechargeTicks()) {
+        while (coins < getMaxCoins(stack) && rechargeTimer >= getCoinRechargeTicks()) {
             coins++;
             rechargeTimer -= getCoinRechargeTicks();
         }
         tag.putInt(NBT_COINS, coins);
-        tag.putInt(NBT_COIN_RECHARGE_TIMER, coins >= getMaxCoins() ? 0 : rechargeTimer);
+        tag.putInt(NBT_COIN_RECHARGE_TIMER, coins >= getMaxCoins(stack) ? 0 : rechargeTimer);
     }
 
     public static void triggerCoinOverheat(LivingEntity owner, int coinLinkHits) {
@@ -685,7 +691,7 @@ public class Hellforge extends ConfigurableGunItem implements GunSkillItem {
         int coins = tag.getInt(NBT_COINS);
 
         tooltip.add(Component.literal(""));
-        tooltip.add(Component.translatable("tooltip.gwrexpansions.hellforge_revolver.coins", coins, getMaxCoins())
-            .withStyle(coins > 0 ? (coins >= getMaxCoins() ? ChatFormatting.GOLD : ChatFormatting.YELLOW) : ChatFormatting.RED));
+        tooltip.add(Component.translatable("tooltip.gwrexpansions.hellforge_revolver.coins", coins, getMaxCoins(stack))
+            .withStyle(coins > 0 ? (coins >= getMaxCoins(stack) ? ChatFormatting.GOLD : ChatFormatting.YELLOW) : ChatFormatting.RED));
     }
 }

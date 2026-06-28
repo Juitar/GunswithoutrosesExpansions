@@ -1,6 +1,7 @@
 package juitar.gwrexpansions.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import juitar.gwrexpansions.CompatModids;
 import juitar.gwrexpansions.GWRexpansions;
 import juitar.gwrexpansions.client.CoinHitFeedbackClient;
 import juitar.gwrexpansions.config.ClientConfig;
@@ -15,6 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGuiEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = GWRexpansions.MODID, value = Dist.CLIENT)
@@ -29,6 +31,11 @@ public class CoinChainHudOverlay {
 
     @SubscribeEvent
     public static void onRenderGui(RenderGuiEvent.Post event) {
+        if (!ModList.get().isLoaded(CompatModids.BOMD)) {
+            resetRankPop();
+            return;
+        }
+
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;
         if (player == null || mc.options.hideGui) {

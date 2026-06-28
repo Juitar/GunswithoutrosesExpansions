@@ -43,6 +43,6 @@ public class ExclusiveGunEnchantment extends Enchantment {
 
     @Override
     public boolean isTradeable() {
-        return GWREConfig.GENERAL.enableCataclysmEnchantmentLibrarianTrades.get();
+        return GWREConfig.GENERAL.enableGunEnchantmentLibrarianTrades.get();
     }
 }

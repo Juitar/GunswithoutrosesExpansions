@@ -13,6 +13,7 @@ public class GWRESounds {
     // 超级霰弹枪声音
     public static final RegistryObject<SoundEvent> supershotgun = initSound("item.supershotgun.shoot");
     public static final RegistryObject<SoundEvent> skullcrusher = initSound("item.skullcrusher.shoot");
+    public static final RegistryObject<SoundEvent> skullcrusher_idle = initSound("item.skullcrusher.idle");
     // 肉钩声音
     public static final RegistryObject<SoundEvent> meat_hook_launch = initSound("meat_hook.launch");
     public static final RegistryObject<SoundEvent> meat_hook_hit = initSound("meat_hook.hit");

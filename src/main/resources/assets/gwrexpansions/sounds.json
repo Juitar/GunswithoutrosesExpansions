@@ -6,6 +6,12 @@
       "gwrexpansions:skullcrusher"
     ]
   },
+  "item.skullcrusher.idle": {
+    "category": "players",
+    "sounds": [
+      "gwrexpansions:skullcrusher_idle"
+    ]
+  },
   "item.supershotgun.shoot": {
     "category": "players",
     "subtitle": "subtitles.gwrexpansions.super_shotgun.shoot",

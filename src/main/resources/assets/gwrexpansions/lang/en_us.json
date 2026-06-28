@@ -302,8 +302,8 @@
   "config.gwrexpansions.enable_all_achievements_super_shotgun_reward.tooltip": "When enabled, completing RIP AND TEAR grants a special Super Shotgun reward.",
   "config.gwrexpansions.allow_shooter_projectile_self_damage": "Shooter Projectile Self-Damage",
   "config.gwrexpansions.allow_shooter_projectile_self_damage.tooltip": "When enabled, Diamond Bullet Shrapnel and Slime Bullets can damage their shooter.",
-  "config.gwrexpansions.enable_cataclysm_enchantment_librarian_trades": "Cataclysm Enchantment Librarian Trades",
-  "config.gwrexpansions.enable_cataclysm_enchantment_librarian_trades.tooltip": "When enabled, Cataclysm gun-specific enchantment books can appear in librarian villager trades.",
+  "config.gwrexpansions.enable_gun_enchantment_librarian_trades": "Gun Enchantment Librarian Trades",
+  "config.gwrexpansions.enable_gun_enchantment_librarian_trades.tooltip": "When enabled, all gun-specific enchantment books can appear in librarian villager trades.",
   "config.gwrexpansions.bonus_damage": "Bonus Damage",
   "config.gwrexpansions.damage_multiplier": "Damage Multiplier",
   "config.gwrexpansions.headshot_multiplier": "Headshot Multiplier",
@@ -510,6 +510,14 @@
   "enchantment.gwrexpansions.remnant_fervor.desc": "Remnant Fangshot: awakening requires one fewer shot-blade cycle.",
   "enchantment.gwrexpansions.overload_calibration": "Overload Calibration",
   "enchantment.gwrexpansions.overload_calibration.desc": "Harbinger Raycaster: overload requires two fewer redstone battery shots of charge.",
+  "enchantment.gwrexpansions.gilded_skull": "Gilded Skull",
+  "enchantment.gwrexpansions.gilded_skull.desc": "Skullcrusher: some fired bone scraps can become diamond bullets.",
+  "enchantment.gwrexpansions.slow_burning_fury": "Slow-Burning Fury",
+  "enchantment.gwrexpansions.slow_burning_fury.desc": "Skullcrusher: base fire delay +2, but final fire-rate cap rises to 70% and movement-speed bonus cap increases by 20%.",
+  "enchantment.gwrexpansions.wise_casting": "Wise Casting",
+  "enchantment.gwrexpansions.wise_casting.desc": "Obsidian Launcher: until all three spells are stored, each shot casts a spell that has not been stored yet.",
+  "enchantment.gwrexpansions.coin_reserve": "Coin Reserve",
+  "enchantment.gwrexpansions.coin_reserve.desc": "Hellforge Revolver: maximum coins +2.",
   "config.gwrexpansions.hellforge_max_coins": "Hellforge Max Coins",
   "config.gwrexpansions.hellforge_coin_recharge_ticks": "Hellforge Coin Recharge Ticks",
   "config.gwrexpansions.hellforge_coin_chain_window_ticks": "Hellforge Coin Chain Window Ticks",
@@ -553,5 +561,6 @@
   "config.gwrexpansions.hellforge_coin_hit_fov_punch_enabled": "Hellforge Coin-Hit FOV Punch Enabled",
   "config.gwrexpansions.hellforge_overheat_voice_enabled": "Hellforge Overheat Voice Enabled",
   "config.gwrexpansions.hellforge_overheat_music_enabled": "Hellforge Overheat Music Enabled",
-  "config.gwrexpansions.hellforge_coin_hit_hud_flash_enabled": "Hellforge Coin-Hit HUD Flash Enabled"
+  "config.gwrexpansions.hellforge_coin_hit_hud_flash_enabled": "Hellforge Coin-Hit HUD Flash Enabled",
+  "config.gwrexpansions.skullcrusher_idle_sound_enabled": "Skullcrusher Idle Sound Enabled"
 }
