@@ -743,7 +743,7 @@ public class GWREConfigScreen {
                         addInt(skullcrusher::add, entries, "skullcrusher_hud_left_arc_x_adjust",
                                         ClientConfig.INSTANCE.skullcrusherHudLeftArcXAdjust, 0, -200, 200);
                         addInt(skullcrusher::add, entries, "skullcrusher_hud_right_arc_x_adjust",
-                                        ClientConfig.INSTANCE.skullcrusherHudRightArcXAdjust, -1, -200, 200);
+                                        ClientConfig.INSTANCE.skullcrusherHudRightArcXAdjust, 0, -200, 200);
                         addDouble(skullcrusher::add, entries, "skullcrusher_hud_arc_scale",
                                         ClientConfig.INSTANCE.skullcrusherHudArcScale, 0.5D, 0.1D, 2.0D);
                         addInt(skullcrusher::add, entries, "skullcrusher_hud_base_gap",

@@ -11,6 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.event.RenderGuiEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 /**
@@ -35,7 +36,7 @@ public class SkullcrusherHudRenderer {
     private static final int MAX_RADIUS = 15;
     private static final int HUD_BOUNDS_SIZE = 80;
     
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onRenderGui(RenderGuiEvent event) {
         Minecraft mc = Minecraft.getInstance();
         Player player = mc.player;
@@ -102,7 +103,7 @@ public class SkullcrusherHudRenderer {
         int arcRenderHeight = Math.round(ARC_TEXTURE_HEIGHT * arcScale);
         int baseGap = ClientConfig.getInt(ClientConfig.INSTANCE.skullcrusherHudBaseGap, 4);
         int leftAdjust = ClientConfig.getInt(ClientConfig.INSTANCE.skullcrusherHudLeftArcXAdjust, 0);
-        int rightAdjust = ClientConfig.getInt(ClientConfig.INSTANCE.skullcrusherHudRightArcXAdjust, -1);
+        int rightAdjust = ClientConfig.getInt(ClientConfig.INSTANCE.skullcrusherHudRightArcXAdjust, 0);
         int centerGap = baseGap + radius;
         double y = centerY - arcRenderHeight / 2.0D;
         double rightX = centerX + centerGap + rightAdjust;

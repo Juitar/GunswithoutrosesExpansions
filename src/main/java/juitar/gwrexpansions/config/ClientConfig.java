@@ -200,7 +200,7 @@ public class ClientConfig {
         skullcrusherHudLeftArcXAdjust = builder.comment("骷髅粉碎者HUD左弧X微调 / Skullcrusher HUD left arc X fine adjustment")
                 .defineInRange("skullcrusher_left_arc_x_adjust", 0, -200, 200);
         skullcrusherHudRightArcXAdjust = builder.comment("骷髅粉碎者HUD右弧X微调 / Skullcrusher HUD right arc X fine adjustment")
-                .defineInRange("skullcrusher_right_arc_x_adjust", -1, -200, 200);
+                .defineInRange("skullcrusher_right_arc_x_adjust", 0, -200, 200);
         skullcrusherHudArcScale = builder.comment("骷髅粉碎者HUD弧线缩放 / Skullcrusher HUD arc scale")
                 .defineInRange("skullcrusher_arc_scale", 0.5D, 0.1D, 2.0D);
         skullcrusherHudBaseGap = builder.comment("骷髅粉碎者HUD准星到弧线基础距离 / Skullcrusher HUD base gap from crosshair to arc")
