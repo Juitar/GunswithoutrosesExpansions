@@ -62,7 +62,6 @@ public class Skullcrusher extends ConfigurableGatlingItem implements GeoItem {
     private static final double GILDED_SKULL_DIAMOND_CHANCE = 0.25D;
     private static final int MAX_CONSECUTIVE_TIME = 100; // 重新定义最大连续射击时间计数
     private static final UUID CHARGE_MOVEMENT_SPEED_UUID = UUID.fromString("ff402a19-bc6c-4a83-a64f-bcc962a1d8e0");
-    private static final double VANILLA_USE_MOVEMENT_MULTIPLIER = 0.2D;
     private static final double MAX_EFFECTIVE_MOVEMENT_MULTIPLIER = 1.5D;
     private static final double MAX_AMMO_SAVE_CHANCE = 0.5D;
     private static final int MAX_CHARGED_PROJECTILE_BONUS = 2;
@@ -275,7 +274,7 @@ public class Skullcrusher extends ConfigurableGatlingItem implements GeoItem {
         double progress = getUseProgress(useTicks);
         double maxEffectiveMovementMultiplier = getMaxEffectiveMovementMultiplier(stack);
         double effectiveMultiplier = 1.0D + (maxEffectiveMovementMultiplier - 1.0D) * progress;
-        double attributeMultiplier = effectiveMultiplier / VANILLA_USE_MOVEMENT_MULTIPLIER - 1.0D;
+        double attributeMultiplier = effectiveMultiplier - 1.0D;
         movementSpeed.addTransientModifier(new AttributeModifier(CHARGE_MOVEMENT_SPEED_UUID,
                 "Skullcrusher charge movement speed", attributeMultiplier, AttributeModifier.Operation.MULTIPLY_TOTAL));
     }

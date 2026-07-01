@@ -1,6 +1,5 @@
 package juitar.gwrexpansions.entity.cataclysm;
 
-
 import com.github.L_Ender.cataclysm.init.ModEffect;
 import juitar.gwrexpansions.config.GWREConfig;
 import juitar.gwrexpansions.entity.meetyourfight.DuskfallBulletDelegate;
@@ -29,12 +28,10 @@ public class IgnitiumBulletEntity extends BulletEntity implements DuskfallBullet
         super(GWREEntities.IGNITIUM_BULLET.get(), shooter, level);
     }
 
-
     @Override
     protected void onHitEntity(EntityHitResult result) {
         Entity target = result.getEntity();
         Entity shooter = getOwner();
-
 
         if (target instanceof LivingEntity livingTarget) {
             int lastHurtResistant = target.invulnerableTime;
@@ -42,7 +39,7 @@ public class IgnitiumBulletEntity extends BulletEntity implements DuskfallBullet
             MobEffectInstance currentEffect = livingTarget.getEffect(ModEffect.EFFECTBLAZING_BRAND.get());
             int newAmplifier = Math.min(2, currentEffect != null ? currentEffect.getAmplifier() + 1 : 0);
 
-           // 添加新效果，重置持续时间
+            // 添加新效果，重置持续时间
             livingTarget.addEffect(new MobEffectInstance(ModEffect.EFFECTBLAZING_BRAND.get(), 200, newAmplifier));
 
             float damage = (float) this.getDamage();

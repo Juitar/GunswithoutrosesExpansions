@@ -1,6 +1,7 @@
 package juitar.gwrexpansions.item.BOMD;
 
 import juitar.gwrexpansions.config.GWREConfig;
+import juitar.gwrexpansions.client.render.HellforgeGeoRenderer;
 import juitar.gwrexpansions.entity.BOMD.CoinEntity;
 import juitar.gwrexpansions.item.ConfigurableGunItem;
 import juitar.gwrexpansions.item.GunSkillItem;
@@ -14,8 +15,10 @@ import net.minecraft.server.level.ServerPlayer;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.item.IBullet;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
@@ -27,14 +30,26 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.network.PacketDistributor;
+import software.bernie.geckolib.animatable.GeoItem;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Nullable;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class Hellforge extends ConfigurableGunItem implements GunSkillItem {
+public class Hellforge extends ConfigurableGunItem implements GunSkillItem, GeoItem {
     public static final String NBT_COINS = "Coins";
     public static final String NBT_COIN_RECHARGE_TIMER = "CoinRechargeTimer";
     public static final String NBT_COIN_CHAIN_HITS = "CoinChainHits";
@@ -49,6 +64,9 @@ public class Hellforge extends ConfigurableGunItem implements GunSkillItem {
     public static final String NBT_STYLE_HEAT = "StyleHeat";
     public static final String NBT_HEAT_KEEP_TIMER = "HeatKeepTimer";
     public static final String NBT_OVERHEAT_LOCKOUT_TIMER = "OverheatLockoutTimer";
+    public static final String NBT_GECKO_ANIMATION = "HellforgeGeckoAnimation";
+    public static final String NBT_GECKO_ANIMATION_TIMER = "HellforgeGeckoAnimationTimer";
+    public static final String NBT_GECKO_ANIMATION_SEQUENCE = "HellforgeGeckoAnimationSequence";
     public static final String NBT_LAST_STYLE_EVENT = "LastStyleEvent";
     public static final String NBT_LAST_STYLE_EVENT_COUNT = "LastStyleEventCount";
     public static final String NBT_RECENT_KILL_TIMER = "RecentKillTimer";
@@ -65,6 +83,19 @@ public class Hellforge extends ConfigurableGunItem implements GunSkillItem {
     private static final int STYLE_MAX_WINDOW_TICKS = 110;
     private static final int OVERHEAT_LOCKOUT_TICKS = 40;
     private static final int STRONG_OVERHEAT_LOCKOUT_TICKS = 60;
+    private static final String GECKO_CONTROLLER = "controller";
+    private static final String GECKO_ANIM_FIRE = "fire";
+    private static final String GECKO_ANIM_COIN = "coin";
+    private static final String GECKO_ANIM_ROTATE_FIRE = "rotate_fire";
+    private static final int GECKO_FIRE_TICKS = 8;
+    private static final int GECKO_COIN_TICKS = 11;
+    private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
+    private static final RawAnimation FIRE_ANIM = RawAnimation.begin().thenPlay("fire");
+    private static final RawAnimation COIN_ANIM = RawAnimation.begin().thenPlay("coin");
+    private static final RawAnimation ROTATE_ANIM = RawAnimation.begin().thenLoop("rotate");
+    private static final RawAnimation ROTATE_FIRE_ANIM = RawAnimation.begin().thenPlay("rotate+fire");
+    private static final Map<Long, Integer> LAST_SEEN_GECKO_SEQUENCE = new ConcurrentHashMap<>();
+    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
     /**
       *
@@ -80,6 +111,7 @@ public class Hellforge extends ConfigurableGunItem implements GunSkillItem {
      */
     public Hellforge(Properties properties, int bonusDamage, double damageMultiplier, int fireDelay, double inaccuracy, int enchantability, int conintime, Supplier<GWREConfig.GunConfig> configSupplier) {
         super(properties, bonusDamage, damageMultiplier, fireDelay, inaccuracy, enchantability, configSupplier);
+        GeoItem.registerSyncedAnimatable(this);
     }
 
     public enum StyleEvent {
@@ -105,6 +137,38 @@ public class Hellforge extends ConfigurableGunItem implements GunSkillItem {
     @Override
     protected void shoot(Level level, Player player, ItemStack gun, ItemStack ammo, IBullet bulletItem, boolean bulletFree) {
         super.shoot(level, player, gun, ammo, bulletItem, bulletFree);
+        ensureGeckoId(gun, level);
+        setGeckoAnimation(gun, isOverheated(gun) ? GECKO_ANIM_ROTATE_FIRE : GECKO_ANIM_FIRE, GECKO_FIRE_TICKS);
+    }
+
+    @Override
+    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+        consumer.accept(new IClientItemExtensions() {
+            private HellforgeGeoRenderer renderer;
+
+            @Override
+            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+                if (this.renderer == null) {
+                    this.renderer = new HellforgeGeoRenderer();
+                }
+                return this.renderer;
+            }
+        });
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, GECKO_CONTROLLER, 0, state -> {
+            ItemStack stack = state.getData(software.bernie.geckolib.constant.DataTickets.ITEMSTACK);
+            restartAnimationIfSequenceChanged(state, stack);
+            state.setAnimation(getGeckoAnimation(stack));
+            return PlayState.CONTINUE;
+        }));
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.cache;
     }
 
     @Override
@@ -140,10 +204,12 @@ public class Hellforge extends ConfigurableGunItem implements GunSkillItem {
     @Override
     public void inventoryTick(ItemStack stack, Level level, net.minecraft.world.entity.Entity entity, int slotId, boolean isSelected) {
         super.inventoryTick(stack, level, entity, slotId, isSelected);
+        tickGeckoAnimation(stack);
 
         if (level.isClientSide || !(entity instanceof ServerPlayer player)) {
             return;
         }
+        ensureGeckoId(stack, level);
 
         CompoundTag tag = stack.getOrCreateTag();
         int overheatTimer = tag.getInt(NBT_COIN_OVERHEAT_TIMER);
@@ -252,6 +318,8 @@ public class Hellforge extends ConfigurableGunItem implements GunSkillItem {
         int cooldown = tag.getInt(NBT_COIN_CHAIN_HITS) >= 5 ? hellforgeConfig().chainThrowCooldownTicks.get() : hellforgeConfig().baseThrowCooldownTicks.get();
         tag.putInt(NBT_COIN_THROW_COOLDOWN, cooldown);
         throwCoin(level, player);
+        ensureGeckoId(stack, level);
+        setGeckoAnimation(stack, GECKO_ANIM_COIN, GECKO_COIN_TICKS);
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
             GWRESounds.HELLFORGE_REVOLVER_COIN_FLIP.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
         return true;
@@ -297,6 +365,76 @@ public class Hellforge extends ConfigurableGunItem implements GunSkillItem {
 
     public static GWREConfig.HellforgeConfig hellforgeConfig() {
         return GWREConfig.PISTOL.hellforge;
+    }
+
+    private static boolean isOverheated(@Nullable ItemStack stack) {
+        return stack != null && stack.hasTag() && stack.getOrCreateTag().getInt(NBT_COIN_OVERHEAT_TIMER) > 0;
+    }
+
+    private static void ensureGeckoId(ItemStack stack, Level level) {
+        if (stack.isEmpty() || !(stack.getItem() instanceof Hellforge) || !(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+
+        GeoItem.getOrAssignId(stack, serverLevel);
+    }
+
+    private static void setGeckoAnimation(ItemStack stack, String animation, int ticks) {
+        if (stack.isEmpty()) {
+            return;
+        }
+
+        CompoundTag tag = stack.getOrCreateTag();
+        tag.putString(NBT_GECKO_ANIMATION, animation);
+        tag.putInt(NBT_GECKO_ANIMATION_TIMER, ticks);
+        tag.putInt(NBT_GECKO_ANIMATION_SEQUENCE, tag.getInt(NBT_GECKO_ANIMATION_SEQUENCE) + 1);
+    }
+
+    private static void tickGeckoAnimation(ItemStack stack) {
+        if (stack.isEmpty() || !stack.hasTag()) {
+            return;
+        }
+
+        CompoundTag tag = stack.getOrCreateTag();
+        int timer = tag.getInt(NBT_GECKO_ANIMATION_TIMER);
+        if (timer > 1) {
+            tag.putInt(NBT_GECKO_ANIMATION_TIMER, timer - 1);
+        } else if (timer == 1) {
+            tag.putInt(NBT_GECKO_ANIMATION_TIMER, 0);
+            tag.remove(NBT_GECKO_ANIMATION);
+        }
+    }
+
+    private static RawAnimation getGeckoAnimation(@Nullable ItemStack stack) {
+        if (stack != null && stack.hasTag() && stack.getOrCreateTag().getInt(NBT_GECKO_ANIMATION_TIMER) > 0) {
+            String animation = stack.getOrCreateTag().getString(NBT_GECKO_ANIMATION);
+            if (GECKO_ANIM_COIN.equals(animation)) {
+                return COIN_ANIM;
+            }
+            if (GECKO_ANIM_ROTATE_FIRE.equals(animation)) {
+                return ROTATE_FIRE_ANIM;
+            }
+            if (GECKO_ANIM_FIRE.equals(animation)) {
+                return FIRE_ANIM;
+            }
+        }
+
+        return isOverheated(stack) ? ROTATE_ANIM : IDLE_ANIM;
+    }
+
+    private static void restartAnimationIfSequenceChanged(AnimationState<Hellforge> state, @Nullable ItemStack stack) {
+        if (stack == null || stack.isEmpty() || !stack.hasTag()) {
+            return;
+        }
+
+        CompoundTag tag = stack.getOrCreateTag();
+        int sequence = tag.getInt(NBT_GECKO_ANIMATION_SEQUENCE);
+        long id = GeoItem.getId(stack);
+        long key = id != 0L ? id : System.identityHashCode(stack);
+        Integer previous = LAST_SEEN_GECKO_SEQUENCE.put(key, sequence);
+        if (previous != null && previous != sequence) {
+            state.getController().forceAnimationReset();
+        }
     }
 
     public static int getMaxCoins() {
