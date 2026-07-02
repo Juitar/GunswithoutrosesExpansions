@@ -289,8 +289,27 @@ public class GWREConfigScreen {
                         return;
                 }
                 ConfigCategory category = builder.getOrCreateCategory(text("category.launchers"));
-                addGunSubCategory(category, entries, "item.gwrexpansions.obsidian_launcher",
-                                GWREConfig.LAUNCHER.Obisidian, 30, 1.0D, 1.0D, 60, 0.0D);
+                addObsidianLauncherSubCategory(category, entries);
+        }
+
+        private static void addObsidianLauncherSubCategory(ConfigCategory category, ConfigEntryBuilder entries) {
+                GWREConfig.ObsidianLauncherConfig config = GWREConfig.LAUNCHER.Obisidian;
+                SubCategoryBuilder subCategory = entries.startSubCategory(
+                                Component.translatable("item.gwrexpansions.obsidian_launcher"))
+                                .setExpanded(false);
+
+                addGunEntries(subCategory::add, entries, config, 30, 1.0D, 1.0D, 60, 0.0D);
+                addInt(subCategory::add, entries, "obsidian_launch_delay_ticks", config.launchDelayTicks, 3, 0, 40);
+                addInt(subCategory::add, entries, "obsidian_min_range", config.minRange, 15, 1, 256);
+                addInt(subCategory::add, entries, "obsidian_max_range_full_charge", config.maxRangeFullCharge, 45, 1, 256);
+                addDouble(subCategory::add, entries, "obsidian_base_aoe_radius", config.baseAoeRadius, 1.0D, 0.1D, 64.0D);
+                addDouble(subCategory::add, entries, "obsidian_aoe_radius_charge_scale", config.aoeRadiusChargeScale, 0.5D, 0.0D, 10.0D);
+                addDouble(subCategory::add, entries, "obsidian_return_speed", config.returnSpeed, 1.5D, 0.1D, 16.0D);
+                addDouble(subCategory::add, entries, "obsidian_return_damage_factor", config.returnDamageFactor, 0.5D, 0.0D, 10.0D);
+                addInt(subCategory::add, entries, "obsidian_frenzy_duration_ticks", config.frenzyDurationTicks, 60, 1, 72000);
+                addInt(subCategory::add, entries, "obsidian_stored_spell_weight", config.storedSpellWeight, 1, 0, 1000);
+                addInt(subCategory::add, entries, "obsidian_missing_spell_weight", config.missingSpellWeight, 4, 0, 1000);
+                category.addEntry(subCategory.build());
         }
 
         private static void addBurstGunCategory(ConfigBuilder builder, ConfigEntryBuilder entries) {

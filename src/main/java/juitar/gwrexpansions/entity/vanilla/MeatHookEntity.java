@@ -383,6 +383,9 @@ public class MeatHookEntity extends AbstractArrow {
         this.hookedEntity = result.getEntity();
         this.entityData.set(HOOKED_ENTITY_ID, result.getEntity().getId());
         this.entityData.set(PULLING, true);
+        if (this.getOwner() instanceof Player player) {
+            Supershotgun.setHooking(player, true);
+        }
         if (result.getEntity() instanceof LivingEntity hookedLiving) {
             MeatHookKillRewardHandler.markHookRewardTarget(hookedLiving, this.getOwner());
         }
@@ -740,6 +743,7 @@ public class MeatHookEntity extends AbstractArrow {
     private void notifyOwnerForCooldown() {
         Entity owner = this.getOwner();
         if (owner instanceof Player player) {
+            Supershotgun.setHooking(player, false);
             // 检查主手和副手的物品
             ItemStack mainHandItem = player.getMainHandItem();
             ItemStack offHandItem = player.getOffhandItem();

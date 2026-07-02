@@ -53,13 +53,8 @@ public class ObsidianCoreEntity extends AbstractArrow {
     private static final EntityDataAccessor<Integer> SPELL_TYPE = SynchedEntityData.defineId(ObsidianCoreEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> SPELL_RELEASED = SynchedEntityData.defineId(ObsidianCoreEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> FRENZY_SHOT = SynchedEntityData.defineId(ObsidianCoreEntity.class, EntityDataSerializers.BOOLEAN);
-    private static final double RETURN_SPEED = 1.5D; // 回归速度
-    private static final float AOE_RADIUS = 1.0f; // AOE范围
     private static final float AOE_DAMAGE_FACTOR = 1.0F; // AOE伤害系数
-    private static final float RETURN_DAMAGE_FACTOR = 0.5F; // 回归伤害系数
     private static final int MAX_LIFETIME = 200; // 最大存在时间
-    private static final float BASE_MAX_RANGE = 30.0f; // 基础最大射程，单位：方块
-    private static final int BASE_MIN_RANGE = 15; // 最小射程
     private boolean hasHit = false; // 是否已击中目标
     private boolean hasDealtAOE = false; // 是否已造成AOE伤害
     private Vec3 startPos; // 发射起始位置
@@ -130,7 +125,7 @@ public class ObsidianCoreEntity extends AbstractArrow {
         this.entityData.define(OWNER_ID, -1);
         this.entityData.define(HIT_ENTITY_ID, -1);
         this.entityData.define(AOE_RADIUS_MULTIPLIER, 1.0f); // 默认AOE范围乘数为1.0
-        this.entityData.define(MAX_RANGE, BASE_MAX_RANGE); // 默认最大射程
+        this.entityData.define(MAX_RANGE, (float)ObsidianLauncher.getConfiguredMaxRange()); // 默认最大射程
         this.entityData.define(SPELL_TYPE, SpellType.FIRE.ordinal()); // 默认为火焰属性
         this.entityData.define(SPELL_RELEASED, false);
         this.entityData.define(FRENZY_SHOT, false);
@@ -176,8 +171,8 @@ public class ObsidianCoreEntity extends AbstractArrow {
                     float maxRange = this.getMaxRange();
                     
                     // 确保最大射程不小于BASE_MIN_RANGE
-                    if (maxRange < BASE_MIN_RANGE) {
-                        maxRange = BASE_MIN_RANGE;
+                    if (maxRange < ObsidianLauncher.getConfiguredMinRange()) {
+                        maxRange = ObsidianLauncher.getConfiguredMinRange();
                     }
                     
                     if (distanceTraveled > maxRange) {
@@ -320,7 +315,7 @@ public class ObsidianCoreEntity extends AbstractArrow {
         // 计算回归向量
         Vec3 ownerPos = owner.position().add(0, owner.getEyeHeight() * 0.8, 0);
         Vec3 currentPos = this.position();
-        Vec3 returnVec = ownerPos.subtract(currentPos).normalize().scale(RETURN_SPEED);
+        Vec3 returnVec = ownerPos.subtract(currentPos).normalize().scale(ObsidianLauncher.getConfiguredReturnSpeed());
         
         // 检查是否接近所有者
         double distanceToOwner = currentPos.distanceTo(ownerPos);
@@ -360,7 +355,7 @@ public class ObsidianCoreEntity extends AbstractArrow {
             
             // 对实体造成伤害
             if (entity instanceof LivingEntity livingEntity) {
-                float damage = (float)(this.getBaseDamage() * RETURN_DAMAGE_FACTOR);
+                float damage = (float)(this.getBaseDamage() * ObsidianLauncher.getConfiguredReturnDamageFactor());
                 boolean wasAlive = livingEntity.isAlive();
                 entity.hurt(this.damageSources().arrow(this, this.getOwner() instanceof LivingEntity ? (LivingEntity)this.getOwner() : null), damage);
                 
@@ -522,7 +517,7 @@ public class ObsidianCoreEntity extends AbstractArrow {
         hasDealtAOE = true;
         
         // 获取AOE范围
-        float aoeRadius = AOE_RADIUS * getAOERadiusMultiplier();
+        float aoeRadius = ObsidianLauncher.getConfiguredBaseAoeRadius() * getAOERadiusMultiplier();
         
         // 获取范围内的所有生物
         List<LivingEntity> nearbyEntities = this.level().getEntitiesOfClass(
@@ -556,7 +551,7 @@ public class ObsidianCoreEntity extends AbstractArrow {
      */
     private void dealAOEDamage(BlockPos hitPos) {
         // 获取AOE范围内的所有实体
-        float actualRadius = AOE_RADIUS * getAOERadiusMultiplier();
+        float actualRadius = ObsidianLauncher.getConfiguredBaseAoeRadius() * getAOERadiusMultiplier();
         List<Entity> entities = this.level().getEntities(this, 
             new AABB(hitPos).inflate(actualRadius), 
             entity -> entity != this && entity != this.getOwner());
@@ -820,7 +815,7 @@ public class ObsidianCoreEntity extends AbstractArrow {
     
     private void spawnAOEParticles(Entity hitEntity) {
         // 使用实际AOE范围，随蓄力变化
-        float actualRadius = AOE_RADIUS * getAOERadiusMultiplier();
+        float actualRadius = ObsidianLauncher.getConfiguredBaseAoeRadius() * getAOERadiusMultiplier();
         
         // 生成外圈粒子环
         spawnAOEBaseRing(
@@ -929,7 +924,7 @@ public class ObsidianCoreEntity extends AbstractArrow {
     
     private void spawnAOEParticles(BlockPos hitPos) {
         // 使用实际AOE范围，随蓄力变化
-        float actualRadius = AOE_RADIUS * getAOERadiusMultiplier();
+        float actualRadius = ObsidianLauncher.getConfiguredBaseAoeRadius() * getAOERadiusMultiplier();
         
         // 生成外圈粒子环
         spawnAOEBaseRing(
@@ -1037,10 +1032,14 @@ public class ObsidianCoreEntity extends AbstractArrow {
     }
     
     public void setReturning(boolean returning) {
+        boolean wasReturning = this.entityData.get(RETURNING);
         this.entityData.set(RETURNING, returning);
         
         // 回归时无重力
         if (returning) {
+            if (!wasReturning && !this.level().isClientSide && this.launcherId != null && this.getOwner() instanceof Player player) {
+                ObsidianLauncher.onCoreBeganReturning(player, this.launcherId);
+            }
             this.setNoGravity(true);
             this.setDeltaMovement(Vec3.ZERO); // 重置速度
         }
@@ -1195,7 +1194,7 @@ public class ObsidianCoreEntity extends AbstractArrow {
     }
 
     public float getAoeRadius() {
-        return AOE_RADIUS * getAOERadiusMultiplier();
+        return ObsidianLauncher.getConfiguredBaseAoeRadius() * getAOERadiusMultiplier();
     }
 
     public int getAoeAge() {

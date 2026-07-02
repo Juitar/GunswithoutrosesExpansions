@@ -1,6 +1,7 @@
 package juitar.gwrexpansions.item.BOMD;
 
 import juitar.gwrexpansions.advancement.BOMD.AvadaKedavraTrigger;
+import juitar.gwrexpansions.client.render.ObsidianLauncherGeoRenderer;
 import juitar.gwrexpansions.config.GWREConfig;
 import juitar.gwrexpansions.entity.BOMD.ObsidianCoreEntity;
 import juitar.gwrexpansions.item.ConfigurableLauncherItem;
@@ -12,6 +13,7 @@ import juitar.gwrexpansions.registry.GWRECataclysmEnchantments;
 import juitar.gwrexpansions.registry.GWRESounds;
 import lykrast.gunswithoutroses.item.IBullet;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -27,23 +29,51 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
+import software.bernie.geckolib.animatable.GeoItem;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class ObsidianLauncher extends ConfigurableLauncherItem implements GunSkillItem {
-    private static final int BASE_MIN_RANGE = 15;
-    private static final int BASE_MAX_RANGE = 30;
-    private static final int MAX_RANGE_WITH_FULL_CHARGE = 45;
+public class ObsidianLauncher extends ConfigurableLauncherItem implements GunSkillItem, GeoItem {
     private static final int MAX_CHARGE_TIME = 40;
     private static final int HALF_CHARGE_TICKS = 20;
     private static final int NORMAL_MAX_ACTIVE_CORES = 1;
+    private static final String NBT_GECKO_ANIMATION = "ObsidianLauncherGeckoAnimation";
+    private static final String NBT_GECKO_ANIMATION_TIMER = "ObsidianLauncherGeckoAnimationTimer";
+    private static final String NBT_GECKO_ANIMATION_SEQUENCE = "ObsidianLauncherGeckoAnimationSequence";
+    private static final String GECKO_CONTROLLER = "controller";
+    private static final String GECKO_ANIM_FIRE = "fire";
+    private static final String GECKO_ANIM_BACK = "back";
+    private static final int GECKO_FIRE_TICKS = 6;
+    private static final int GECKO_BACK_TICKS = 8;
+    private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
+    private static final RawAnimation FIRE_ANIM = RawAnimation.begin().thenPlay("fire");
+    private static final RawAnimation HOOKING_ANIM = RawAnimation.begin().thenLoop("hooking");
+    private static final RawAnimation HOOKING_BACK_ANIM = RawAnimation.begin().thenLoop("hooking back");
+    private static final RawAnimation BACK_ANIM = RawAnimation.begin().thenPlay("back");
+    private static final RawAnimation FEVER_IDLE_ANIM = RawAnimation.begin().thenLoop("fever fire");
+    private static final Map<Long, Integer> LAST_SEEN_GECKO_SEQUENCE = new ConcurrentHashMap<>();
+    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
     public static final String NBT_LAUNCHER_ID = "ObsidianLauncherId";
     public static final String NBT_ACTIVE_CORES = "ActiveObsidianCores";
+    public static final String NBT_CORE_RETURNING = "ObsidianCoreReturning";
     public static final String NBT_FRENZY_TICKS = "ObsidianFrenzyTicks";
+    private static final String NBT_PENDING_SHOT_TICKS = "ObsidianPendingShotTicks";
+    private static final String NBT_PENDING_SHOT_FRENZY = "ObsidianPendingShotFrenzy";
     private static final String NBT_LEGACY_FRENZY_SHOTS = "ObsidianFrenzyShots";
     public static final String NBT_FIRE_SPELL_CAST = "FireSpellCast";
     public static final String NBT_FROST_SPELL_CAST = "FrostSpellCast";
@@ -55,6 +85,37 @@ public class ObsidianLauncher extends ConfigurableLauncherItem implements GunSki
     public ObsidianLauncher(Properties properties, int bonusDamage, double damageMultiplier, int fireDelay,
                             double inaccuracy, int enchantability, Supplier<GWREConfig.GunConfig> configSupplier) {
         super(properties, bonusDamage, damageMultiplier, fireDelay, inaccuracy, enchantability, configSupplier);
+        GeoItem.registerSyncedAnimatable(this);
+    }
+
+    @Override
+    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+        consumer.accept(new IClientItemExtensions() {
+            private ObsidianLauncherGeoRenderer renderer;
+
+            @Override
+            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+                if (this.renderer == null) {
+                    this.renderer = new ObsidianLauncherGeoRenderer();
+                }
+                return this.renderer;
+            }
+        });
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, GECKO_CONTROLLER, 0, state -> {
+            ItemStack stack = state.getData(software.bernie.geckolib.constant.DataTickets.ITEMSTACK);
+            restartAnimationIfSequenceChanged(state, stack);
+            state.setAnimation(getGeckoAnimation(stack));
+            return PlayState.CONTINUE;
+        }));
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.cache;
     }
 
     @Override
@@ -76,6 +137,7 @@ public class ObsidianLauncher extends ConfigurableLauncherItem implements GunSki
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         ensureLauncherId(stack);
+        ensureGeckoId(stack, level);
         boolean frenzied = isFrenzied(stack);
 
         if (frenzied) {
@@ -93,19 +155,22 @@ public class ObsidianLauncher extends ConfigurableLauncherItem implements GunSki
         }
 
         if (!level.isClientSide) {
+            CompoundTag tag = stack.getOrCreateTag();
+            tag.putInt(NBT_ACTIVE_CORES, Math.min(NORMAL_MAX_ACTIVE_CORES, getActiveCores(stack) + 1));
+            tag.putBoolean(NBT_CORE_RETURNING, false);
+            int launchDelayTicks = getLaunchDelayTicks();
+            tag.putInt(NBT_PENDING_SHOT_TICKS, launchDelayTicks);
+            tag.putBoolean(NBT_PENDING_SHOT_FRENZY, frenzied);
+            setGeckoAnimation(stack, GECKO_ANIM_FIRE, GECKO_FIRE_TICKS);
             if (!bulletFree) {
                 ammo.shrink(1);
             }
-
-            CompoundTag tag = stack.getOrCreateTag();
-            tag.putInt(NBT_ACTIVE_CORES, Math.min(NORMAL_MAX_ACTIVE_CORES, getActiveCores(stack) + 1));
-            tag.putInt("UseTicks", HALF_CHARGE_TICKS);
-
-            shoot(level, player, stack, ammo, null, bulletFree, frenzied);
-            level.playSound(null, player.getX(), player.getY(), player.getZ(),
-                    getFireSound(), SoundSource.PLAYERS,
-                    1.0F, 1.0F / (level.getRandom().nextFloat() * 0.4F + 1.2F));
             player.awardStat(Stats.ITEM_USED.get(this));
+            if (launchDelayTicks <= 0) {
+                firePendingShot(level, player, stack, frenzied);
+                tag.putInt(NBT_PENDING_SHOT_TICKS, 0);
+                tag.remove(NBT_PENDING_SHOT_FRENZY);
+            }
         }
 
         return InteractionResultHolder.consume(stack);
@@ -114,6 +179,7 @@ public class ObsidianLauncher extends ConfigurableLauncherItem implements GunSki
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
         super.inventoryTick(stack, level, entity, slotId, isSelected);
+        tickGeckoAnimation(stack);
         if (!stack.hasTag()) {
             return;
         }
@@ -128,8 +194,21 @@ public class ObsidianLauncher extends ConfigurableLauncherItem implements GunSki
             return;
         }
 
+        ensureGeckoId(stack, level);
+
         if (tag.contains(NBT_LEGACY_FRENZY_SHOTS)) {
             tag.remove(NBT_LEGACY_FRENZY_SHOTS);
+        }
+
+        int pendingShotTicks = tag.getInt(NBT_PENDING_SHOT_TICKS);
+        if (pendingShotTicks > 0 && entity instanceof Player player) {
+            tag.putInt(NBT_PENDING_SHOT_TICKS, pendingShotTicks - 1);
+            if (pendingShotTicks == 1) {
+                boolean frenzyShot = tag.getBoolean(NBT_PENDING_SHOT_FRENZY);
+                firePendingShot(level, player, stack, frenzyShot);
+                tag.putInt(NBT_PENDING_SHOT_TICKS, 0);
+                tag.remove(NBT_PENDING_SHOT_FRENZY);
+            }
         }
 
         if (frenzyTicks > 0) {
@@ -150,7 +229,7 @@ public class ObsidianLauncher extends ConfigurableLauncherItem implements GunSki
         float chargeBonus = calculateChargeBonus(HALF_CHARGE_TICKS);
         double damage = getBonusDamage(gun, player) * getDamageMultiplier(gun, player) * chargeBonus;
         coreEntity.setBaseDamage(damage);
-        coreEntity.setAOERadiusMultiplier(1.0f + chargeBonus * 0.5f);
+        coreEntity.setAOERadiusMultiplier(1.0f + chargeBonus * getAoeRadiusChargeScale());
         coreEntity.setMaxRange(getRangeForCharge(HALF_CHARGE_TICKS));
         coreEntity.setLauncherId(ensureLauncherId(gun));
         coreEntity.setFrenzyShot(frenzyShot);
@@ -171,6 +250,13 @@ public class ObsidianLauncher extends ConfigurableLauncherItem implements GunSki
 
         level.addFreshEntity(coreEntity);
         gun.hurtAndBreak(1, player, (p) -> p.broadcastBreakEvent(player.getUsedItemHand()));
+    }
+
+    private void firePendingShot(Level level, Player player, ItemStack stack, boolean frenzyShot) {
+        shoot(level, player, stack, ItemStack.EMPTY, null, true, frenzyShot);
+        level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                getFireSound(), SoundSource.PLAYERS,
+                1.0F, 1.0F / (level.getRandom().nextFloat() * 0.4F + 1.2F));
     }
 
     private static ObsidianCoreEntity.SpellType selectSpellType(ItemStack gun, Level level) {
@@ -225,17 +311,19 @@ public class ObsidianLauncher extends ConfigurableLauncherItem implements GunSki
 
     public int getRangeForCharge(int chargeTime) {
         if (chargeTime <= 0) {
-            return BASE_MIN_RANGE;
+            return getConfiguredMinRange();
         }
 
         float chargePercent = Math.min(1.0f, (float) chargeTime / MAX_CHARGE_TIME);
-        int rangeBonus = (int) (chargePercent * (MAX_RANGE_WITH_FULL_CHARGE - BASE_MIN_RANGE));
-        return BASE_MIN_RANGE + rangeBonus;
+        int minRange = getConfiguredMinRange();
+        int maxRange = Math.max(minRange, getConfiguredMaxRange());
+        int rangeBonus = (int) (chargePercent * (maxRange - minRange));
+        return minRange + rangeBonus;
     }
 
     @Override
     protected void addExtraStatsTooltip(ItemStack stack, @Nullable Level world, List<Component> tooltip) {
-        MutableComponent range = Component.literal(Integer.toString(BASE_MAX_RANGE)).withStyle(ChatFormatting.WHITE);
+        MutableComponent range = Component.literal(getConfiguredMinRange() + "-" + getConfiguredMaxRange()).withStyle(ChatFormatting.WHITE);
         tooltip.add(Component.translatable("item.gwrexpansions.obsidian_launcher.tooltip.range").withStyle(ChatFormatting.DARK_GREEN));
         tooltip.add(Component.translatable("item.gwrexpansions.obsidian_launcher.tooltip.range.values", range)
                 .withStyle(ChatFormatting.DARK_GREEN));
@@ -284,6 +372,10 @@ public class ObsidianLauncher extends ConfigurableLauncherItem implements GunSki
         }
 
         decrementActiveCore(launcher);
+        launcher.getOrCreateTag().putBoolean(NBT_CORE_RETURNING, false);
+        launcher.getOrCreateTag().putInt(NBT_PENDING_SHOT_TICKS, 0);
+        launcher.getOrCreateTag().remove(NBT_PENDING_SHOT_FRENZY);
+        setGeckoAnimation(launcher, GECKO_ANIM_BACK, GECKO_BACK_TICKS);
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
                 GWRESounds.OBSIDIAN_CORE_RELOAD.get(), SoundSource.PLAYERS, 0.6F, 1.15F);
         if (spellReleased) {
@@ -303,6 +395,17 @@ public class ObsidianLauncher extends ConfigurableLauncherItem implements GunSki
         ItemStack launcher = findLauncherById(player, launcherId);
         if (!launcher.isEmpty()) {
             decrementActiveCore(launcher);
+            launcher.getOrCreateTag().putBoolean(NBT_CORE_RETURNING, false);
+            launcher.getOrCreateTag().putInt(NBT_PENDING_SHOT_TICKS, 0);
+            launcher.getOrCreateTag().remove(NBT_PENDING_SHOT_FRENZY);
+            clearGeckoAnimation(launcher);
+        }
+    }
+
+    public static void onCoreBeganReturning(Player player, UUID launcherId) {
+        ItemStack launcher = findLauncherById(player, launcherId);
+        if (!launcher.isEmpty() && launcher.getItem() instanceof ObsidianLauncher) {
+            launcher.getOrCreateTag().putBoolean(NBT_CORE_RETURNING, true);
         }
     }
 
@@ -453,6 +556,34 @@ public class ObsidianLauncher extends ConfigurableLauncherItem implements GunSki
         return Math.max(1, GWREConfig.LAUNCHER.Obisidian.frenzyDurationTicks.get());
     }
 
+    public static int getLaunchDelayTicks() {
+        return Math.max(0, GWREConfig.LAUNCHER.Obisidian.launchDelayTicks.get());
+    }
+
+    public static int getConfiguredMinRange() {
+        return Math.max(1, GWREConfig.LAUNCHER.Obisidian.minRange.get());
+    }
+
+    public static int getConfiguredMaxRange() {
+        return Math.max(getConfiguredMinRange(), GWREConfig.LAUNCHER.Obisidian.maxRangeFullCharge.get());
+    }
+
+    public static float getConfiguredBaseAoeRadius() {
+        return (float)Math.max(0.1D, GWREConfig.LAUNCHER.Obisidian.baseAoeRadius.get());
+    }
+
+    public static float getAoeRadiusChargeScale() {
+        return (float)Math.max(0.0D, GWREConfig.LAUNCHER.Obisidian.aoeRadiusChargeScale.get());
+    }
+
+    public static double getConfiguredReturnSpeed() {
+        return Math.max(0.1D, GWREConfig.LAUNCHER.Obisidian.returnSpeed.get());
+    }
+
+    public static float getConfiguredReturnDamageFactor() {
+        return (float)Math.max(0.0D, GWREConfig.LAUNCHER.Obisidian.returnDamageFactor.get());
+    }
+
     private static void checkAndTriggerAvadaKedavra(Player player, ItemStack gun) {
         if (!(player instanceof net.minecraft.server.level.ServerPlayer serverPlayer)) {
             return;
@@ -469,5 +600,90 @@ public class ObsidianLauncher extends ConfigurableLauncherItem implements GunSki
     @Override
     protected float calculateChargeBonus(int chargeTicks) {
         return 0.5F + Math.min(1.0F, (float) chargeTicks / MAX_CHARGE_TIME);
+    }
+
+    private static void ensureGeckoId(ItemStack stack, Level level) {
+        if (stack.isEmpty() || !(stack.getItem() instanceof ObsidianLauncher) || !(level instanceof net.minecraft.server.level.ServerLevel serverLevel)) {
+            return;
+        }
+
+        GeoItem.getOrAssignId(stack, serverLevel);
+    }
+
+    private static void setGeckoAnimation(ItemStack stack, String animation, int ticks) {
+        if (stack.isEmpty()) {
+            return;
+        }
+
+        CompoundTag tag = stack.getOrCreateTag();
+        tag.putString(NBT_GECKO_ANIMATION, animation);
+        tag.putInt(NBT_GECKO_ANIMATION_TIMER, ticks);
+        tag.putInt(NBT_GECKO_ANIMATION_SEQUENCE, tag.getInt(NBT_GECKO_ANIMATION_SEQUENCE) + 1);
+    }
+
+    private static void clearGeckoAnimation(ItemStack stack) {
+        if (stack.isEmpty() || !stack.hasTag()) {
+            return;
+        }
+
+        CompoundTag tag = stack.getOrCreateTag();
+        if (tag.contains(NBT_GECKO_ANIMATION) || tag.getInt(NBT_GECKO_ANIMATION_TIMER) > 0) {
+            tag.remove(NBT_GECKO_ANIMATION);
+            tag.putInt(NBT_GECKO_ANIMATION_TIMER, 0);
+            tag.putInt(NBT_GECKO_ANIMATION_SEQUENCE, tag.getInt(NBT_GECKO_ANIMATION_SEQUENCE) + 1);
+        }
+    }
+
+    private static void tickGeckoAnimation(ItemStack stack) {
+        if (stack.isEmpty() || !stack.hasTag()) {
+            return;
+        }
+
+        CompoundTag tag = stack.getOrCreateTag();
+        int timer = tag.getInt(NBT_GECKO_ANIMATION_TIMER);
+        if (timer > 1) {
+            tag.putInt(NBT_GECKO_ANIMATION_TIMER, timer - 1);
+        } else if (timer == 1) {
+            tag.putInt(NBT_GECKO_ANIMATION_TIMER, 0);
+            tag.remove(NBT_GECKO_ANIMATION);
+            tag.putInt(NBT_GECKO_ANIMATION_SEQUENCE, tag.getInt(NBT_GECKO_ANIMATION_SEQUENCE) + 1);
+        }
+    }
+
+    private static RawAnimation getGeckoAnimation(@Nullable ItemStack stack) {
+        if (stack != null && stack.hasTag() && stack.getOrCreateTag().getInt(NBT_GECKO_ANIMATION_TIMER) > 0) {
+            String animation = stack.getOrCreateTag().getString(NBT_GECKO_ANIMATION);
+            if (GECKO_ANIM_BACK.equals(animation)) {
+                return BACK_ANIM;
+            }
+            if (GECKO_ANIM_FIRE.equals(animation)) {
+                return FIRE_ANIM;
+            }
+        }
+
+        if (stack != null && getActiveCores(stack) > 0) {
+            return stack.getOrCreateTag().getBoolean(NBT_CORE_RETURNING) ? HOOKING_BACK_ANIM : HOOKING_ANIM;
+        }
+
+        if (stack != null && isFrenzied(stack)) {
+            return FEVER_IDLE_ANIM;
+        }
+
+        return IDLE_ANIM;
+    }
+
+    private static void restartAnimationIfSequenceChanged(AnimationState<ObsidianLauncher> state, @Nullable ItemStack stack) {
+        if (stack == null || stack.isEmpty() || !stack.hasTag()) {
+            return;
+        }
+
+        CompoundTag tag = stack.getOrCreateTag();
+        int sequence = tag.getInt(NBT_GECKO_ANIMATION_SEQUENCE);
+        long id = GeoItem.getId(stack);
+        long key = id != 0L ? id : System.identityHashCode(stack);
+        Integer previous = LAST_SEEN_GECKO_SEQUENCE.put(key, sequence);
+        if (previous != null && previous != sequence) {
+            state.getController().forceAnimationReset();
+        }
     }
 }

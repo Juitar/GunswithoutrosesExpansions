@@ -1,13 +1,18 @@
 package juitar.gwrexpansions.item.vanilla;
 
 import juitar.gwrexpansions.config.GWREConfig;
+import juitar.gwrexpansions.client.render.SupershotgunGeoRenderer;
 import juitar.gwrexpansions.entity.vanilla.MeatHookEntity;
 import juitar.gwrexpansions.item.ConfigurableGunItem;
 import juitar.gwrexpansions.item.GunSkillItem;
 import juitar.gwrexpansions.item.GunSkillTooltip;
 import lykrast.gunswithoutroses.entity.BulletEntity;
+import lykrast.gunswithoutroses.item.IBullet;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -17,14 +22,25 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import org.jetbrains.annotations.NotNull;
+import software.bernie.geckolib.animatable.GeoItem;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class Supershotgun extends ConfigurableGunItem implements GunSkillItem {
+public class Supershotgun extends ConfigurableGunItem implements GunSkillItem, GeoItem {
     public static final String SUPER_SHOTGUN_SHOT_TAG = "GWRESuperShotgunShot";
     private static final double HOOK_RANGE = 32.0D; // 肉钩最大射程
     private static final double PULL_SPEED = 1.5D; // 拉近速度
@@ -33,6 +49,25 @@ public class Supershotgun extends ConfigurableGunItem implements GunSkillItem {
     private static final String NBT_HOOK_COOLDOWN = "Hook_Cooldown"; // 冷却时间NBT
     private static final String NBT_COOLDOWN_PAUSED = "Cooldown_Paused"; // 冷却暂停标志NBT
     private static final String NBT_PAUSE_COUNTER = "Pause_Counter"; // 暂停计数器NBT
+    private static final String NBT_HOOKING = "SuperShotgunHooking";
+    private static final String NBT_GECKO_ANIMATION = "SuperShotgunGeckoAnimation";
+    private static final String NBT_GECKO_ANIMATION_TIMER = "SuperShotgunGeckoAnimationTimer";
+    private static final String NBT_GECKO_ANIMATION_SEQUENCE = "SuperShotgunGeckoAnimationSequence";
+    private static final String NBT_RELOAD_TIMER = "SuperShotgunReloadTimer";
+    private static final String NBT_RELOAD_ANIMATION_TICKS = "SuperShotgunReloadAnimationTicks";
+    private static final String GECKO_CONTROLLER = "controller";
+    private static final String GECKO_ANIM_FIRE = "fire";
+    private static final String GECKO_ANIM_HOOK = "hook";
+    private static final int GECKO_FIRE_TICKS = 6;
+    private static final int GECKO_HOOK_TICKS = 4;
+    private static final float RELOAD_ANIMATION_TICKS = 22.5F;
+    private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
+    private static final RawAnimation FIRE_ANIM = RawAnimation.begin().thenPlay("fire");
+    private static final RawAnimation RELOAD_ANIM = RawAnimation.begin().thenPlay("reload");
+    private static final RawAnimation HOOK_ANIM = RawAnimation.begin().thenPlay("hook");
+    private static final RawAnimation HOOKING_ANIM = RawAnimation.begin().thenLoop("hooking");
+    private static final Map<Long, Integer> LAST_SEEN_GECKO_SEQUENCE = new ConcurrentHashMap<>();
+    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
     /**
      * 创建可配置的枪支
@@ -47,11 +82,51 @@ public class Supershotgun extends ConfigurableGunItem implements GunSkillItem {
      */
     public Supershotgun(Properties properties, int bonusDamage, double damageMultiplier, int fireDelay, double inaccuracy, int enchantability, Supplier<GWREConfig.GunConfig> configSupplier) {
         super(properties, bonusDamage, damageMultiplier, fireDelay, inaccuracy, enchantability, configSupplier);
+        GeoItem.registerSyncedAnimatable(this);
     }
 
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
         return super.use(world, player, hand);
+    }
+
+    @Override
+    protected void shoot(Level level, Player player, ItemStack gun, ItemStack ammo, IBullet bulletItem, boolean bulletFree) {
+        super.shoot(level, player, gun, ammo, bulletItem, bulletFree);
+        ensureGeckoId(gun, level);
+        setGeckoAnimation(gun, GECKO_ANIM_FIRE, GECKO_FIRE_TICKS);
+        setReloadAnimation(gun, getFireDelay(gun, player));
+    }
+
+    @Override
+    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+        consumer.accept(new IClientItemExtensions() {
+            private SupershotgunGeoRenderer renderer;
+
+            @Override
+            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+                if (this.renderer == null) {
+                    this.renderer = new SupershotgunGeoRenderer();
+                }
+                return this.renderer;
+            }
+        });
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, GECKO_CONTROLLER, 0, state -> {
+            ItemStack stack = state.getData(software.bernie.geckolib.constant.DataTickets.ITEMSTACK);
+            restartAnimationIfSequenceChanged(state, stack);
+            state.setControllerSpeed(getGeckoAnimationSpeed(stack));
+            state.setAnimation(getGeckoAnimation(stack));
+            return PlayState.CONTINUE;
+        }));
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.cache;
     }
 
     @Override
@@ -76,6 +151,9 @@ public class Supershotgun extends ConfigurableGunItem implements GunSkillItem {
         hook.shoot(look.x, look.y, look.z, 3.5f, 0.0f);
         player.level().addFreshEntity(hook);
 
+        ensureGeckoId(stack, player.level());
+        setGeckoAnimation(stack, GECKO_ANIM_HOOK, GECKO_HOOK_TICKS);
+        setHooking(stack, false);
         setHookCooldown(stack, HOOK_COOLDOWN);
         setCooldownPaused(stack, true);
         resetPauseCounter(stack);
@@ -94,6 +172,10 @@ public class Supershotgun extends ConfigurableGunItem implements GunSkillItem {
     @Override
     public void inventoryTick(ItemStack stack, Level world, Entity entity, int slot, boolean isSelected) {
         super.inventoryTick(stack, world, entity, slot, isSelected);
+        tickGeckoAnimation(stack);
+        if (!world.isClientSide) {
+            ensureGeckoId(stack, world);
+        }
         
         // 获取冷却状态
         int cooldown = getHookCooldown(stack);
@@ -108,6 +190,7 @@ public class Supershotgun extends ConfigurableGunItem implements GunSkillItem {
                 // 如果暂停时间超过最大值，自动恢复计算冷却
                 if (pauseCounter >= MAX_PAUSE_TIME) {
                     setCooldownPaused(stack, false);
+                    setHooking(stack, false);
                 } else {
                     setPauseCounter(stack, pauseCounter);
                 }
@@ -180,6 +263,7 @@ public class Supershotgun extends ConfigurableGunItem implements GunSkillItem {
      */
     public void resumeCooldown(ItemStack stack) {
         setCooldownPaused(stack, false);
+        setHooking(stack, false);
     }
     
     /**
@@ -198,7 +282,19 @@ public class Supershotgun extends ConfigurableGunItem implements GunSkillItem {
     public void resetHookCooldown(ItemStack stack) {
         setHookCooldown(stack, 0);
         setCooldownPaused(stack, false);
+        setHooking(stack, false);
         resetPauseCounter(stack);
+    }
+
+    public static void setHooking(Player player, boolean hooking) {
+        setHookingStack(player.getMainHandItem(), hooking);
+        setHookingStack(player.getOffhandItem(), hooking);
+
+        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+            if (setHookingStack(player.getInventory().getItem(i), hooking)) {
+                break;
+            }
+        }
     }
 
     public static boolean resetHookCooldown(Player player) {
@@ -223,5 +319,120 @@ public class Supershotgun extends ConfigurableGunItem implements GunSkillItem {
             return true;
         }
         return false;
+    }
+
+    private static boolean setHookingStack(ItemStack stack, boolean hooking) {
+        if (stack.getItem() instanceof Supershotgun) {
+            setHooking(stack, hooking);
+            return true;
+        }
+        return false;
+    }
+
+    private static void ensureGeckoId(ItemStack stack, Level level) {
+        if (stack.isEmpty() || !(stack.getItem() instanceof Supershotgun) || !(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+
+        GeoItem.getOrAssignId(stack, serverLevel);
+    }
+
+    private static void setGeckoAnimation(ItemStack stack, String animation, int ticks) {
+        if (stack.isEmpty()) {
+            return;
+        }
+
+        CompoundTag tag = stack.getOrCreateTag();
+        tag.putString(NBT_GECKO_ANIMATION, animation);
+        tag.putInt(NBT_GECKO_ANIMATION_TIMER, ticks);
+        tag.putInt(NBT_GECKO_ANIMATION_SEQUENCE, tag.getInt(NBT_GECKO_ANIMATION_SEQUENCE) + 1);
+    }
+
+    private static void setReloadAnimation(ItemStack stack, int cooldownTicks) {
+        CompoundTag tag = stack.getOrCreateTag();
+        tag.putInt(NBT_RELOAD_TIMER, cooldownTicks);
+        tag.putInt(NBT_RELOAD_ANIMATION_TICKS, Math.max(1, cooldownTicks - GECKO_FIRE_TICKS));
+        tag.putInt(NBT_GECKO_ANIMATION_SEQUENCE, tag.getInt(NBT_GECKO_ANIMATION_SEQUENCE) + 1);
+    }
+
+    private static void tickGeckoAnimation(ItemStack stack) {
+        if (stack.isEmpty() || !stack.hasTag()) {
+            return;
+        }
+
+        CompoundTag tag = stack.getOrCreateTag();
+        int timer = tag.getInt(NBT_GECKO_ANIMATION_TIMER);
+        if (timer > 1) {
+            tag.putInt(NBT_GECKO_ANIMATION_TIMER, timer - 1);
+        } else if (timer == 1) {
+            tag.putInt(NBT_GECKO_ANIMATION_TIMER, 0);
+            tag.remove(NBT_GECKO_ANIMATION);
+            if (tag.getInt(NBT_RELOAD_TIMER) > 0) {
+                tag.putInt(NBT_GECKO_ANIMATION_SEQUENCE, tag.getInt(NBT_GECKO_ANIMATION_SEQUENCE) + 1);
+            }
+        }
+
+        int reloadTimer = tag.getInt(NBT_RELOAD_TIMER);
+        if (reloadTimer > 1) {
+            tag.putInt(NBT_RELOAD_TIMER, reloadTimer - 1);
+        } else if (reloadTimer == 1) {
+            tag.putInt(NBT_RELOAD_TIMER, 0);
+            tag.remove(NBT_RELOAD_ANIMATION_TICKS);
+        }
+    }
+
+    private static RawAnimation getGeckoAnimation(@Nullable ItemStack stack) {
+        if (stack != null && stack.hasTag() && stack.getOrCreateTag().getInt(NBT_GECKO_ANIMATION_TIMER) > 0) {
+            String animation = stack.getOrCreateTag().getString(NBT_GECKO_ANIMATION);
+            if (GECKO_ANIM_HOOK.equals(animation)) {
+                return HOOK_ANIM;
+            }
+            if (GECKO_ANIM_FIRE.equals(animation)) {
+                return FIRE_ANIM;
+            }
+        }
+
+        if (stack != null && stack.hasTag()) {
+            CompoundTag tag = stack.getOrCreateTag();
+            if (tag.getBoolean(NBT_HOOKING)) {
+                return HOOKING_ANIM;
+            }
+            if (tag.getInt(NBT_RELOAD_TIMER) > 0) {
+                return RELOAD_ANIM;
+            }
+        }
+
+        return IDLE_ANIM;
+    }
+
+    private static float getGeckoAnimationSpeed(@Nullable ItemStack stack) {
+        if (stack != null && stack.hasTag()) {
+            CompoundTag tag = stack.getOrCreateTag();
+            if (tag.getInt(NBT_GECKO_ANIMATION_TIMER) <= 0 && tag.getInt(NBT_RELOAD_TIMER) > 0) {
+                int reloadTicks = Math.max(1, tag.getInt(NBT_RELOAD_ANIMATION_TICKS));
+                return RELOAD_ANIMATION_TICKS / reloadTicks;
+            }
+        }
+
+        return 1.0F;
+    }
+
+    private static void restartAnimationIfSequenceChanged(AnimationState<Supershotgun> state, @Nullable ItemStack stack) {
+        if (stack == null || stack.isEmpty() || !stack.hasTag()) {
+            return;
+        }
+
+        CompoundTag tag = stack.getOrCreateTag();
+        int sequence = tag.getInt(NBT_GECKO_ANIMATION_SEQUENCE);
+        long id = GeoItem.getId(stack);
+        long key = id != 0L ? id : System.identityHashCode(stack);
+        Integer previous = LAST_SEEN_GECKO_SEQUENCE.put(key, sequence);
+        if (previous != null && previous != sequence) {
+            state.getController().forceAnimationReset();
+        }
+    }
+
+    private static void setHooking(ItemStack stack, boolean hooking) {
+        stack.getOrCreateTag().putBoolean(NBT_HOOKING, hooking);
     }
 }

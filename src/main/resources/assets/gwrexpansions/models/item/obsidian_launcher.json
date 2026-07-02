@@ -1,6 +1,30 @@
 {
-	"parent": "gunswithoutroses:item/base_gun",
-	"textures": {
-		"layer0": "gwrexpansions:item/obsidian_launcher"
-	}
+  "gui_light": "front",
+  "loader": "forge:separate_transforms",
+  "base": {
+    "parent": "gwrexpansions:item/obsidian_launcher_2d"
+  },
+  "perspectives": {
+    "firstperson_righthand": {
+      "parent": "gwrexpansions:item/obsidian_launcher_gecko"
+    },
+    "firstperson_lefthand": {
+      "parent": "gwrexpansions:item/obsidian_launcher_gecko"
+    },
+    "thirdperson_righthand": {
+      "parent": "gwrexpansions:item/obsidian_launcher_gecko"
+    },
+    "thirdperson_lefthand": {
+      "parent": "gwrexpansions:item/obsidian_launcher_gecko"
+    },
+    "gui": {
+      "parent": "gwrexpansions:item/obsidian_launcher_2d"
+    },
+    "ground": {
+      "parent": "gwrexpansions:item/obsidian_launcher_gecko"
+    },
+    "fixed": {
+      "parent": "gwrexpansions:item/obsidian_launcher_2d"
+    }
+  }
 }

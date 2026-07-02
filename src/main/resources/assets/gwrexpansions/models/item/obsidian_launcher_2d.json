@@ -1,0 +1,7 @@
+{
+  "gui_light": "front",
+  "parent": "gunswithoutroses:item/base_gun",
+  "textures": {
+    "layer0": "gwrexpansions:item/obsidian_launcher_2d"
+  }
+}

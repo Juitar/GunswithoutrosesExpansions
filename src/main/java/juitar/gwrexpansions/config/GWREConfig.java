@@ -822,6 +822,13 @@ public class GWREConfig {
                 public final ForgeConfigSpec.IntValue frenzyDurationTicks;
                 public final ForgeConfigSpec.IntValue storedSpellWeight;
                 public final ForgeConfigSpec.IntValue missingSpellWeight;
+                public final ForgeConfigSpec.IntValue launchDelayTicks;
+                public final ForgeConfigSpec.IntValue minRange;
+                public final ForgeConfigSpec.IntValue maxRangeFullCharge;
+                public final ForgeConfigSpec.DoubleValue baseAoeRadius;
+                public final ForgeConfigSpec.DoubleValue aoeRadiusChargeScale;
+                public final ForgeConfigSpec.DoubleValue returnSpeed;
+                public final ForgeConfigSpec.DoubleValue returnDamageFactor;
 
                 public ObsidianLauncherConfig(ForgeConfigSpec.Builder builder) {
                         super(builder, "Obsidian", 30, 1.0, 1.0, 60, 0.0);
@@ -832,6 +839,20 @@ public class GWREConfig {
                                         .defineInRange("storedSpellWeight", 1, 0, 1000);
                         missingSpellWeight = builder.comment("Random spell weight for a spell type that is not stored yet.")
                                         .defineInRange("missingSpellWeight", 4, 0, 1000);
+                        launchDelayTicks = builder.comment("Ticks between pressing fire and actually launching the Obsidian Core. Used to line up with the fire animation.")
+                                        .defineInRange("launchDelayTicks", 3, 0, 40);
+                        minRange = builder.comment("Minimum flight range of the Obsidian Core in blocks.")
+                                        .defineInRange("minRange", 15, 1, 256);
+                        maxRangeFullCharge = builder.comment("Maximum flight range of the Obsidian Core in blocks at full charge.")
+                                        .defineInRange("maxRangeFullCharge", 45, 1, 256);
+                        baseAoeRadius = builder.comment("Base AOE radius of Obsidian Core spell release in blocks before charge scaling.")
+                                        .defineInRange("baseAoeRadius", 1.0, 0.1, 64.0);
+                        aoeRadiusChargeScale = builder.comment("Additional AOE radius multiplier gained from charge bonus. Final multiplier is 1 + chargeBonus * value.")
+                                        .defineInRange("aoeRadiusChargeScale", 0.5, 0.0, 10.0);
+                        returnSpeed = builder.comment("Return speed of the Obsidian Core while flying back to the player.")
+                                        .defineInRange("returnSpeed", 1.5, 0.1, 16.0);
+                        returnDamageFactor = builder.comment("Damage multiplier applied when the Obsidian Core hits entities on the way back.")
+                                        .defineInRange("returnDamageFactor", 0.5, 0.0, 10.0);
                         builder.pop();
                 }
         }

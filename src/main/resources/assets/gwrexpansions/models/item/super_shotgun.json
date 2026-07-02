@@ -1,15 +1,27 @@
 {
-    "parent": "minecraft:item/handheld",
+    "gui_light": "front",
     "loader": "forge:separate_transforms",
     "base":{
-        "parent": "gwrexpansions:item/super_shotgun_3d"
+        "parent": "gwrexpansions:item/super_shotgun_2d"
     },
     "perspectives":{
+        "firstperson_righthand":{
+            "parent": "gwrexpansions:item/super_shotgun_gecko"
+        },
+        "firstperson_lefthand":{
+            "parent": "gwrexpansions:item/super_shotgun_gecko"
+        },
+        "thirdperson_righthand":{
+            "parent": "gwrexpansions:item/super_shotgun_gecko"
+        },
+        "thirdperson_lefthand":{
+            "parent": "gwrexpansions:item/super_shotgun_gecko"
+        },
         "gui":{
             "parent": "gwrexpansions:item/super_shotgun_2d"
         },
         "ground":{
-            "parent": "gwrexpansions:item/super_shotgun_2d"
+            "parent": "gwrexpansions:item/super_shotgun_gecko"
         },
         "fixed":{
             "parent": "gwrexpansions:item/super_shotgun_2d"
