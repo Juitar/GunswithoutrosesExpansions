@@ -6,10 +6,13 @@ import juitar.gwrexpansions.entity.vanilla.MeatHookEntity;
 import juitar.gwrexpansions.item.ConfigurableGunItem;
 import juitar.gwrexpansions.item.GunSkillItem;
 import juitar.gwrexpansions.item.GunSkillTooltip;
+import juitar.gwrexpansions.network.GWRENetwork;
+import juitar.gwrexpansions.network.SuperShotgunFeedbackPacket;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.item.IBullet;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -23,6 +26,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
+import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
@@ -93,6 +97,7 @@ public class Supershotgun extends ConfigurableGunItem implements GunSkillItem, G
     @Override
     protected void shoot(Level level, Player player, ItemStack gun, ItemStack ammo, IBullet bulletItem, boolean bulletFree) {
         super.shoot(level, player, gun, ammo, bulletItem, bulletFree);
+        triggerShotFeedback(level, player);
         ensureGeckoId(gun, level);
         setGeckoAnimation(gun, GECKO_ANIM_FIRE, GECKO_FIRE_TICKS);
         setReloadAnimation(gun, getFireDelay(gun, player));
@@ -256,6 +261,16 @@ public class Supershotgun extends ConfigurableGunItem implements GunSkillItem, G
     public boolean isHookReady(ItemStack stack) {
         return getHookCooldown(stack) <= 0;
     }
+
+    public static boolean isFlashAnimationActive(ItemStack stack) {
+        if (stack.isEmpty() || !stack.hasTag()) {
+            return false;
+        }
+
+        CompoundTag tag = stack.getOrCreateTag();
+        return tag.getInt(NBT_GECKO_ANIMATION_TIMER) > 0
+                && GECKO_ANIM_FIRE.equals(tag.getString(NBT_GECKO_ANIMATION));
+    }
     
     /**
      * 恢复冷却计算（肉钩返回结果后调用）
@@ -335,6 +350,23 @@ public class Supershotgun extends ConfigurableGunItem implements GunSkillItem, G
         }
 
         GeoItem.getOrAssignId(stack, serverLevel);
+    }
+
+    private static void triggerShotFeedback(Level level, Player player) {
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+
+        Vec3 look = player.getLookAngle();
+        Vec3 muzzle = player.getEyePosition().add(look.scale(1.15D));
+        serverLevel.sendParticles(ParticleTypes.SMOKE, muzzle.x, muzzle.y - 0.08D, muzzle.z,
+                3, 0.16D, 0.12D, 0.16D, 0.025D);
+        serverLevel.sendParticles(ParticleTypes.SMOKE, muzzle.x, muzzle.y - 0.08D, muzzle.z,
+                4, 0.12D, 0.08D, 0.12D, 0.02D);
+
+        if (player instanceof ServerPlayer serverPlayer) {
+            GWRENetwork.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new SuperShotgunFeedbackPacket());
+        }
     }
 
     private static void setGeckoAnimation(ItemStack stack, String animation, int ticks) {

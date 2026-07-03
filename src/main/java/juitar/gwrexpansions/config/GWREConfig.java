@@ -120,6 +120,8 @@ public class GWREConfig {
                 public final ForgeConfigSpec.BooleanValue meatHookKillRewardEnabled;
                 public final ForgeConfigSpec.IntValue meatHookKillRewardWindowTicks;
                 public final ForgeConfigSpec.DoubleValue meatHookKillRewardAbsorptionHearts;
+                public final ForgeConfigSpec.IntValue meatHookMarkDurationTicks;
+                public final ForgeConfigSpec.DoubleValue meatHookMarkedDamageMultiplier;
 
                 public SupershotgunConfig(ForgeConfigSpec.Builder builder) {
                         super(builder, "Supershotgun", 0, 1.5, 1.0, 40, 4);
@@ -133,6 +135,12 @@ public class GWREConfig {
                         meatHookKillRewardAbsorptionHearts = builder
                                         .comment("Absorption hearts granted by the meat hook kill reward. This does not stack above the configured amount.")
                                         .defineInRange("meatHookKillRewardAbsorptionHearts", 4.0, 0.0, 100.0);
+                        meatHookMarkDurationTicks = builder
+                                        .comment("Ticks that a meat-hook mark stays on the target after the hook stops refreshing it.")
+                                        .defineInRange("meatHookMarkDurationTicks", 60, 0, 72000);
+                        meatHookMarkedDamageMultiplier = builder
+                                        .comment("Damage multiplier applied when the Super Shotgun hits a target marked by the meat hook.")
+                                        .defineInRange("meatHookMarkedDamageMultiplier", 1.2, 0.0, 100.0);
                         builder.pop();
                 }
         }

@@ -13,6 +13,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.ModList;
 
 public class HellforgeOverheatMusicClient {
+    private static final int FADE_OUT_TICKS = 60;
+    private static final float TARGET_VOLUME = 0.9F;
+
     private static HeatingMusicSound currentSound;
     private static boolean wasOverheated;
     private static int musicStartDelay;
@@ -38,7 +41,9 @@ public class HellforgeOverheatMusicClient {
         if (shouldPlay) {
             if (!wasOverheated) {
                 wasOverheated = true;
-                musicStartDelay = ClientConfig.getBoolean(ClientConfig.INSTANCE.hellforgeOverheatMusicEnabled, true) ? 16 : 0;
+                if (currentSound == null || currentSound.isStopped()) {
+                    musicStartDelay = ClientConfig.getBoolean(ClientConfig.INSTANCE.hellforgeOverheatMusicEnabled, true) ? 16 : 0;
+                }
                 if (ClientConfig.getBoolean(ClientConfig.INSTANCE.hellforgeOverheatVoiceEnabled, true)) {
                     player.level().playLocalSound(player.getX(), player.getY(), player.getZ(),
                             GWRESounds.HELLFORGE_REVOLVER_OVERHEAT.get(), SoundSource.PLAYERS, 2.5F, 1.0F, false);
@@ -46,6 +51,10 @@ public class HellforgeOverheatMusicClient {
             }
             if (!ClientConfig.getBoolean(ClientConfig.INSTANCE.hellforgeOverheatMusicEnabled, true)) {
                 stop(mc);
+                return;
+            }
+            if (currentSound != null && !currentSound.isStopped()) {
+                currentSound.resume(player);
                 return;
             }
             if ((currentSound == null || currentSound.isStopped()) && musicStartDelay > 0) {
@@ -59,7 +68,11 @@ public class HellforgeOverheatMusicClient {
         } else {
             wasOverheated = false;
             musicStartDelay = 0;
-            stop(mc);
+            if (currentSound != null && !currentSound.isStopped()) {
+                currentSound.beginFadeOut();
+            } else {
+                stop(mc);
+            }
         }
     }
 
@@ -82,29 +95,54 @@ public class HellforgeOverheatMusicClient {
     }
 
     private static class HeatingMusicSound extends AbstractTickableSoundInstance {
-        private final LocalPlayer player;
+        private LocalPlayer player;
+        private int fadeOutTicks = -1;
 
         private HeatingMusicSound(LocalPlayer player) {
             super(GWRESounds.HELLFORGE_REVOLVER_HEATING_MUSIC.get(), SoundSource.PLAYERS, RandomSource.create());
             this.player = player;
             this.looping = true;
             this.delay = 0;
-            this.volume = 0.9F;
+            this.volume = TARGET_VOLUME;
             this.pitch = 1.0F;
             this.relative = true;
         }
 
         @Override
         public void tick() {
-            if (player.isRemoved()
-                    || !ClientConfig.getBoolean(ClientConfig.INSTANCE.hellforgeOverheatMusicEnabled, true)
-                    || getHeldHellforge(player).getOrCreateTag().getInt(Hellforge.NBT_COIN_OVERHEAT_TIMER) <= 0) {
+            if (player == null
+                    || player.isRemoved()
+                    || !ClientConfig.getBoolean(ClientConfig.INSTANCE.hellforgeOverheatMusicEnabled, true)) {
                 stopSound();
                 return;
             }
             this.x = player.getX();
             this.y = player.getY();
             this.z = player.getZ();
+
+            if (fadeOutTicks >= 0) {
+                this.volume = TARGET_VOLUME * (fadeOutTicks / (float)FADE_OUT_TICKS);
+                if (fadeOutTicks == 0) {
+                    stopSound();
+                    return;
+                }
+                fadeOutTicks--;
+                return;
+            }
+
+            this.volume = TARGET_VOLUME;
+        }
+
+        private void beginFadeOut() {
+            if (fadeOutTicks < 0) {
+                fadeOutTicks = FADE_OUT_TICKS;
+            }
+        }
+
+        private void resume(LocalPlayer player) {
+            this.player = player;
+            this.fadeOutTicks = -1;
+            this.volume = TARGET_VOLUME;
         }
 
         private void stopSound() {

@@ -37,5 +37,17 @@ public class GWRENetwork {
             CoinHitFeedbackPacket::decode,
             CoinHitFeedbackPacket::handle,
             Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+
+        CHANNEL.registerMessage(packetId++, MeatHookMarkPacket.class,
+            MeatHookMarkPacket::encode,
+            MeatHookMarkPacket::decode,
+            MeatHookMarkPacket::handle,
+            Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+
+        CHANNEL.registerMessage(packetId++, SuperShotgunFeedbackPacket.class,
+            SuperShotgunFeedbackPacket::encode,
+            SuperShotgunFeedbackPacket::decode,
+            SuperShotgunFeedbackPacket::handle,
+            Optional.of(NetworkDirection.PLAY_TO_CLIENT));
     }
 }

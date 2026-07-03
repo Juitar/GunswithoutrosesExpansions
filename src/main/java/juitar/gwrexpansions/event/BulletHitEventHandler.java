@@ -6,6 +6,7 @@ import juitar.gwrexpansions.config.GWREConfig;
 import juitar.gwrexpansions.entity.BOMD.CoinEntity;
 import juitar.gwrexpansions.entity.vanilla.SlimeBulletEntity;
 import juitar.gwrexpansions.item.BOMD.Hellforge;
+import juitar.gwrexpansions.item.vanilla.Supershotgun;
 import juitar.gwrexpansions.item.vanilla.RedstoneBulletItem;
 import juitar.gwrexpansions.registry.VanillaItem;
 import juitar.gwrexpansions.util.CoinTargetUtils;
@@ -125,6 +126,9 @@ public class BulletHitEventHandler {
                 }
 
                 boolean isHellforgeShot = bulletData.getBoolean("HellforgeShot");
+                if (bulletData.getBoolean(Supershotgun.SUPER_SHOTGUN_SHOT_TAG)) {
+                    applySuperShotgunImpact(target, shooter);
+                }
 
                 // 检查子弹是否有HellforgeShot标记
                 if (isHellforgeShot) {
@@ -151,6 +155,25 @@ public class BulletHitEventHandler {
             // 确保标记被重置
             PROCESSING.set(false);
         }
+    }
+
+    private static void applySuperShotgunImpact(LivingEntity target, Entity shooter) {
+        if (shooter == null || target.level().isClientSide) {
+            return;
+        }
+
+        CompoundTag targetData = target.getPersistentData();
+        long gameTime = target.level().getGameTime();
+        if (targetData.getLong("GWRESuperShotgunImpactTick") == gameTime) {
+            return;
+        }
+        targetData.putLong("GWRESuperShotgunImpactTick", gameTime);
+
+        double distance = Math.max(1.0D, target.distanceTo(shooter));
+        double strength = Math.max(0.45D, 0.9D - distance * 0.045D);
+        target.knockback(strength, shooter.getX() - target.getX(), shooter.getZ() - target.getZ());
+        target.setDeltaMovement(target.getDeltaMovement().add(0.0D, Math.max(0.06D, 0.16D - distance * 0.01D), 0.0D));
+        target.hasImpulse = true;
     }
 
     @SubscribeEvent

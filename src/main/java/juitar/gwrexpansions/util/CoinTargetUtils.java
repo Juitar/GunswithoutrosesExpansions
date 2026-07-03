@@ -1,6 +1,7 @@
 package juitar.gwrexpansions.util;
 
 import juitar.gwrexpansions.entity.BOMD.CoinEntity;
+import juitar.gwrexpansions.event.MeatHookKillRewardHandler;
 import juitar.gwrexpansions.registry.GWREEffects;
 import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.Mob;
@@ -37,7 +38,8 @@ public class CoinTargetUtils {
 
         for (LivingEntity entity : entities) {
             // 检查实体是否有aimed效果
-            boolean hasAimedEffect = entity.hasEffect(GWREEffects.AIMED.get());
+            boolean hasAimedEffect = entity.hasEffect(GWREEffects.AIMED.get())
+                    || MeatHookKillRewardHandler.hasActiveMeatHookMark(entity);
             if (hasAimedEffect && entity.isAlive()) {
                 double distance = entity.position().distanceTo(position);
                 if (distance < nearestDistance) {
