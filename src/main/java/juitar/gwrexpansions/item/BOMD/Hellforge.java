@@ -87,13 +87,16 @@ public class Hellforge extends ConfigurableGunItem implements GunSkillItem, GeoI
     private static final String GECKO_ANIM_FIRE = "fire";
     private static final String GECKO_ANIM_COIN = "coin";
     private static final String GECKO_ANIM_ROTATE_FIRE = "rotate_fire";
+    private static final String GECKO_ANIM_ROTATE_COIN = "rotate_coin";
     private static final int GECKO_FIRE_TICKS = 8;
     private static final int GECKO_COIN_TICKS = 11;
+    private static final int GECKO_ROTATE_COIN_TICKS = 7;
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
     private static final RawAnimation FIRE_ANIM = RawAnimation.begin().thenPlay("fire");
     private static final RawAnimation COIN_ANIM = RawAnimation.begin().thenPlay("coin");
     private static final RawAnimation ROTATE_ANIM = RawAnimation.begin().thenLoop("rotate");
     private static final RawAnimation ROTATE_FIRE_ANIM = RawAnimation.begin().thenPlay("rotate+fire");
+    private static final RawAnimation ROTATE_COIN_ANIM = RawAnimation.begin().thenPlay("rotate+coin");
     private static final Map<Long, Integer> LAST_SEEN_GECKO_SEQUENCE = new ConcurrentHashMap<>();
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
@@ -319,7 +322,8 @@ public class Hellforge extends ConfigurableGunItem implements GunSkillItem, GeoI
         tag.putInt(NBT_COIN_THROW_COOLDOWN, cooldown);
         throwCoin(level, player);
         ensureGeckoId(stack, level);
-        setGeckoAnimation(stack, GECKO_ANIM_COIN, GECKO_COIN_TICKS);
+        setGeckoAnimation(stack, isOverheated(stack) ? GECKO_ANIM_ROTATE_COIN : GECKO_ANIM_COIN,
+            isOverheated(stack) ? GECKO_ROTATE_COIN_TICKS : GECKO_COIN_TICKS);
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
             GWRESounds.HELLFORGE_REVOLVER_COIN_FLIP.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
         return true;
@@ -410,6 +414,9 @@ public class Hellforge extends ConfigurableGunItem implements GunSkillItem, GeoI
             String animation = stack.getOrCreateTag().getString(NBT_GECKO_ANIMATION);
             if (GECKO_ANIM_COIN.equals(animation)) {
                 return COIN_ANIM;
+            }
+            if (GECKO_ANIM_ROTATE_COIN.equals(animation)) {
+                return ROTATE_COIN_ANIM;
             }
             if (GECKO_ANIM_ROTATE_FIRE.equals(animation)) {
                 return ROTATE_FIRE_ANIM;

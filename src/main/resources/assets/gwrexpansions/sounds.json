@@ -12,6 +12,27 @@
       "gwrexpansions:skullcrusher_idle"
     ]
   },
+  "item.destiny_seven.idle": {
+    "category": "players",
+    "sounds": [
+      "gwrexpansions:destiny_idle"
+    ]
+  },
+  "item.destiny_seven.pull": {
+    "category": "players",
+    "sounds": [
+      {
+        "name": "gwrexpansions:destiny_pull",
+        "volume": 1.5
+      }
+    ]
+  },
+  "item.destiny_seven.shot": {
+    "category": "players",
+    "sounds": [
+      "gwrexpansions:destiny_shot"
+    ]
+  },
   "item.supershotgun.shoot": {
     "category": "players",
     "subtitle": "subtitles.gwrexpansions.super_shotgun.shoot",

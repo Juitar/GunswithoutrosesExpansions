@@ -1,6 +1,30 @@
 {
-  "parent": "gunswithoutroses:item/base_gun",
-  "textures": {
-    "layer0": "gwrexpansions:item/destiny_seven"
+  "gui_light": "front",
+  "loader": "forge:separate_transforms",
+  "base": {
+    "parent": "gwrexpansions:item/destiny_seven_2d"
+  },
+  "perspectives": {
+    "firstperson_righthand": {
+      "parent": "gwrexpansions:item/destiny_seven_gecko"
+    },
+    "firstperson_lefthand": {
+      "parent": "gwrexpansions:item/destiny_seven_gecko"
+    },
+    "thirdperson_righthand": {
+      "parent": "gwrexpansions:item/destiny_seven_gecko"
+    },
+    "thirdperson_lefthand": {
+      "parent": "gwrexpansions:item/destiny_seven_gecko"
+    },
+    "gui": {
+      "parent": "gwrexpansions:item/destiny_seven_2d"
+    },
+    "ground": {
+      "parent": "gwrexpansions:item/destiny_seven_gecko"
+    },
+    "fixed": {
+      "parent": "gwrexpansions:item/destiny_seven_2d"
+    }
   }
 }

@@ -49,5 +49,6 @@ public class GunSkillKeyHandler {
         SuperShotgunFeedbackClient.tick();
         HellforgeOverheatMusicClient.tick();
         SkullcrusherIdleSoundClient.tick();
+        DestinyIdleSoundClient.tick();
     }
 }

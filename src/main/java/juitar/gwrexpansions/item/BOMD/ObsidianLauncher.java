@@ -56,15 +56,20 @@ public class ObsidianLauncher extends ConfigurableLauncherItem implements GunSki
     private static final String NBT_GECKO_ANIMATION_SEQUENCE = "ObsidianLauncherGeckoAnimationSequence";
     private static final String GECKO_CONTROLLER = "controller";
     private static final String GECKO_ANIM_FIRE = "fire";
+    private static final String GECKO_ANIM_FEVER_FIRE = "fever_fire";
     private static final String GECKO_ANIM_BACK = "back";
     private static final int GECKO_FIRE_TICKS = 6;
     private static final int GECKO_BACK_TICKS = 8;
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
+    private static final RawAnimation FEVER_READY_ANIM = RawAnimation.begin().thenLoop("fever ready");
     private static final RawAnimation FIRE_ANIM = RawAnimation.begin().thenPlay("fire");
     private static final RawAnimation HOOKING_ANIM = RawAnimation.begin().thenLoop("hooking");
     private static final RawAnimation HOOKING_BACK_ANIM = RawAnimation.begin().thenLoop("hooking back");
     private static final RawAnimation BACK_ANIM = RawAnimation.begin().thenPlay("back");
-    private static final RawAnimation FEVER_IDLE_ANIM = RawAnimation.begin().thenLoop("fever fire");
+    private static final RawAnimation FEVER_IDLE_ANIM = RawAnimation.begin().thenLoop("fever idle");
+    private static final RawAnimation FEVER_FIRE_ANIM = RawAnimation.begin().thenPlay("fever fire");
+    private static final RawAnimation FEVER_HOOKING_ANIM = RawAnimation.begin().thenLoop("fever hooking");
+    private static final RawAnimation FEVER_HOOKING_BACK_ANIM = RawAnimation.begin().thenLoop("fever hooking back");
     private static final Map<Long, Integer> LAST_SEEN_GECKO_SEQUENCE = new ConcurrentHashMap<>();
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
@@ -161,7 +166,7 @@ public class ObsidianLauncher extends ConfigurableLauncherItem implements GunSki
             int launchDelayTicks = getLaunchDelayTicks();
             tag.putInt(NBT_PENDING_SHOT_TICKS, launchDelayTicks);
             tag.putBoolean(NBT_PENDING_SHOT_FRENZY, frenzied);
-            setGeckoAnimation(stack, GECKO_ANIM_FIRE, GECKO_FIRE_TICKS);
+            setGeckoAnimation(stack, frenzied ? GECKO_ANIM_FEVER_FIRE : GECKO_ANIM_FIRE, GECKO_FIRE_TICKS);
             if (!bulletFree) {
                 ammo.shrink(1);
             }
@@ -375,7 +380,11 @@ public class ObsidianLauncher extends ConfigurableLauncherItem implements GunSki
         launcher.getOrCreateTag().putBoolean(NBT_CORE_RETURNING, false);
         launcher.getOrCreateTag().putInt(NBT_PENDING_SHOT_TICKS, 0);
         launcher.getOrCreateTag().remove(NBT_PENDING_SHOT_FRENZY);
-        setGeckoAnimation(launcher, GECKO_ANIM_BACK, GECKO_BACK_TICKS);
+        if (!frenzyShot) {
+            setGeckoAnimation(launcher, GECKO_ANIM_BACK, GECKO_BACK_TICKS);
+        } else {
+            clearGeckoAnimation(launcher);
+        }
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
                 GWRESounds.OBSIDIAN_CORE_RELOAD.get(), SoundSource.PLAYERS, 0.6F, 1.15F);
         if (spellReleased) {
@@ -536,7 +545,6 @@ public class ObsidianLauncher extends ConfigurableLauncherItem implements GunSki
     public boolean canUseGunSkill(ServerPlayer player, InteractionHand hand, ItemStack stack) {
         return stack.getItem() instanceof ObsidianLauncher
                 && !isFrenzied(stack)
-                && getActiveCores(stack) <= 0
                 && hasAllStoredSpells(stack);
     }
 
@@ -656,17 +664,28 @@ public class ObsidianLauncher extends ConfigurableLauncherItem implements GunSki
             if (GECKO_ANIM_BACK.equals(animation)) {
                 return BACK_ANIM;
             }
+            if (GECKO_ANIM_FEVER_FIRE.equals(animation)) {
+                return FEVER_FIRE_ANIM;
+            }
             if (GECKO_ANIM_FIRE.equals(animation)) {
                 return FIRE_ANIM;
             }
         }
 
         if (stack != null && getActiveCores(stack) > 0) {
-            return stack.getOrCreateTag().getBoolean(NBT_CORE_RETURNING) ? HOOKING_BACK_ANIM : HOOKING_ANIM;
+            boolean returning = stack.getOrCreateTag().getBoolean(NBT_CORE_RETURNING);
+            if (isFrenzied(stack)) {
+                return returning ? FEVER_HOOKING_BACK_ANIM : FEVER_HOOKING_ANIM;
+            }
+            return returning ? HOOKING_BACK_ANIM : HOOKING_ANIM;
         }
 
         if (stack != null && isFrenzied(stack)) {
             return FEVER_IDLE_ANIM;
+        }
+
+        if (stack != null && hasAllStoredSpells(stack)) {
+            return FEVER_READY_ANIM;
         }
 
         return IDLE_ANIM;

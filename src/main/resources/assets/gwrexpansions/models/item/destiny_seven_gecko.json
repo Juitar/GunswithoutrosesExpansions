@@ -2,20 +2,20 @@
   "parent": "builtin/entity",
   "display": {
     "thirdperson_righthand": {
-      "translation": [0, 1.5, -7.25],
-      "scale": [0.5, 0.5, 0.5]
+      "translation": [0, -3, -5.5],
+      "scale": [0.65, 0.65, 0.65]
     },
     "thirdperson_lefthand": {
-      "translation": [0, 1.5, -7.25],
-      "scale": [0.5, 0.5, 0.5]
+      "translation": [0, -3, -5.5],
+      "scale": [0.65, 0.65, 0.65]
     },
     "firstperson_righthand": {
-      "translation": [1.0, 3.0, -10],
-      "scale": [0.6, 0.6, 0.6]
+      "translation": [1.2, -3, -5.5],
+      "scale": [0.78, 0.78, 0.78]
     },
     "firstperson_lefthand": {
-      "translation": [1.0, 3.0, -10],
-      "scale": [0.6, 0.6, 0.6]
+      "translation": [1.2, -3, -5.5],
+      "scale": [0.78, 0.78, 0.78]
     },
     "ground": {
       "translation": [0, 4.5, 0],

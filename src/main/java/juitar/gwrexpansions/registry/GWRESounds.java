@@ -14,6 +14,9 @@ public class GWRESounds {
     public static final RegistryObject<SoundEvent> supershotgun = initSound("item.supershotgun.shoot");
     public static final RegistryObject<SoundEvent> skullcrusher = initSound("item.skullcrusher.shoot");
     public static final RegistryObject<SoundEvent> skullcrusher_idle = initSound("item.skullcrusher.idle");
+    public static final RegistryObject<SoundEvent> destiny_idle = initSound("item.destiny_seven.idle");
+    public static final RegistryObject<SoundEvent> destiny_pull = initSound("item.destiny_seven.pull");
+    public static final RegistryObject<SoundEvent> destiny_shot = initSound("item.destiny_seven.shot");
     // 肉钩声音
     public static final RegistryObject<SoundEvent> meat_hook_launch = initSound("meat_hook.launch");
     public static final RegistryObject<SoundEvent> meat_hook_hit = initSound("meat_hook.hit");
