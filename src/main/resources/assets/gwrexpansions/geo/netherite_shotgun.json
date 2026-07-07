@@ -1,0 +1,67 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.unknown",
+				"texture_width": 64,
+				"texture_height": 64,
+				"visible_bounds_width": 3,
+				"visible_bounds_height": 1.5,
+				"visible_bounds_offset": [0, 0.25, 0]
+			},
+			"bones": [
+				{
+					"name": "root",
+					"pivot": [-0.05, -2, 0],
+					"cubes": [
+						{"origin": [-1.45, 0, -1], "size": [3, 3, 5.5], "uv": [0, 10]},
+						{"origin": [-1.05, 1, -9], "size": [2, 2, 8], "uv": [0, 0]},
+						{"origin": [-0.55, 0.5, -7], "size": [1, 1, 6], "uv": [16, 10]},
+						{"origin": [-0.05, -2, 2], "size": [0, 2, 2], "uv": [16, 24]}
+					]
+				},
+				{
+					"name": "handle",
+					"parent": "root",
+					"pivot": [-0.05, -2, 0],
+					"cubes": [
+						{"origin": [-1.5, -1.11272, 5.72559], "size": [3, 2.2, 4], "uv": [0, 18]},
+						{"origin": [-1.22488, -0.14756, 3.25094], "size": [2.5, 2.2, 3.7], "pivot": [0.02512, 0.95244, 5.10094], "rotation": [-42.5, 0, 0], "uv": [0, 24]}
+					]
+				},
+				{
+					"name": "handlePump",
+					"parent": "root",
+					"pivot": [-0.05, 1, -2],
+					"cubes": [
+						{"origin": [-1.25, -0.5, -8], "size": [2.5, 1.5, 5], "uv": [20, 0]}
+					]
+				},
+				{
+					"name": "Pumb",
+					"parent": "root",
+					"pivot": [0.5, 0.75, 2.75],
+					"cubes": [
+						{"origin": [-1.25, 1, 1.5], "size": [2.005, 1.5, 2], "uv": [20, 6]}
+					]
+				},
+				{
+					"name": "shell",
+					"parent": "root",
+					"pivot": [-0.5, 2, 2.5],
+					"cubes": [
+						{"origin": [-1, 1.5, 1.5], "size": [1, 1, 2], "uv": [10, 24]}
+					]
+				},
+				{
+					"name": "fire",
+					"pivot": [0, 4, -9.05],
+					"cubes": [
+						{"origin": [-3, -1, -11], "size": [6, 6, 1], "uv": [16, 17]}
+					]
+				}
+			]
+		}
+	]
+}

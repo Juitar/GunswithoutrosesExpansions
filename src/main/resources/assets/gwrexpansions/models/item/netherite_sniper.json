@@ -1,6 +1,27 @@
 {
-	"parent": "gunswithoutroses:item/base_gun",
-	"textures": {
-		"layer0": "gwrexpansions:item/netherite_sniper"
-	}
+  "gui_light": "front",
+  "loader": "forge:separate_transforms",
+  "base": {
+    "parent": "gwrexpansions:item/netherite_sniper_2d"
+  },
+  "perspectives": {
+    "firstperson_righthand": {
+      "parent": "gwrexpansions:item/netherite_sniper_gecko"
+    },
+    "firstperson_lefthand": {
+      "parent": "gwrexpansions:item/netherite_sniper_gecko"
+    },
+    "thirdperson_righthand": {
+      "parent": "gwrexpansions:item/netherite_sniper_gecko"
+    },
+    "thirdperson_lefthand": {
+      "parent": "gwrexpansions:item/netherite_sniper_gecko"
+    },
+    "ground": {
+      "parent": "gwrexpansions:item/netherite_sniper_gecko"
+    },
+    "fixed": {
+      "parent": "gwrexpansions:item/netherite_sniper_2d"
+    }
+  }
 }

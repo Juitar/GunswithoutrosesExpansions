@@ -1,6 +1,27 @@
 {
-	"parent": "gunswithoutroses:item/base_gun",
-	"textures": {
-		"layer0": "gwrexpansions:item/netherite_shotgun"
-	}
+  "gui_light": "front",
+  "loader": "forge:separate_transforms",
+  "base": {
+    "parent": "gwrexpansions:item/netherite_shotgun_2d"
+  },
+  "perspectives": {
+    "firstperson_righthand": {
+      "parent": "gwrexpansions:item/netherite_shotgun_gecko"
+    },
+    "firstperson_lefthand": {
+      "parent": "gwrexpansions:item/netherite_shotgun_gecko"
+    },
+    "thirdperson_righthand": {
+      "parent": "gwrexpansions:item/netherite_shotgun_gecko"
+    },
+    "thirdperson_lefthand": {
+      "parent": "gwrexpansions:item/netherite_shotgun_gecko"
+    },
+    "ground": {
+      "parent": "gwrexpansions:item/netherite_shotgun_gecko"
+    },
+    "fixed": {
+      "parent": "gwrexpansions:item/netherite_shotgun_2d"
+    }
+  }
 }

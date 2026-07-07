@@ -21,7 +21,7 @@ public class VanillaItem {
 
     public static void registerItems() {
 
-        netherite_shotgun = GWREItems.initItem(() -> new ConfigurableGunItem(
+        netherite_shotgun = GWREItems.initItem(() -> new NetheriteShotgun(
                 GWREItems.defP().durability(4000).fireResistant(),
                 0, 0.0, 0, 5.0, 15,
                 () -> GWREConfig.SHOTGUN.Netherite)
@@ -30,7 +30,7 @@ public class VanillaItem {
                 .repair(() -> Ingredient.of(Tags.Items.INGOTS_NETHERITE)),
                 "netherite_shotgun");
 
-        netherite_sniper = GWREItems.initItem(() -> new ConfigurableGunItem(
+        netherite_sniper = GWREItems.initItem(() -> new NetheriteSniper(
                 GWREItems.defP().durability(4000).fireResistant(),
                 0, 0.0, 0, 0.0, 15,
                 () -> GWREConfig.SNIPER.netherite)
