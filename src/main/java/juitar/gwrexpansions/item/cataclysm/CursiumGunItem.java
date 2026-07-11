@@ -3,6 +3,7 @@ package juitar.gwrexpansions.item.cataclysm;
 import com.github.L_Ender.cataclysm.entity.projectile.Phantom_Halberd_Entity;
 import com.github.L_Ender.cataclysm.init.ModParticle;
 import com.github.L_Ender.cataclysm.init.ModSounds;
+import juitar.gwrexpansions.client.render.CursiumBallistaGeoRenderer;
 import juitar.gwrexpansions.config.GWREConfig;
 import juitar.gwrexpansions.entity.cataclysm.CursiumBulletEntity;
 import juitar.gwrexpansions.item.ConfigurableGunItem;
@@ -13,38 +14,104 @@ import juitar.gwrexpansions.registry.GWRECataclysmEnchantments;
 import lykrast.gunswithoutroses.entity.BulletEntity;
 import lykrast.gunswithoutroses.item.IBullet;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
+import org.jetbrains.annotations.NotNull;
+import software.bernie.geckolib.animatable.GeoItem;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class CursiumGunItem extends ConfigurableGunItem implements GunSkillItem {
+public class CursiumGunItem extends ConfigurableGunItem implements GunSkillItem, GeoItem {
     private static final String RAGE_TAG = "CursiumRage";
     private static final String TRIPLE_SHOT_READY_TAG = "CursiumTripleShotReady";
     public static final String CURSIUM_SNIPER_SHOT_TAG = "CursiumSniperShot";
+    private static final String NBT_GECKO_ANIMATION = "CursiumBallistaGeckoAnimation";
+    private static final String NBT_GECKO_ANIMATION_TIMER = "CursiumBallistaGeckoAnimationTimer";
+    private static final String NBT_GECKO_ANIMATION_SEQUENCE = "CursiumBallistaGeckoAnimationSequence";
+    private static final String GECKO_CONTROLLER = "controller";
+    private static final String GECKO_ANIM_FIRE = "fire";
+    private static final String GECKO_ANIM_POWER = "power";
+    private static final String GECKO_ANIM_POWER_IDLE = "power idle";
+    private static final String GECKO_ANIM_POWER_FIRE = "power fire";
+    private static final int GECKO_FIRE_TICKS = 12;
+    private static final int GECKO_POWER_TICKS = 22;
+    private static final int GECKO_POWER_FIRE_TICKS = 12;
     private static final double CURSIUM_DRAIN_RAGE_PER_HEADSHOT = 1.5D;
     private static final double TRIPLE_SHOT_SIDE_OFFSET = 0.45D;
+    private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
+    private static final RawAnimation FIRE_ANIM = RawAnimation.begin().thenPlay("fire");
+    private static final RawAnimation POWER_ANIM = RawAnimation.begin().thenPlay("power");
+    private static final RawAnimation POWER_IDLE_ANIM = RawAnimation.begin().thenLoop("power idle");
+    private static final RawAnimation POWER_FIRE_ANIM = RawAnimation.begin().thenPlay("power fire");
+    private static final Map<Long, Integer> LAST_SEEN_GECKO_SEQUENCE = new ConcurrentHashMap<>();
+    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
-    public CursiumGunItem(Properties properties, int bonusDamage, double damageMultiplier, int fireDelay, double inaccuracy, int enchantability, Supplier<GWREConfig.GunConfig> configSupplier) {
-        super(properties, bonusDamage, damageMultiplier, fireDelay, inaccuracy, enchantability,configSupplier);
+    public CursiumGunItem(Properties properties, int bonusDamage, double damageMultiplier, int fireDelay,
+            double inaccuracy, int enchantability, Supplier<GWREConfig.GunConfig> configSupplier) {
+        super(properties, bonusDamage, damageMultiplier, fireDelay, inaccuracy, enchantability, configSupplier);
+        GeoItem.registerSyncedAnimatable(this);
+    }
+
+    @Override
+    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+        consumer.accept(new IClientItemExtensions() {
+            private CursiumBallistaGeoRenderer renderer;
+
+            @Override
+            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+                if (this.renderer == null) {
+                    this.renderer = new CursiumBallistaGeoRenderer();
+                }
+                return this.renderer;
+            }
+        });
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, GECKO_CONTROLLER, 0, state -> {
+            ItemStack stack = state.getData(software.bernie.geckolib.constant.DataTickets.ITEMSTACK);
+            restartAnimationIfSequenceChanged(state, stack);
+            state.setControllerSpeed(1.0F);
+            state.setAnimation(getGeckoAnimation(stack));
+            return PlayState.CONTINUE;
+        }));
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.cache;
     }
 
     public static double getRage(ItemStack stack) {
@@ -130,7 +197,8 @@ public class CursiumGunItem extends ConfigurableGunItem implements GunSkillItem 
     }
 
     @Override
-    protected ItemStack overrideFiredStack(LivingEntity shooter, ItemStack gun, ItemStack ammo, IBullet bulletItem, boolean bulletFree) {
+    protected ItemStack overrideFiredStack(LivingEntity shooter, ItemStack gun, ItemStack ammo, IBullet bulletItem,
+            boolean bulletFree) {
         if (ammo.is(CompatCataclysm.tagBaseBullets)) return new ItemStack(CompatCataclysm.cursium_bullet.get());
         else return ammo;
     }
@@ -145,7 +213,7 @@ public class CursiumGunItem extends ConfigurableGunItem implements GunSkillItem 
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public @NotNull InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         return super.use(level, player, hand);
     }
 
@@ -164,13 +232,19 @@ public class CursiumGunItem extends ConfigurableGunItem implements GunSkillItem 
 
         setRage(stack, 0.0D);
         setTripleShotReady(stack, true);
+        ensureGeckoId(stack, player.level());
+        setGeckoAnimation(stack, GECKO_ANIM_POWER, GECKO_POWER_TICKS);
         releasePhantomHalberdStorm(player.serverLevel(), player);
     }
 
     @Override
-    protected void shoot(Level level, Player player, ItemStack gun, ItemStack ammo, IBullet bulletItem, boolean bulletFree) {
+    protected void shoot(Level level, Player player, ItemStack gun, ItemStack ammo, IBullet bulletItem,
+            boolean bulletFree) {
         boolean tripleShotReady = isTripleShotReady(gun);
         super.shoot(level, player, gun, ammo, bulletItem, bulletFree);
+        ensureGeckoId(gun, level);
+        setGeckoAnimation(gun, tripleShotReady ? GECKO_ANIM_POWER_FIRE : GECKO_ANIM_FIRE,
+                tripleShotReady ? GECKO_POWER_FIRE_TICKS : GECKO_FIRE_TICKS);
         if (tripleShotReady && !level.isClientSide) {
             spawnTripleShotSideBullets(level, player, gun, ammo, bulletItem, bulletFree);
             setTripleShotReady(gun, false);
@@ -178,9 +252,31 @@ public class CursiumGunItem extends ConfigurableGunItem implements GunSkillItem 
     }
 
     @Override
-    protected void addExtraStatsTooltip(ItemStack stack, @Nullable Level world, List<Component> tooltip){
+    public void inventoryTick(ItemStack stack, Level world, Entity entity, int slot, boolean isSelected) {
+        super.inventoryTick(stack, world, entity, slot, isSelected);
+        tickGeckoAnimation(stack);
+        if (!world.isClientSide) {
+            ensureGeckoId(stack, world);
+        }
+    }
+
+    public static boolean isFlashAnimationActive(ItemStack stack) {
+        if (stack.isEmpty() || !stack.hasTag()) {
+            return false;
+        }
+
+        CompoundTag tag = stack.getOrCreateTag();
+        String animation = tag.getString(NBT_GECKO_ANIMATION);
+        int timer = tag.getInt(NBT_GECKO_ANIMATION_TIMER);
+        return timer > 0 && (GECKO_ANIM_FIRE.equals(animation)
+                || GECKO_ANIM_POWER.equals(animation)
+                || GECKO_ANIM_POWER_FIRE.equals(animation));
+    }
+
+    @Override
+    protected void addExtraStatsTooltip(ItemStack stack, @Nullable Level world, List<Component> tooltip) {
         tooltip.add(Component.translatable("tooltip.gwrexpansions.cursium_sniper.desc").withStyle(ChatFormatting.GRAY));
-        tooltip.add(Component.translatable("tooltip.gwrexpansions.cursium_sniper.desc2") .withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.gwrexpansions.cursium_sniper.desc2").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.gwrexpansions.cursium_sniper.rage",
                 GunSkillTooltip.keyName())
                 .withStyle(ChatFormatting.GRAY));
@@ -245,7 +341,8 @@ public class CursiumGunItem extends ConfigurableGunItem implements GunSkillItem 
         }
     }
 
-    private static void spawnHalberd(ServerLevel level, Player player, double x, double z, float yRot, int warmup, float damage) {
+    private static void spawnHalberd(ServerLevel level, Player player, double x, double z, float yRot, int warmup,
+            float damage) {
         double maxY = player.getY() + 3.0D;
         double minY = player.getY() - 5.0D;
         BlockPos blockPos = BlockPos.containing(x, maxY, z);
@@ -279,5 +376,94 @@ public class CursiumGunItem extends ConfigurableGunItem implements GunSkillItem 
         level.addFreshEntity(halberd);
         level.sendParticles(ModParticle.PHANTOM_WING_FLAME.get(), x, y + 0.2D, z,
                 8, 0.18D, 0.05D, 0.18D, 0.01D);
+    }
+
+    private static void ensureGeckoId(ItemStack stack, Level level) {
+        if (stack.isEmpty() || !(stack.getItem() instanceof CursiumGunItem) || !(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+
+        GeoItem.getOrAssignId(stack, serverLevel);
+    }
+
+    private static void setGeckoAnimation(ItemStack stack, String animation, int ticks) {
+        if (stack.isEmpty()) {
+            return;
+        }
+
+        CompoundTag tag = stack.getOrCreateTag();
+        tag.putString(NBT_GECKO_ANIMATION, animation);
+        tag.putInt(NBT_GECKO_ANIMATION_TIMER, ticks);
+        tag.putInt(NBT_GECKO_ANIMATION_SEQUENCE, tag.getInt(NBT_GECKO_ANIMATION_SEQUENCE) + 1);
+    }
+
+    private static void tickGeckoAnimation(ItemStack stack) {
+        if (stack.isEmpty() || !stack.hasTag()) {
+            return;
+        }
+
+        CompoundTag tag = stack.getOrCreateTag();
+        if (!isTripleShotReady(stack) && GECKO_ANIM_POWER_IDLE.equals(tag.getString(NBT_GECKO_ANIMATION))) {
+            tag.remove(NBT_GECKO_ANIMATION);
+            tag.putInt(NBT_GECKO_ANIMATION_SEQUENCE, tag.getInt(NBT_GECKO_ANIMATION_SEQUENCE) + 1);
+        }
+
+        int timer = tag.getInt(NBT_GECKO_ANIMATION_TIMER);
+        if (timer > 1) {
+            tag.putInt(NBT_GECKO_ANIMATION_TIMER, timer - 1);
+        } else if (timer == 1) {
+            String animation = tag.getString(NBT_GECKO_ANIMATION);
+            tag.putInt(NBT_GECKO_ANIMATION_TIMER, 0);
+            if (GECKO_ANIM_POWER.equals(animation) && isTripleShotReady(stack)) {
+                tag.putString(NBT_GECKO_ANIMATION, GECKO_ANIM_POWER_IDLE);
+            } else {
+                tag.remove(NBT_GECKO_ANIMATION);
+            }
+            tag.putInt(NBT_GECKO_ANIMATION_SEQUENCE, tag.getInt(NBT_GECKO_ANIMATION_SEQUENCE) + 1);
+        }
+    }
+
+    private static RawAnimation getGeckoAnimation(@Nullable ItemStack stack) {
+        if (stack != null && stack.hasTag()) {
+            CompoundTag tag = stack.getOrCreateTag();
+            String animation = tag.getString(NBT_GECKO_ANIMATION);
+            int timer = tag.getInt(NBT_GECKO_ANIMATION_TIMER);
+
+            if (GECKO_ANIM_POWER_IDLE.equals(animation)) {
+                return POWER_IDLE_ANIM;
+            }
+
+            if (timer <= 0) {
+                return IDLE_ANIM;
+            }
+
+            if (GECKO_ANIM_POWER.equals(animation)) {
+                return POWER_ANIM;
+            }
+            if (GECKO_ANIM_POWER_FIRE.equals(animation)) {
+                return POWER_FIRE_ANIM;
+            }
+            if (GECKO_ANIM_FIRE.equals(animation)) {
+                return FIRE_ANIM;
+            }
+        }
+
+        return IDLE_ANIM;
+    }
+
+    private static void restartAnimationIfSequenceChanged(AnimationState<CursiumGunItem> state,
+            @Nullable ItemStack stack) {
+        if (stack == null || stack.isEmpty() || !stack.hasTag()) {
+            return;
+        }
+
+        CompoundTag tag = stack.getOrCreateTag();
+        int sequence = tag.getInt(NBT_GECKO_ANIMATION_SEQUENCE);
+        long id = GeoItem.getId(stack);
+        long key = id != 0L ? id : System.identityHashCode(stack);
+        Integer previous = LAST_SEEN_GECKO_SEQUENCE.put(key, sequence);
+        if (previous != null && previous != sequence) {
+            state.getController().forceAnimationReset();
+        }
     }
 }

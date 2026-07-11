@@ -181,7 +181,7 @@ public class ClientConfig {
         remnantFangshotHudOffsetX = defineHudOffsetX(builder, "remnant_fangshot");
         remnantFangshotHudOffsetY = defineHudOffsetY(builder, "remnant_fangshot", 13);
 
-        cursiumSniperHudEnabled = defineHudEnabled(builder, "cursium_sniper", "咒魂狙击枪 / Cursium Sniper");
+        cursiumSniperHudEnabled = defineHudEnabled(builder, "cursium_sniper", "咒骸弩炮 / Cursium Ballista");
         cursiumSniperHudOffsetX = defineHudOffsetX(builder, "cursium_sniper");
         cursiumSniperHudOffsetY = defineHudOffsetY(builder, "cursium_sniper", 23);
 
