@@ -15,7 +15,8 @@ final class GunProjectileSupport {
     private GunProjectileSupport() {
     }
 
-    static void shoot(GunItem gun, Level level, Player player, ItemStack gunStack, ItemStack ammo, IBullet bullet, boolean bulletFree, ProjectileConversion conversion, int pierceCount, java.util.List<AmmoConversion> ammoConversions) {
+    static void shoot(GunItem gun, Level level, Player player, ItemStack gunStack, ItemStack ammo, IBullet bullet, boolean bulletFree, ProjectileConversion conversion, int pierceCount, java.util.List<AmmoConversion> ammoConversions, KubeJSGunEvents callbacks) {
+        callbacks.onFire(gun, level, player, gunStack);
         ItemStack firedAmmo = convertAmmo(ammo, ammoConversions);
         if (firedAmmo != ammo && firedAmmo.getItem() instanceof IBullet convertedBullet) bullet = convertedBullet;
         int projectiles = gun.getProjectilesPerShot(gunStack, player);
@@ -27,6 +28,7 @@ final class GunProjectileSupport {
             shot.setDamage(Math.max(0.0D, shot.getDamage() + gun.getBonusDamage(gunStack, player)) * gun.getDamageMultiplier(gunStack, player));
             shot.setKnockbackStrength(shot.getKnockbackStrength() + gun.getKnockbackBonus(gunStack, player));
             shot.setHeadshotMultiplier(gun.getHeadshotMultiplier(gunStack, player));
+            callbacks.markProjectile(gun, shot);
             level.addFreshEntity(shot);
         }
     }

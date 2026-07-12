@@ -23,6 +23,9 @@ public abstract class AbstractKubeJSGunBuilder extends ItemBuilder {
     protected int pierceCount = 1;
     protected final List<AmmoConversion> ammoConversions = new ArrayList<>();
     protected Consumer<GunSkillContext> skillUse;
+    protected Consumer<GunFireContext> fire;
+    protected Consumer<GunHitEntityContext> hitEntity;
+    protected Consumer<GunHitEntityContext> headshot;
 
     protected AbstractKubeJSGunBuilder(ResourceLocation id, ResourceLocation gunTag) {
         super(id);
@@ -47,6 +50,9 @@ public abstract class AbstractKubeJSGunBuilder extends ItemBuilder {
     }
     public AbstractKubeJSGunBuilder pierce(int value) { pierceCount = Math.min(atLeast(value, 1, "pierce"), 64); return this; }
     public AbstractKubeJSGunBuilder onSkillUse(Consumer<GunSkillContext> callback) { skillUse = callback; return this; }
+    public AbstractKubeJSGunBuilder onFire(Consumer<GunFireContext> callback) { fire = callback; return this; }
+    public AbstractKubeJSGunBuilder onHitEntity(Consumer<GunHitEntityContext> callback) { hitEntity = callback; return this; }
+    public AbstractKubeJSGunBuilder onHeadshot(Consumer<GunHitEntityContext> callback) { headshot = callback; return this; }
 
     protected static int atLeast(int value, int min, String name) { if (value < min) throw new IllegalArgumentException(name + " must be >= " + min); return value; }
     protected static double atLeast(double value, double min, String name) { return Math.max(min, finite(value, name)); }

@@ -26,5 +26,6 @@ public abstract class BulletEntityMixin {
         }
         juitar.gwrexpansions.item.BOMD.Hellforge.onBulletHeadshot(bullet, target, shooter, headshot);
         bulletItem.onLivingEntityHit(bullet, target, shooter, level, headshot);
+        juitar.gwrexpansions.compat.kubejs.KubeJSGunEvents.onBulletHit(bullet, target, shooter, level, headshot);
     }
 }

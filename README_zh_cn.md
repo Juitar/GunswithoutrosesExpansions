@@ -136,6 +136,9 @@ StartupEvents.registry("item", (event) => {
 | `.fireDelayFractional(number)` | 亚 tick 射击间隔       | 仅加特林可用                    |
 | `.pierce(number)`              | 穿透弹可穿过的实体数量 | 最小`1`，最大 `64`              |
 | `.skillCooldown(number)`       | 技能冷却，单位 tick    | 保存在物品 NBT 中并在背包内递减 |
+| `.onFire(callback)`            | 每次合法开火时调用一次 | 仅服务端                        |
+| `.onHitEntity(callback)`       | 该枪弹丸命中生物时调用 | 爆头时同样会调用                |
+| `.onHeadshot(callback)`        | 确认爆头后调用         | 在 `onHitEntity` 之后，仅服务端 |
 
 霰弹枪默认使用多弹丸；加特林支持亚 tick 射速；狙击枪仍然继承 GWR 的 `GunItem`，只是使用狙击标签和狙击默认参数。
 
@@ -181,6 +184,23 @@ StartupEvents.registry("item", (event) => {
 ```
 
 `ctx.message(text)` 是安全的服务端消息方法。回调不会同步到客户端；脚本异常会被捕获并记录，不会导致服务器崩溃。
+
+### 服务端开火与命中回调
+
+`onFire`、`onHitEntity` 和 `onHeadshot` 与 `onSkillUse` 一样，均为安全的纯服务端回调。开火上下文包含 `player`、`level`、`item`、`itemId`；命中上下文额外包含 `projectile` 和 `target`。一次爆头会先执行 `onHitEntity`，再执行 `onHeadshot`。
+
+```js
+event.create('marked_rifle', 'gwrexpansions:gun')
+  .onFire(ctx => ctx.message('开火'))
+  .onHitEntity(ctx => {
+    // ctx.target 是被命中的生物
+  })
+  .onHeadshot(ctx => {
+    // 仅在确认爆头后执行
+  })
+```
+
+回调与发射出的弹丸绑定，只有该 KubeJS 枪械发射的弹丸能够触发。它们要求射手为玩家，且只在逻辑服务端执行。
 
 ## 依赖
 

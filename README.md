@@ -142,6 +142,9 @@ StartupEvents.registry('item', event => {
 | `.fireDelayFractional(number)` | Gatling fractional fire delay | Gatling only |
 | `.pierce(number)` | Number of entities a converted piercing projectile can pierce | Minimum `1`, maximum `64` |
 | `.skillCooldown(number)` | Skill cooldown in ticks | Stored on the ItemStack and ticks down in inventory |
+| `.onFire(callback)` | Called once for each legal shot | Server-side only |
+| `.onHitEntity(callback)` | Called when one of this gun's bullets hits a living entity | Also runs for headshots |
+| `.onHeadshot(callback)` | Called after `onHitEntity` for a confirmed headshot | Server-side only |
 
 Shotgun builders default to multiple projectiles. Gatling builders support fractional fire delay. Sniper builders use the sniper tag and sniper-oriented defaults but remain based on GWR's `GunItem`.
 
@@ -186,6 +189,23 @@ StartupEvents.registry('item', event => {
 ```
 
 `ctx.message(text)` is the safe convenience method for sending a server-side player message. The callback is never serialized to the client. Script exceptions are caught and logged without crashing the server.
+
+### Server-side firing and hit callbacks
+
+`onFire`, `onHitEntity`, and `onHeadshot` use the same safe server-side callback model as `onSkillUse`. Fire context provides `player`, `level`, `item`, and `itemId`; hit context additionally provides `projectile` and `target`. A headshot runs both `onHitEntity` and `onHeadshot`, in that order.
+
+```js
+event.create('marked_rifle', 'gwrexpansions:gun')
+  .onFire(ctx => ctx.message('Bang'))
+  .onHitEntity(ctx => {
+    // ctx.target is the living entity that was hit
+  })
+  .onHeadshot(ctx => {
+    // Runs only for confirmed headshots
+  })
+```
+
+The callbacks are associated with the fired projectile, so only bullets fired by that KubeJS gun can invoke them. They require a player shooter and run only on the logical server.
 
 ## Requirements
 
