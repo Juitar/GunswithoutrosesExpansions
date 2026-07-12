@@ -8,7 +8,7 @@ import software.bernie.geckolib.model.GeoModel;
 public class NetheriteShotgunGeoModel extends GeoModel<NetheriteShotgun> {
     @Override
     public ResourceLocation getModelResource(NetheriteShotgun animatable) {
-        return GWRexpansions.resource("geo/netherite_shotgun.json");
+        return GWRexpansions.resource("geo/netherite_shotgun.geo.json");
     }
 
     @Override

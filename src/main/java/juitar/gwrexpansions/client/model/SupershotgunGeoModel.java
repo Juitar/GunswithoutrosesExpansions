@@ -8,7 +8,7 @@ import software.bernie.geckolib.model.GeoModel;
 public class SupershotgunGeoModel extends GeoModel<Supershotgun> {
     @Override
     public ResourceLocation getModelResource(Supershotgun animatable) {
-        return GWRexpansions.resource("geo/super_shotgun.json");
+        return GWRexpansions.resource("geo/super_shotgun.geo.json");
     }
 
     @Override

@@ -1,5 +1,5 @@
 {
-	"format_version": "1.12.0",
+	"format_version": "1.21.110",
 	"minecraft:geometry": [
 		{
 			"description": {
@@ -58,7 +58,18 @@
 					"name": "fire",
 					"pivot": [0, 4, -9.05],
 					"cubes": [
-						{"origin": [-3, -1, -11], "size": [6, 6, 1], "uv": [16, 17]}
+						{
+							"origin": [-4.5, -2.5, -11],
+							"size": [9, 9, 1],
+							"uv": {
+								"north": {"uv": [17, 18], "uv_size": [6, 6]},
+								"east": {"uv": [16, 18], "uv_size": [1, 6]},
+								"south": {"uv": [24, 18], "uv_size": [6, 6]},
+								"west": {"uv": [23, 18], "uv_size": [1, 6]},
+								"up": {"uv": [17, 17], "uv_size": [6, 1]},
+								"down": {"uv": [23, 18], "uv_size": [6, -1]}
+							}
+						}
 					]
 				}
 			]

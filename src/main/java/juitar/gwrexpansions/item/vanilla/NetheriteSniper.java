@@ -1,16 +1,13 @@
 package juitar.gwrexpansions.item.vanilla;
 
-import juitar.gwrexpansions.client.render.NetheriteSniperGeoRenderer;
 import juitar.gwrexpansions.config.GWREConfig;
 import juitar.gwrexpansions.item.ConfigurableGunItem;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
@@ -24,7 +21,6 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class NetheriteSniper extends ConfigurableGunItem implements GeoItem {
@@ -49,21 +45,6 @@ public class NetheriteSniper extends ConfigurableGunItem implements GeoItem {
         super.shoot(level, player, gun, ammo, bulletItem, bulletFree);
         ensureGeckoId(gun, level);
         setGeckoFiring(gun, FIRE_ANIM_TICKS);
-    }
-
-    @Override
-    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-        consumer.accept(new IClientItemExtensions() {
-            private NetheriteSniperGeoRenderer renderer;
-
-            @Override
-            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-                if (this.renderer == null) {
-                    this.renderer = new NetheriteSniperGeoRenderer();
-                }
-                return this.renderer;
-            }
-        });
     }
 
     @Override

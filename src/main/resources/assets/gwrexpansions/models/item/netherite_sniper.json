@@ -6,19 +6,19 @@
   },
   "perspectives": {
     "firstperson_righthand": {
-      "parent": "gwrexpansions:item/netherite_sniper_gecko"
+      "parent": "gwrexpansions:item/netherite_sniper_2d"
     },
     "firstperson_lefthand": {
-      "parent": "gwrexpansions:item/netherite_sniper_gecko"
+      "parent": "gwrexpansions:item/netherite_sniper_2d"
     },
     "thirdperson_righthand": {
-      "parent": "gwrexpansions:item/netherite_sniper_gecko"
+      "parent": "gwrexpansions:item/netherite_sniper_2d"
     },
     "thirdperson_lefthand": {
-      "parent": "gwrexpansions:item/netherite_sniper_gecko"
+      "parent": "gwrexpansions:item/netherite_sniper_2d"
     },
     "ground": {
-      "parent": "gwrexpansions:item/netherite_sniper_gecko"
+      "parent": "gwrexpansions:item/netherite_sniper_2d"
     },
     "fixed": {
       "parent": "gwrexpansions:item/netherite_sniper_2d"
