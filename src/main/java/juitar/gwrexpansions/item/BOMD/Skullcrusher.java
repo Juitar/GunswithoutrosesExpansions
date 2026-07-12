@@ -118,6 +118,7 @@ public class Skullcrusher extends ConfigurableGatlingItem implements GeoItem {
     protected void addExtraStatsTooltip(ItemStack stack, @Nullable Level world, List<Component> tooltip) {
         tooltip.add(Component.translatable("tooltip.gwrexpansions.skullcrusher.desc").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.gwrexpansions.skullcrusher.desc2").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.gwrexpansions.skullcrusher.desc3").withStyle(ChatFormatting.GRAY));
     }
 
     @Override

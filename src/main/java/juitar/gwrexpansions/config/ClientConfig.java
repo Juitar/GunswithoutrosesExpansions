@@ -77,6 +77,7 @@ public class ClientConfig {
     public final ForgeConfigSpec.DoubleValue superShotgunHudOffsetX;
     public final ForgeConfigSpec.DoubleValue superShotgunHudOffsetY;
     public final ForgeConfigSpec.DoubleValue superShotgunHudScale;
+    public final ForgeConfigSpec.BooleanValue destinySevenIdleSoundEnabled;
     public final ForgeConfigSpec.BooleanValue skullcrusherHudEnabled;
     public final ForgeConfigSpec.DoubleValue skullcrusherHudOffsetX;
     public final ForgeConfigSpec.DoubleValue skullcrusherHudOffsetY;
@@ -190,6 +191,10 @@ public class ClientConfig {
         superShotgunHudOffsetY = defineHudOffsetY(builder, "super_shotgun", 10);
         superShotgunHudScale = builder.comment("超级霰弹枪肉钩 HUD 缩放 / Super Shotgun meat hook HUD scale")
                 .defineInRange("super_shotgun_hud_scale", 1.0D, 0.5D, 2.0D);
+
+        destinySevenIdleSoundEnabled = builder
+                .comment("是否启用命定·柒手持待机音效 / Enable Destiny Seven held idle sound")
+                .define("destiny_seven_idle_sound_enabled", true);
 
         skullcrusherHudEnabled = defineHudEnabled(builder, "skullcrusher", "骷髅粉碎者 / Skullcrusher");
         skullcrusherHudOffsetX = defineHudOffsetX(builder, "skullcrusher");

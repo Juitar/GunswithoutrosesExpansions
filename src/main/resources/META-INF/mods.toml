@@ -75,7 +75,7 @@ side = "BOTH"
     side = "BOTH"
 [[dependencies.${mod_id}]]
     modId = "kubejs"
-    versionRange = "[2001.6.5-build.26,)"
+    versionRange = "[2001.6.5-build.16,)"
     mandatory = false
     ordering = "AFTER"
     side = "BOTH"

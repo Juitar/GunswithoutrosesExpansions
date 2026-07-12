@@ -118,8 +118,9 @@
   "tooltip.gwrexpansions.duskfall_eclipse_blaster.desc": "发射弹丸可穿透多个实体",
   "tooltip.gwrexpansions.duskfall_eclipse_blaster.spirits": "最多维持 %d 个暮玫灵体；每个使暮影蚀光弹丸 +%d%% 伤害，并提供 %d%% 减伤",
   "tooltip.gwrexpansions.hungerbulletitem": "消耗饥饿等级作为子弹",
-  "tooltip.gwrexpansions.skullcrusher.desc": "粉碎头骨作为子弹",
-  "tooltip.gwrexpansions.skullcrusher.desc2": "随着开火时间增加，增加射速以及伤害",
+  "tooltip.gwrexpansions.skullcrusher.desc": "粉碎头骨，发射骨片",
+  "tooltip.gwrexpansions.skullcrusher.desc2": "持续射击会提高射速、伤害、移动速度和弹药不消耗率",
+  "tooltip.gwrexpansions.skullcrusher.desc3": "蓄力完成后额外发射骨片",
   "msg.gwrexpansions.bust": "破产！",
   "msg.gwrexpansions.double": "双击!",
   "msg.gwrexpansions.triple": "三连！",
@@ -134,7 +135,9 @@
   "entity.gwrexpansions.mirecaller_bomb_bullet": "巨颌炸弹弹丸",
   "tooltip.gwrexpansions.supershotgun.ready": "肉钩就绪",
   "tooltip.gwrexpansions.supershotgun.notready": "肉钩正在冷却",
-  "tooltip.gwrexpansions.supershotgun.hook": "按下 [%s] 发射肉钩，将你拉向目标",
+  "tooltip.gwrexpansions.supershotgun.desc": "按下 [%s] 发射肉钩，将自己拉向目标",
+  "tooltip.gwrexpansions.supershotgun.desc2": "肉钩标记目标；命中标记目标时造成额外伤害和击退",
+  "tooltip.gwrexpansions.supershotgun.desc3": "击杀标记目标可重置肉钩并获得吸收效果",
   "subtitles.gwrexpansions.meat_hook.hit": "肉钩命中",
   "subtitles.gwrexpansions.meat_hook.launch": "肉钩发射",
   "item.gwrexpansions.obsidian_launcher": "黑曜石发射器",
@@ -572,5 +575,7 @@
   "config.gwrexpansions.hellforge_overheat_voice_enabled": "启用锻狱过热播报",
   "config.gwrexpansions.hellforge_overheat_music_enabled": "启用锻狱过热音乐",
   "config.gwrexpansions.hellforge_coin_hit_hud_flash_enabled": "启用锻狱硬币命中 HUD 闪光",
-  "config.gwrexpansions.skullcrusher_idle_sound_enabled": "启用头骨粉碎者待机音效"
+  "config.gwrexpansions.skullcrusher_idle_sound_enabled": "启用头骨粉碎者待机音效",
+  "config.gwrexpansions.destiny_seven_idle_sound_enabled": "启用命定·柒待机音效",
+  "config.gwrexpansions.client.mod.meetyourfight": "Meet Your fight"
 }

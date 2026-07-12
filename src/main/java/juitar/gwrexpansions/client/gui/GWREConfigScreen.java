@@ -784,6 +784,18 @@ public class GWREConfigScreen {
 
                         category.addEntry(bomd.build());
                 }
+
+                if (isLoaded(CompatModids.MEETYOURFIGHT)) {
+                        SubCategoryBuilder meetYourFight = entries.startSubCategory(text("client.mod.meetyourfight"))
+                                        .setExpanded(false);
+                        SubCategoryBuilder destinySeven = entries.startSubCategory(
+                                        Component.translatable("item.gwrexpansions.destiny_seven"))
+                                        .setExpanded(false);
+                        addBoolean(destinySeven::add, entries, "destiny_seven_idle_sound_enabled",
+                                        ClientConfig.INSTANCE.destinySevenIdleSoundEnabled, true);
+                        meetYourFight.add(destinySeven.build());
+                        category.addEntry(meetYourFight.build());
+                }
         }
 
         private static void addHudClientEntries(EntrySink sink, ConfigEntryBuilder entries, String key,

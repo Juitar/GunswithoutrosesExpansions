@@ -1,6 +1,7 @@
 package juitar.gwrexpansions.client;
 
 import juitar.gwrexpansions.CompatModids;
+import juitar.gwrexpansions.config.ClientConfig;
 import juitar.gwrexpansions.item.meetyourfight.DestinyGunItem;
 import juitar.gwrexpansions.registry.GWRESounds;
 import net.minecraft.client.Minecraft;
@@ -29,7 +30,9 @@ public class DestinyIdleSoundClient {
     }
 
     private static boolean shouldPlay(LocalPlayer player) {
-        return ModList.get().isLoaded(CompatModids.MEETYOURFIGHT) && !getHeldDestiny(player).isEmpty();
+        return ModList.get().isLoaded(CompatModids.MEETYOURFIGHT)
+                && ClientConfig.getBoolean(ClientConfig.INSTANCE.destinySevenIdleSoundEnabled, true)
+                && !getHeldDestiny(player).isEmpty();
     }
 
     private static void stop(Minecraft mc) {

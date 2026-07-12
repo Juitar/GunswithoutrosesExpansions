@@ -209,8 +209,10 @@ public class Supershotgun extends ConfigurableGunItem implements GunSkillItem, G
     @Override
     protected void addExtraStatsTooltip(ItemStack stack, @Nullable Level world, List<Component> tooltip) {
         super.addExtraStatsTooltip(stack, world, tooltip);
-        tooltip.add(Component.translatable("tooltip.gwrexpansions.supershotgun.hook",
+        tooltip.add(Component.translatable("tooltip.gwrexpansions.supershotgun.desc",
                 GunSkillTooltip.keyName()).withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.gwrexpansions.supershotgun.desc2").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.gwrexpansions.supershotgun.desc3").withStyle(ChatFormatting.GRAY));
         
         int cooldown = getHookCooldown(stack);
         boolean isPaused = isCooldownPaused(stack);

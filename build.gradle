@@ -145,9 +145,8 @@ dependencies {
     // then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     //kubejs
-    implementation fg.deobf("curse.maven:kubejs-238086:8020595")
+    implementation fg.deobf("curse.maven:kubejs-238086:5853326")
     implementation fg.deobf("curse.maven:rhino-416294:6186971")
-    implementation fg.deobf("curse.maven:architectury-api-419699:5137938")
     implementation fg.deobf("curse.maven:architectury-api-419699:5137938")
     //Cataclysm
     implementation fg.deobf("curse.maven:curios-309927:6418456")

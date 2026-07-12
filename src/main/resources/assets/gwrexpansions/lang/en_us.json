@@ -118,8 +118,9 @@
   "tooltip.gwrexpansions.duskfall_eclipse_blaster.desc": "Fired rounds pierce multiple entities",
   "tooltip.gwrexpansions.duskfall_eclipse_blaster.spirits": "Maintains up to %d Dusk Rose Spirits; each grants +%d%% damage to Duskfall Eclipse shots and %d%% damage reduction",
   "tooltip.gwrexpansions.hungerbulletitem": "Uses hunger as ammo",
-  "tooltip.gwrexpansions.skullcrusher.desc": "Use Skull as ammo",
-  "tooltip.gwrexpansions.skullcrusher.desc2": "As the firing time increases, the RPM and Damage are increased",
+  "tooltip.gwrexpansions.skullcrusher.desc": "Crush Skulls to fire bone fragments",
+  "tooltip.gwrexpansions.skullcrusher.desc2": "Sustained fire increases fire rate, damage, movement speed, and ammo save chance",
+  "tooltip.gwrexpansions.skullcrusher.desc3": "Fully charged fire adds bone fragments",
   "msg.gwrexpansions.bust": "Bust!",
   "msg.gwrexpansions.double": "Double!",
   "msg.gwrexpansions.triple": "Triple!",
@@ -134,7 +135,9 @@
   "entity.gwrexpansions.mirecaller_bomb_bullet": "Mirecaller Bomb Bullet",
   "tooltip.gwrexpansions.supershotgun.ready": "Meat Hook is ready!",
   "tooltip.gwrexpansions.supershotgun.notready": "Meat Hook is cooling",
-  "tooltip.gwrexpansions.supershotgun.hook": "Press [%s] to launch the meat hook and pull yourself towards the target.",
+  "tooltip.gwrexpansions.supershotgun.desc": "Press [%s] to launch a meat hook and pull yourself toward the target",
+  "tooltip.gwrexpansions.supershotgun.desc2": "Hooked targets take extra damage and knockback from this weapon",
+  "tooltip.gwrexpansions.supershotgun.desc3": "Killing a hooked target can reset the hook and grant absorption",
   "subtitles.gwrexpansions.meat_hook.hit": "Meat Hook hits",
   "subtitles.gwrexpansions.meat_hook.launch": "Meat Hook launch",
   "item.gwrexpansions.obsidian_launcher": "Obsidian Launcher",
@@ -572,5 +575,7 @@
   "config.gwrexpansions.hellforge_overheat_voice_enabled": "Hellforge Overheat Voice Enabled",
   "config.gwrexpansions.hellforge_overheat_music_enabled": "Hellforge Overheat Music Enabled",
   "config.gwrexpansions.hellforge_coin_hit_hud_flash_enabled": "Hellforge Coin-Hit HUD Flash Enabled",
-  "config.gwrexpansions.skullcrusher_idle_sound_enabled": "Skullcrusher Idle Sound Enabled"
+  "config.gwrexpansions.skullcrusher_idle_sound_enabled": "Skullcrusher Idle Sound Enabled",
+  "config.gwrexpansions.destiny_seven_idle_sound_enabled": "Destiny Seven Idle Sound Enabled",
+  "config.gwrexpansions.client.mod.meetyourfight": "Meet Your Fight"
 }
