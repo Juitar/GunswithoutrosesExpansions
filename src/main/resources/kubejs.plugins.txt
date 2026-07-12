@@ -1,0 +1,1 @@
+juitar.gwrexpansions.compat.kubejs.GWREKubeJSPlugin gwrexpansions

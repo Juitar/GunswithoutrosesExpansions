@@ -1,5 +1,7 @@
 # Guns Without Roses Expansions
 
+**Languages:** [English](README.md) · [简体中文](README_zh_cn.md)
+
 [![CurseForge](http://cf.way2muchnoise.eu/guns-without-roses.svg)](https://www.curseforge.com/minecraft/mc-mods/gunswithoutroses-expansions)
 
 ![](https://media.forgecdn.net/attachments/description/1219417/description_4e919a27-0c6e-47bb-bad9-7200ea6b97cf.png)
@@ -92,12 +94,107 @@ The mod focuses on high-impact weapons with distinct combat loops: ricochets, po
 - Meat Hook system for the Super Shotgun, inspired by DOOM.
 - Optional integration code is guarded so missing optional mods should not crash the base mod.
 
+## KubeJS Gun Support
+
+GWRE optionally integrates with KubeJS Forge `2001.6.5-build.26` (with Rhino `2001.2.3-build.10`). Architectury API `9.2.14` is also required by KubeJS. Put registration code in `kubejs/startup_scripts/` and restart the game after changing startup registrations.
+
+Four gun builders are available:
+
+| KubeJS type | GWR implementation | Automatic GWR tag |
+|---|---|---|
+| `gwrexpansions:gun` | `GunItem` | `gunswithoutroses:gun/pistol` |
+| `gwrexpansions:shotgun` | `ShotgunItem` | `gunswithoutroses:gun/shotgun` |
+| `gwrexpansions:gatling` | `GatlingItem` | `gunswithoutroses:gun/gatling` |
+| `gwrexpansions:sniper` | `GunItem` with sniper defaults | `gunswithoutroses:gun/sniper` |
+
+Tags are assigned automatically; no extra tag script is required.
+
+### Basic example
+
+```js
+StartupEvents.registry('item', event => {
+  event.create('diamond_repeater', 'gwrexpansions:gun')
+    .displayName('Diamond Repeater')
+    .bonusDamage(4)
+    .damageMultiplier(1.25)
+    .fireDelay(8)
+    .inaccuracy(0.5)
+    .enchantability(12)
+    .projectileSpeed(3.0)
+    .headshotMultiplier(1.5)
+})
+```
+
+### Parameters
+
+| Method | Meaning | Notes |
+|---|---|---|
+| `.bonusDamage(number)` | Flat bonus damage | May be negative; must be finite |
+| `.damageMultiplier(number)` | Damage multiplier | Minimum `0` |
+| `.fireDelay(number)` | Fire delay in ticks | Minimum `1` |
+| `.inaccuracy(number)` | Spread/inaccuracy | Minimum `0` |
+| `.enchantability(number)` | Enchanting value | Minimum `0` |
+| `.projectileSpeed(number)` | Projectile speed | Must be positive |
+| `.headshotMultiplier(number)` | Headshot multiplier | Minimum `1` |
+| `.projectiles(number)` | Projectiles per shot | Maximum `64`; mainly useful for shotguns |
+| `.knockback(number)` | Projectile knockback bonus | Must be finite |
+| `.chanceFreeShot(number)` | Chance to preserve ammunition | Clamped to `0..1` |
+| `.fireDelayFractional(number)` | Gatling fractional fire delay | Gatling only |
+| `.pierce(number)` | Number of entities a converted piercing projectile can pierce | Minimum `1`, maximum `64` |
+| `.skillCooldown(number)` | Skill cooldown in ticks | Stored on the ItemStack and ticks down in inventory |
+
+Shotgun builders default to multiple projectiles. Gatling builders support fractional fire delay. Sniper builders use the sniper tag and sniper-oriented defaults but remain based on GWR's `GunItem`.
+
+### Projectile conversion
+
+Keep the original GWR projectile:
+
+```js
+.projectileConversion('original')
+```
+
+Convert it to a GWR piercing projectile:
+
+```js
+.projectileConversion('gwrexpansions:piercing')
+.pierce(2)
+```
+
+Replace one ammunition item with another projectile implementation. The source ammunition is consumed, while the target `IBullet` creates the projectile:
+
+```js
+.projectileConversion(
+  'gunswithoutroses:iron_bullet',
+  'gwrexpansions:diamond_bullet'
+)
+```
+
+The target must be a registered GWR-compatible `IBullet`. Invalid target IDs are reported in the log and do not silently create an unrelated projectile.
+
+### Server-side gun skills
+
+Skills use GWRE's existing R-key network path and execute on the logical server. The cooldown belongs to the ItemStack, so it continues to tick while the gun is in the player's inventory, matching the Super Shotgun hook and Hellforge coin systems.
+
+```js
+StartupEvents.registry('item', event => {
+  event.create('overload_gun', 'gwrexpansions:gun')
+    .skillCooldown(40)
+    .onSkillUse(ctx => {
+      ctx.message('Overload activated!')
+    })
+})
+```
+
+`ctx.message(text)` is the safe convenience method for sending a server-side player message. The callback is never serialized to the client. Script exceptions are caught and logged without crashing the server.
+
 ## Requirements
 
 - Minecraft `1.20.1`
 - Forge `47+`
 - Guns Without Roses `1.20.1-2.5.1+`
 - Cloth Config `11+` on client
+
+KubeJS support is optional. If enabled, install KubeJS Forge `2001.6.5-build.26`, Rhino `2001.2.3-build.10`, and Architectury API `9.2.14`.
 
 ## Optional Integrations
 
