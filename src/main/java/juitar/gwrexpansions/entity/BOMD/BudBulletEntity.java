@@ -105,7 +105,7 @@ public class BudBulletEntity extends BulletEntity {
         int sporeCount = 8; // 固定为8个
         
         for (int i = 0; i < sporeCount; i++) {
-            SporeEntity spore = new SporeEntity(GWREEntities.SPORE.get(), this.level(), (LivingEntity) shooter);
+            SporeEntity spore = new SporeEntity(GWREEntities.SPORE.get(), this.level(), shooter);
 
             // 设置基本属性
             spore.setDamage(2); // 孢子伤害较低

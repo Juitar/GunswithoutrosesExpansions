@@ -33,7 +33,7 @@ public class SporeEntity extends BulletEntity {
         super(level, shooter);
     }
 
-    public SporeEntity(EntityType<? extends BulletEntity> type, Level level, LivingEntity shooter) {
+    public SporeEntity(EntityType<? extends BulletEntity> type, Level level, Entity shooter) {
         super(type, level);
         this.setOwner(shooter);
     }

@@ -29,6 +29,9 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 处理子弹击中事件的事件处理器
  */
@@ -312,18 +315,28 @@ public class BulletHitEventHandler {
             event.getServer().getAllLevels().forEach(level -> {
                 RedstoneBulletItem.tickRedstonePulses(level);
 
-                // 获取所有子弹实体
-                level.getAllEntities().forEach(entity -> {
+                // 先完成实体遍历，再处理子弹。处理连锁时可能会销毁硬币或生成子弹，
+                // 直接在 getAllEntities() 的迭代中执行会使实体存储的迭代器失效。
+                List<BulletEntity> bullets = new ArrayList<>();
+                for (Entity entity : level.getAllEntities()) {
                     if (entity instanceof BulletEntity bullet) {
-                        CompoundTag bulletData = bullet.getPersistentData();
-
-                        tickHellforgeCoinMissGrace(bullet, bulletData);
-
-                        if (bulletData.getBoolean("SeekingCoinChain")) {
-                            handleCoinChainSeeking(bullet);
-                        }
+                        bullets.add(bullet);
                     }
-                });
+                }
+
+                for (BulletEntity bullet : bullets) {
+                    // 前一个子弹的连锁处理可能已移除当前子弹；快照中的失效实体不再处理。
+                    if (!bullet.isAlive() || bullet.level() != level) {
+                        continue;
+                    }
+
+                    CompoundTag bulletData = bullet.getPersistentData();
+                    tickHellforgeCoinMissGrace(bullet, bulletData);
+
+                    if (bulletData.getBoolean("SeekingCoinChain")) {
+                        handleCoinChainSeeking(bullet);
+                    }
+                }
             });
         }
     }
