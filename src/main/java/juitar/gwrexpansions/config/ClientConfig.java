@@ -71,6 +71,10 @@ public class ClientConfig {
     public final ForgeConfigSpec.DoubleValue remnantFangshotHudOffsetX;
     public final ForgeConfigSpec.DoubleValue remnantFangshotHudOffsetY;
     public final ForgeConfigSpec.BooleanValue cursiumSniperHudEnabled;
+    public final ForgeConfigSpec.BooleanValue ignitiumHudEnabled;
+    public final ForgeConfigSpec.DoubleValue ignitiumHudOffsetX;
+    public final ForgeConfigSpec.DoubleValue ignitiumHudOffsetY;
+    public final ForgeConfigSpec.DoubleValue ignitiumHudScale;
     public final ForgeConfigSpec.DoubleValue cursiumSniperHudOffsetX;
     public final ForgeConfigSpec.DoubleValue cursiumSniperHudOffsetY;
     public final ForgeConfigSpec.BooleanValue superShotgunHudEnabled;
@@ -185,6 +189,11 @@ public class ClientConfig {
         cursiumSniperHudEnabled = defineHudEnabled(builder, "cursium_sniper", "咒骸弩炮 / Cursium Ballista");
         cursiumSniperHudOffsetX = defineHudOffsetX(builder, "cursium_sniper");
         cursiumSniperHudOffsetY = defineHudOffsetY(builder, "cursium_sniper", 23);
+        ignitiumHudEnabled = defineHudEnabled(builder, "ignitium_gatling", "腾炎加特林 / Ignitium Gatling");
+        ignitiumHudOffsetX = builder.comment("腾炎加特林 HUD 相对准星中心的 X 偏移，正值向右 / Ignitium HUD X offset from crosshair; positive moves right")
+                .defineInRange("ignitium_gatling_crosshair_offset_x", 0.0D, -2000.0D, 2000.0D);
+        ignitiumHudOffsetY = defineHudOffsetY(builder, "ignitium_gatling", 18);
+        ignitiumHudScale = builder.defineInRange("ignitium_gatling_scale", 1.0D, 0.5D, 2.0D);
 
         superShotgunHudEnabled = defineHudEnabled(builder, "super_shotgun", "超级霰弹枪 / Super Shotgun");
         superShotgunHudOffsetX = defineHudOffsetX(builder, "super_shotgun");

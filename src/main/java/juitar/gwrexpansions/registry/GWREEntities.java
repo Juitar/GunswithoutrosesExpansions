@@ -7,6 +7,8 @@ import juitar.gwrexpansions.entity.cataclysm.CeraunusLightningBulletEntity;
 import juitar.gwrexpansions.entity.cataclysm.CeraunusStormBulletEntity;
 import juitar.gwrexpansions.entity.cataclysm.CeraunusWaterBulletEntity;
 import juitar.gwrexpansions.entity.cataclysm.IgnitiumBulletEntity;
+import juitar.gwrexpansions.entity.cataclysm.IgnitiumFlameSigilEntity;
+import juitar.gwrexpansions.entity.cataclysm.IgnitiumFireballEntity;
 import juitar.gwrexpansions.entity.cataclysm.LavapowerBulletEntity;
 import juitar.gwrexpansions.entity.cataclysm.TidalAbyssBlastPortalEntity;
 import juitar.gwrexpansions.entity.cataclysm.TidalAbyssMineEntity;
@@ -50,6 +52,8 @@ public class GWREEntities {
     public static RegistryObject<EntityType<FireDragonSteelBulletEntity>> DRAGONSTEEL_FIRE_BULLET;
     public static RegistryObject<EntityType<LightningDragonSteelBulletEntity>> DRAGONSTEEL_LIGHTNING_BULLET;
     public static RegistryObject<EntityType<IgnitiumBulletEntity>> IGNITIUM_BULLET;
+    public static RegistryObject<EntityType<IgnitiumFlameSigilEntity>> IGNITIUM_FLAME_SIGIL;
+    public static RegistryObject<EntityType<IgnitiumFireballEntity>> IGNITIUM_FIREBALL;
     public static RegistryObject<EntityType<TidalBulletEntity>> TIDAL_BULLET;
     public static RegistryObject<EntityType<TidalRiftEntity>> TIDAL_RIFT;
     public static RegistryObject<EntityType<TidalAbyssOrbEntity>> TIDAL_ABYSS_ORB;
@@ -101,6 +105,15 @@ public class GWREEntities {
                         .updateInterval(20)
                         .build(new ResourceLocation(GWRexpansions.MODID, "meat_hook").toString()));
         if(ModList.get().isLoaded(CompatModids.CATACLYSM)) {
+            IGNITIUM_FIREBALL = REG.register("ignitium_fireball", () -> EntityType.Builder
+                    .<IgnitiumFireballEntity>of(IgnitiumFireballEntity::new, MobCategory.MISC)
+                    .sized(0.5F, 0.5F).clientTrackingRange(8).updateInterval(1)
+                    .setShouldReceiveVelocityUpdates(true).fireImmune()
+                    .build(GWRexpansions.MODID + ":ignitium_fireball"));
+            IGNITIUM_FLAME_SIGIL = REG.register("ignitium_flame_sigil", () -> EntityType.Builder
+                    .<IgnitiumFlameSigilEntity>of(IgnitiumFlameSigilEntity::new, MobCategory.MISC)
+                    .sized(6.0F, 0.2F).clientTrackingRange(8).updateInterval(2)
+                    .build(GWRexpansions.MODID + ":ignitium_flame_sigil"));
             LAVAPOWER_BULLET = REG.register("lavapower_bullet", () -> EntityType.Builder
                     .<LavapowerBulletEntity>of(LavapowerBulletEntity::new, MobCategory.MISC)
                     .sized(0.3125f, 0.3125f).setUpdateInterval(2).setTrackingRange(64).setShouldReceiveVelocityUpdates(true)

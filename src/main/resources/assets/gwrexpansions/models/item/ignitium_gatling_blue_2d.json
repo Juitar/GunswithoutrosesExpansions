@@ -1,0 +1,4 @@
+{
+  "parent": "gunswithoutroses:item/base_gun",
+  "textures": { "layer0": "gwrexpansions:item/ignitium_gatling_blue" }
+}

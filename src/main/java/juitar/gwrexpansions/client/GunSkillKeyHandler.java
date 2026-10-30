@@ -5,6 +5,7 @@ import juitar.gwrexpansions.GWRexpansions;
 import juitar.gwrexpansions.network.GWRENetwork;
 import juitar.gwrexpansions.network.GunSkillPacket;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
@@ -39,11 +40,19 @@ public class GunSkillKeyHandler {
             return;
         }
 
-        boolean down = GUN_SKILL.isDown();
-        if (down != wasGunSkillDown) {
-            GWRENetwork.CHANNEL.sendToServer(new GunSkillPacket(down));
-            wasGunSkillDown = down;
+        Minecraft mc = Minecraft.getInstance();
+        boolean connected = mc.player != null && mc.level != null && mc.getConnection() != null;
+        boolean down = connected && mc.screen == null && GUN_SKILL.isDown();
+        boolean clicked = false;
+        while (GUN_SKILL.consumeClick()) clicked = true;
+        // A quick tap can begin and end between client ticks. consumeClick retains it,
+        // while isDown still supplies the hold/release edges used by other guns.
+        boolean pressed = connected && mc.screen == null && !wasGunSkillDown && (down || clicked);
+        if (pressed) GWRENetwork.CHANNEL.sendToServer(new GunSkillPacket(true));
+        if (connected && !down && (wasGunSkillDown || pressed)) {
+            GWRENetwork.CHANNEL.sendToServer(new GunSkillPacket(false));
         }
+        wasGunSkillDown = down;
 
         CoinHitFeedbackClient.tick();
         SuperShotgunFeedbackClient.tick();

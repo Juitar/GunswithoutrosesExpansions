@@ -188,6 +188,31 @@ public class GWREConfig {
         }
 
         public static class IgnitiumGatlingConfig extends GunConfig {
+                public final ForgeConfigSpec.BooleanValue skillEnabled;
+                public final ForgeConfigSpec.IntValue maxHeat;
+                public final ForgeConfigSpec.IntValue heatPerBullet;
+                public final ForgeConfigSpec.IntValue entryCost;
+                public final ForgeConfigSpec.IntValue modeDrainPerSecond;
+                public final ForgeConfigSpec.IntValue coolDelayTicks;
+                public final ForgeConfigSpec.IntValue coolPerSecond;
+                public final ForgeConfigSpec.IntValue lightCost;
+                public final ForgeConfigSpec.IntValue lightIntervalTicks;
+                public final ForgeConfigSpec.IntValue abyssCost;
+                public final ForgeConfigSpec.IntValue abyssCooldownTicks;
+                public final ForgeConfigSpec.DoubleValue lightSpeed;
+                public final ForgeConfigSpec.DoubleValue abyssSpeed;
+                public final ForgeConfigSpec.DoubleValue projectileGravity;
+                public final ForgeConfigSpec.DoubleValue lightDamage;
+                public final ForgeConfigSpec.DoubleValue soulLightDamage;
+                public final ForgeConfigSpec.DoubleValue lightRadius;
+                public final ForgeConfigSpec.DoubleValue abyssImpactDamage;
+                public final ForgeConfigSpec.DoubleValue soulAbyssImpactDamage;
+                public final ForgeConfigSpec.DoubleValue abyssImpactRadius;
+                public final ForgeConfigSpec.IntValue sigilDelayTicks;
+                public final ForgeConfigSpec.DoubleValue sigilRadius;
+                public final ForgeConfigSpec.DoubleValue sigilDamage;
+                public final ForgeConfigSpec.DoubleValue soulSigilDamage;
+                public final ForgeConfigSpec.DoubleValue skillLifestealPercent;
                 public final ForgeConfigSpec.IntValue blueFireBonusDamage;
                 public final ForgeConfigSpec.IntValue blueFireDelay;
                 public final ForgeConfigSpec.IntValue blueFireDurationTicks;
@@ -208,6 +233,59 @@ public class GWREConfig {
                         blueFireHealingBonus = builder.comment(
                                         "Flat healing added to each Ignitium Bullet hit while Soul Fire is active.")
                                         .defineInRange("blueFireHealingBonus", 1.0, 0.0, 100.0);
+                        builder.pop();
+                        builder.push("Gun_Skill");
+                        skillEnabled = builder.comment("启用火球技能 / Enable fireball skill")
+                                        .define("skillEnabled", true);
+                        maxHeat = builder.comment("热量上限 / Maximum heat")
+                                        .defineInRange("maxHeat", 100, 1, 10000);
+                        heatPerBullet = builder.comment("每发普通子弹获得热量 / Heat per ordinary bullet")
+                                        .defineInRange("heatPerBullet", 3, 0, 10000);
+                        entryCost = builder.comment("进入火球模式消耗 / Mode entry heat cost")
+                                        .defineInRange("entryCost", 20, 0, 10000);
+                        modeDrainPerSecond = builder.comment("火球模式每秒消耗 / Mode heat drain per second")
+                                        .defineInRange("modeDrainPerSecond", 8, 0, 10000);
+                        coolDelayTicks = builder.comment("停止开火后冷却延迟（tick） / Cooling delay (ticks)")
+                                        .defineInRange("coolDelayTicks", 60, 0, 72000);
+                        coolPerSecond = builder.comment("普通模式每秒冷却热量 / Heat cooled per second")
+                                        .defineInRange("coolPerSecond", 5, 0, 10000);
+                        lightCost = builder.comment("轻火球热量消耗 / Light fireball heat cost")
+                                        .defineInRange("lightCost", 5, 0, 10000);
+                        lightIntervalTicks = builder.comment("轻火球射击间隔（tick） / Light shot interval (ticks)")
+                                        .defineInRange("lightIntervalTicks", 6, 1, 72000);
+                        abyssCost = builder.comment("深渊重弹热量消耗 / Abyss shot heat cost")
+                                        .defineInRange("abyssCost", 20, 0, 10000);
+                        abyssCooldownTicks = builder.comment("深渊重弹冷却（tick） / Abyss shot cooldown (ticks)")
+                                        .defineInRange("abyssCooldownTicks", 40, 0, 72000);
+                        lightSpeed = builder.comment("轻火球初速度（格/tick） / Light launch speed (blocks/tick)")
+                                        .defineInRange("lightSpeed", 1.200, 0.1, 5);
+                        abyssSpeed = builder.comment("深渊重弹初速度（格/tick） / Abyss launch speed (blocks/tick)")
+                                        .defineInRange("abyssSpeed", 1.000, 0.1, 5);
+                        projectileGravity = builder.comment("火球重力（格/tick²） / Fireball gravity (blocks/tick squared)")
+                                        .defineInRange("projectileGravity", 0.040, 0.001, 0.5);
+                        lightDamage = builder.comment("轻火球伤害，受护甲减伤 / Light damage, reduced by armor")
+                                        .defineInRange("lightDamage", 6.000, 0, 1000);
+                        soulLightDamage = builder.comment("魂火轻火球伤害，受护甲减伤 / Soul light damage, reduced by armor")
+                                        .defineInRange("soulLightDamage", 8.000, 0, 1000);
+                        lightRadius = builder.comment("轻火球爆炸半径 / Light blast radius")
+                                        .defineInRange("lightRadius", 1.600, 0.1, 16);
+                        abyssImpactDamage = builder.comment("深渊重弹首次爆炸伤害 / Abyss initial blast damage")
+                                        .defineInRange("abyssImpactDamage", 12.000, 0, 1000);
+                        soulAbyssImpactDamage = builder.comment("魂火深渊重弹首次爆炸伤害，受护甲减伤 / Soul abyss initial damage, reduced by armor")
+                                        .defineInRange("soulAbyssImpactDamage", 16.000, 0, 1000);
+                        abyssImpactRadius = builder.comment("深渊重弹首次爆炸半径 / Abyss initial blast radius")
+                                        .defineInRange("abyssImpactRadius", 2.000, 0.1, 16);
+                        sigilDelayTicks = builder.comment("法阵二次爆炸延迟（tick） / Sigil secondary blast delay (ticks)")
+                                        .defineInRange("sigilDelayTicks", 30, 1, 72000);
+                        sigilRadius = builder.comment("法阵二次爆炸半径 / Sigil secondary blast radius")
+                                        .defineInRange("sigilRadius", 4.500, 0.1, 16);
+                        sigilDamage = builder.comment("法阵二次爆炸伤害 / Sigil secondary blast damage")
+                                        .defineInRange("sigilDamage", 18.000, 0, 1000);
+                        soulSigilDamage = builder.comment("魂火法阵二次爆炸伤害 / Soul sigil secondary blast damage")
+                                        .defineInRange("soulSigilDamage", 24.000, 0, 1000);
+                        skillLifestealPercent = builder.comment(
+                                        "仅火球首次爆炸按实际扣除生命值吸血的百分比；法阵不吸血，0 禁用，不计过量伤害 / Initial fireball blast lifesteal percent of actual health lost; sigils never heal, 0 disables, excludes overkill")
+                                        .defineInRange("skillLifestealPercent", 10.000, 0, 100);
                         builder.pop();
                         builder.pop();
                 }

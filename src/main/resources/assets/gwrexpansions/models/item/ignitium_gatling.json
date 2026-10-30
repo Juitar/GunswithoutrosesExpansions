@@ -1,14 +1,13 @@
 {
-  "parent": "gunswithoutroses:item/base_gun",
-  "textures": {
-    "layer0": "gwrexpansions:item/ignitium_gatling"
-  },
-  "overrides": [
-    {
-      "predicate": {
-        "gwrexpansions:blue_fire": 1
-      },
-      "model": "gwrexpansions:item/ignitium_gatling_blue"
-    }
-  ]
+  "gui_light": "front",
+  "loader": "forge:separate_transforms",
+  "base": { "parent": "gwrexpansions:item/ignitium_gatling_2d" },
+  "perspectives": {
+    "firstperson_righthand": { "parent": "gwrexpansions:item/ignitium_gatling_gecko" },
+    "firstperson_lefthand": { "parent": "gwrexpansions:item/ignitium_gatling_gecko" },
+    "thirdperson_righthand": { "parent": "gwrexpansions:item/ignitium_gatling_gecko" },
+    "thirdperson_lefthand": { "parent": "gwrexpansions:item/ignitium_gatling_gecko" },
+    "ground": { "parent": "gwrexpansions:item/ignitium_gatling_gecko" },
+    "fixed": { "parent": "gwrexpansions:item/ignitium_gatling_gecko" }
+  }
 }

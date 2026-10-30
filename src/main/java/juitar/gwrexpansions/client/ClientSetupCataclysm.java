@@ -5,6 +5,9 @@ import com.github.L_Ender.cataclysm.client.render.entity.Abyss_Orb_Renderer;
 import juitar.gwrexpansions.GWRexpansions;
 import juitar.gwrexpansions.client.render.CeraunusBurstHudRenderer;
 import juitar.gwrexpansions.client.render.CursiumSniperHudRenderer;
+import juitar.gwrexpansions.client.render.IgnitiumGatlingHudRenderer;
+import juitar.gwrexpansions.client.render.IgnitiumFlameSigilRenderer;
+import juitar.gwrexpansions.client.render.IgnitiumFireballRenderer;
 import juitar.gwrexpansions.client.render.HarbingerRaycasterHudRenderer;
 import juitar.gwrexpansions.client.render.RemnantFangshotHudRenderer;
 import juitar.gwrexpansions.client.render.TidalAbyssBlastPortalRenderer;
@@ -29,11 +32,14 @@ final class ClientSetupCataclysm {
         MinecraftForge.EVENT_BUS.register(new HarbingerRaycasterHudRenderer());
         MinecraftForge.EVENT_BUS.register(new TidalPistolHudRenderer());
         MinecraftForge.EVENT_BUS.register(new CursiumSniperHudRenderer());
+        MinecraftForge.EVENT_BUS.register(new IgnitiumGatlingHudRenderer());
         ItemProperties.register(CompatCataclysm.ignitium_gatling.get(), GWRexpansions.resource("blue_fire"),
                 (stack, level, entity, seed) -> IgnitiumGatlingItem.isBlueFireActive(stack) ? 1.0F : 0.0F);
     }
 
     static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerEntityRenderer(GWREEntities.IGNITIUM_FIREBALL.get(), IgnitiumFireballRenderer::new);
+        event.registerEntityRenderer(GWREEntities.IGNITIUM_FLAME_SIGIL.get(), IgnitiumFlameSigilRenderer::new);
         event.registerEntityRenderer(GWREEntities.LAVAPOWER_BULLET.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(GWREEntities.CURSIUM_BULLET.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(GWREEntities.IGNITIUM_BULLET.get(), ThrownItemRenderer::new);

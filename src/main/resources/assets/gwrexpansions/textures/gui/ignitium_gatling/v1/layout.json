@@ -1,0 +1,82 @@
+{
+  "version": 1,
+  "name": "Ignitium Gatling Furnace Sigil",
+  "recommendedTextureSize": 48,
+  "status": "registered by IgnitiumGatlingHudRenderer; continuous angular shader mask",
+  "source": {
+    "tool": "built-in image_gen",
+    "file": "source_atlas.png",
+    "grid": {
+      "columns": 4,
+      "rows": 4
+    },
+    "packing": "RGBA sprites mechanically cropped and nearest-neighbor resampled; alpha>=192 retained as opaque, all other pixels transparent; no geometry painted by HUD code."
+  },
+  "variants": [
+    32,
+    48,
+    64
+  ],
+  "layers": {
+    "background": "sigil_empty.png",
+    "heat": {
+      "fire": "ring_fire_full.png",
+      "soul": "ring_soul_full.png",
+      "mask": "runtime angular mask; continuous heat fraction",
+      "origin": "center of texture",
+      "startAngle": "6 oclock",
+      "direction": "clockwise",
+      "angleFormula": "wrap(atan2(uv.y-0.5, uv.x-0.5) - PI/2, 0, 2*PI)",
+      "visibleWhen": "normalizedAngle <= clamp(heatFraction, 0, 1)",
+      "scope": "glowing ring only; do not clip base ring, core, or heavy cue"
+    },
+    "core": {
+      "fire": [
+        "core_fire_ember.png",
+        "core_fire_medium.png",
+        "core_fire_hot.png"
+      ],
+      "soul": [
+        "core_soul_ember.png",
+        "core_soul_medium.png",
+        "core_soul_hot.png"
+      ],
+      "thresholds": [
+        30,
+        80
+      ]
+    },
+    "heavy": {
+      "ready": "heavy_ready.png",
+      "unavailable": "heavy_unavailable.png",
+      "textureSize": "mainTextureSize / 4",
+      "offset": {
+        "x": "mainTextureSize * 0.375",
+        "y": "floor(mainTextureSize * 0.59375)"
+      },
+      "availableAtHeat": 20
+    },
+    "readyFlash": {
+      "fire": "ready_flash_fire.png",
+      "soul": "ready_flash_soul.png"
+    },
+    "release": {
+      "fire": "release_fire.png",
+      "soul": "release_soul.png",
+      "abyss": "release_abyss.png"
+    }
+  },
+  "drawOrder": [
+    "background",
+    "heat",
+    "core",
+    "heavy only in fireball mode",
+    "readyFlash optional at full heat",
+    "release optional on shot"
+  ],
+  "sampling": {
+    "filter": "nearest",
+    "blur": false,
+    "notes": "Texture pixels and GUI logical pixels are separate; displayed size requires game verification. No text is baked into sprites."
+  }
+}

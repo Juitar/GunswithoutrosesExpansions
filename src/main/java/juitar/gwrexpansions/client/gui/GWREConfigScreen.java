@@ -505,6 +505,31 @@ public class GWREConfigScreen {
                 addDouble(subCategory::add, entries, "ignitium_blue_fire_healing_bonus", config.blueFireHealingBonus,
                                 1.0D,
                                 0.0D, 100.0D);
+                addBoolean(subCategory::add, entries, "ignitium_skill_enabled", config.skillEnabled, true);
+                addInt(subCategory::add, entries, "ignitium_max_heat", config.maxHeat, 100, 1, 10000);
+                addInt(subCategory::add, entries, "ignitium_heat_per_bullet", config.heatPerBullet, 3, 0, 10000);
+                addInt(subCategory::add, entries, "ignitium_entry_cost", config.entryCost, 20, 0, 10000);
+                addInt(subCategory::add, entries, "ignitium_mode_drain", config.modeDrainPerSecond, 8, 0, 10000);
+                addInt(subCategory::add, entries, "ignitium_cool_delay", config.coolDelayTicks, 60, 0, 72000);
+                addInt(subCategory::add, entries, "ignitium_cool_amount", config.coolPerSecond, 5, 0, 10000);
+                addInt(subCategory::add, entries, "ignitium_light_cost", config.lightCost, 5, 0, 10000);
+                addInt(subCategory::add, entries, "ignitium_light_interval", config.lightIntervalTicks, 6, 1, 72000);
+                addInt(subCategory::add, entries, "ignitium_abyss_cost", config.abyssCost, 20, 0, 10000);
+                addInt(subCategory::add, entries, "ignitium_abyss_cooldown", config.abyssCooldownTicks, 40, 0, 72000);
+                addDouble(subCategory::add, entries, "ignitium_light_speed", config.lightSpeed, 1.200D, 0.1, 5);
+                addDouble(subCategory::add, entries, "ignitium_abyss_speed", config.abyssSpeed, 1.000D, 0.1, 5);
+                addDouble(subCategory::add, entries, "ignitium_projectile_gravity", config.projectileGravity, 0.040D, 0.001, 0.5);
+                addDouble(subCategory::add, entries, "ignitium_light_damage", config.lightDamage, 6.000D, 0, 1000);
+                addDouble(subCategory::add, entries, "ignitium_soul_light_damage", config.soulLightDamage, 8.000D, 0, 1000);
+                addDouble(subCategory::add, entries, "ignitium_light_radius", config.lightRadius, 1.600D, 0.1, 16);
+                addDouble(subCategory::add, entries, "ignitium_abyss_impact_damage", config.abyssImpactDamage, 12.000D, 0, 1000);
+                addDouble(subCategory::add, entries, "ignitium_soul_abyss_impact_damage", config.soulAbyssImpactDamage, 16.000D, 0, 1000);
+                addDouble(subCategory::add, entries, "ignitium_abyss_impact_radius", config.abyssImpactRadius, 2.000D, 0.1, 16);
+                addInt(subCategory::add, entries, "ignitium_sigil_delay", config.sigilDelayTicks, 30, 1, 72000);
+                addDouble(subCategory::add, entries, "ignitium_sigil_radius", config.sigilRadius, 4.500D, 0.1, 16);
+                addDouble(subCategory::add, entries, "ignitium_sigil_damage", config.sigilDamage, 18.000D, 0, 1000);
+                addDouble(subCategory::add, entries, "ignitium_soul_sigil_damage", config.soulSigilDamage, 24.000D, 0, 1000);
+                addDouble(subCategory::add, entries, "ignitium_skill_lifesteal_percent", config.skillLifestealPercent, 10.000D, 0, 100);
                 category.addEntry(subCategory.build());
         }
 
@@ -656,6 +681,16 @@ public class GWREConfigScreen {
                         addDouble(harbinger::add, entries, "harbinger_overload_hud_offset_y",
                                         ClientConfig.INSTANCE.harbingerOverloadHudOffsetY, 32.0D, -2000.0D, 2000.0D);
                         cataclysm.add(harbinger.build());
+
+                        SubCategoryBuilder ignitium = entries.startSubCategory(
+                                        Component.translatable("item.gwrexpansions.ignitium_gatling")).setExpanded(false);
+                        addHudClientEntries(ignitium::add, entries, "ignitium_gatling_hud",
+                                        ClientConfig.INSTANCE.ignitiumHudEnabled,
+                                        ClientConfig.INSTANCE.ignitiumHudOffsetX,
+                                        ClientConfig.INSTANCE.ignitiumHudOffsetY, 18);
+                        addDouble(ignitium::add, entries, "ignitium_gatling_hud_scale",
+                                        ClientConfig.INSTANCE.ignitiumHudScale, 1.0D, 0.5D, 2.0D);
+                        cataclysm.add(ignitium.build());
 
                         SubCategoryBuilder tidal = entries.startSubCategory(
                                         Component.translatable("item.gwrexpansions.tidal_pistol")).setExpanded(false);

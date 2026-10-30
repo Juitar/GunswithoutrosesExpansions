@@ -9,7 +9,7 @@ import net.minecraftforge.network.simple.SimpleChannel;
 import java.util.Optional;
 
 public class GWRENetwork {
-    private static final String PROTOCOL_VERSION = "3";
+    private static final String PROTOCOL_VERSION = "6";
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
         new ResourceLocation(GWRexpansions.MODID, "main"),
         () -> PROTOCOL_VERSION,
@@ -20,6 +20,9 @@ public class GWRENetwork {
     private static int packetId = 0;
 
     public static void register() {
+        CHANNEL.registerMessage(packetId++, IgnitiumStatePacket.class,
+            IgnitiumStatePacket::encode, IgnitiumStatePacket::decode, IgnitiumStatePacket::handle,
+            Optional.of(NetworkDirection.PLAY_TO_CLIENT));
         CHANNEL.registerMessage(packetId++, GunSkillPacket.class,
             GunSkillPacket::encode,
             GunSkillPacket::decode,
