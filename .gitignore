@@ -16,11 +16,16 @@ out
 # gradle
 build
 .gradle
+.gradle-home
 
 # other
 eclipse
 run
+/Models/
+/art/
 
 # Files from Forge MDK
 forge*changelog.txt
 run-data
+/run-gametest/
+/src/gametest/
