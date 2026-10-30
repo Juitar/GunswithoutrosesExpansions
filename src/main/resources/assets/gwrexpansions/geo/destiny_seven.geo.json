@@ -3,7 +3,7 @@
 	"minecraft:geometry": [
 		{
 			"description": {
-				"identifier": "geometry.幸运狙",
+				"identifier": "geometry.destiny_seven",
 				"texture_width": 64,
 				"texture_height": 64,
 				"visible_bounds_width": 19,

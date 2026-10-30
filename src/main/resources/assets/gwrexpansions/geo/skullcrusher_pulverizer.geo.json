@@ -1,9 +1,9 @@
 {
-	"format_version": "1.21.0",
+	"format_version": "1.12.0",
 	"minecraft:geometry": [
 		{
 			"description": {
-				"identifier": "geometry.头骨枪",
+				"identifier": "geometry.skullcrusher_pulverizer",
 				"texture_width": 128,
 				"texture_height": 128,
 				"visible_bounds_width": 3,
@@ -318,11 +318,11 @@
 							"origin": [-3.5, 6.52268, -4.81598],
 							"size": [7, 0, 4.5],
 							"uv": {
-								"north": {"uv": [7, 0], "uv_size": [-7, 0], "uv_rotation": 180},
-								"east": {"uv": [0, 0], "uv_size": [0, 5], "uv_rotation": 270},
+								"north": {"uv": [7, 0], "uv_size": [-7, 0]},
+								"east": {"uv": [0, 0], "uv_size": [0, 5]},
 								"south": {"uv": [7, 0], "uv_size": [-7, 0]},
-								"west": {"uv": [0, 0], "uv_size": [0, 5], "uv_rotation": 90},
-								"up": {"uv": [25, 62], "uv_size": [-7, -5], "uv_rotation": 180},
+								"west": {"uv": [0, 0], "uv_size": [0, 5]},
+								"up": {"uv": [25, 62], "uv_size": [-7, -5]},
 								"down": {"uv": [25, 67], "uv_size": [-7, -5]}
 							}
 						}
@@ -367,11 +367,11 @@
 							"pivot": [0, 2.77268, -2.56598],
 							"rotation": [45, 0, 0],
 							"uv": {
-								"north": {"uv": [7, 0], "uv_size": [-7, 0], "uv_rotation": 180},
-								"east": {"uv": [0, 0], "uv_size": [0, 5], "uv_rotation": 270},
+								"north": {"uv": [7, 0], "uv_size": [-7, 0]},
+								"east": {"uv": [0, 0], "uv_size": [0, 5]},
 								"south": {"uv": [7, 0], "uv_size": [-7, 0]},
-								"west": {"uv": [0, 0], "uv_size": [0, 5], "uv_rotation": 90},
-								"up": {"uv": [25, 62], "uv_size": [-7, -5], "uv_rotation": 180},
+								"west": {"uv": [0, 0], "uv_size": [0, 5]},
+								"up": {"uv": [25, 62], "uv_size": [-7, -5]},
 								"down": {"uv": [25, 67], "uv_size": [-7, -5]}
 							}
 						}
